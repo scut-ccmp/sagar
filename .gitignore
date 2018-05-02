@@ -1,0 +1,12 @@
+.DS_Store
+*.o
+*.so
+*.pyc
+*.swp
+*.swo
+*.txt
+*.egg-info/
+POSCAR*/
+SUPERLATT*/
+test/*
+x

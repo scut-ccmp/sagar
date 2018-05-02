@@ -1,0 +1,24 @@
+# An example config file for script superLatticeGenerator.py
+# Need 5 parameters as input. which are dir name, unit_basis, unit_positions,
+# and unit_numbers, and max volumn to extend the superlattice respectively.
+
+# All Superlattice produce to a directory
+# name of the dir give following:
+comment: zb_ZnS
+
+# unit_basis: A 2-D LIST
+lattice:
+  - [0.0, 0.5, 0.5]
+  - [0.5,  0.0,  0.5]
+  - [ 0.5, 0.5,  0.0]
+
+# unit_positions: A 2-D LIST
+positions:
+  - [0., 0., 0.]
+  - [0.25, 0.25, 0.25]
+
+# unit_numbers: A 1-D LIST
+numbers: [30, 16]
+
+# zoom of output structure
+zoom: 4
