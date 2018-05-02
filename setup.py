@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 
 setup(
-    name='nbabe',
+    name='pyabc',
     # Remenber change version in ababe.cmdline.runabalib.exec_from_cmdline()
     version='0.1.0',
     description='A grid structure machine learning tool used\

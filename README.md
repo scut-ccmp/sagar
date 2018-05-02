@@ -1,5 +1,5 @@
-# nbabe
+# pyabc
 
 ## Introduction
-nbabe is a library with some uitils to deal grid site
+pyabc is a library with some uitils to deal grid site
  structures.
