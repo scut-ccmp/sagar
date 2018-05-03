@@ -25,6 +25,12 @@ class testCell(unittest.TestCase):
     def test_extend(self):
         pass
 
+    def test_rotate(self):
+        pass
+
+    def test_trans(self):
+        pass
+
 
 if __name__ == "__main__":
     import nose2

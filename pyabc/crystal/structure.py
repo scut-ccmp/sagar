@@ -11,9 +11,7 @@ class Cell(object):
     parameters:
 
     lattice: 3x3 1D-list, lattice of cell
-
     positions: n tuples(x,y,z) in fraction. 可多态初始化
-
     atoms: list of numbers, represent atom in periodic table.
     """
 
@@ -24,6 +22,15 @@ class Cell(object):
         self._numbers = len(atoms)
 
     def extend(self, mat):
+        """
+        extend transform a cell by mat
+
+        parameters:
+        mat: a 3x3 numpy.array
+
+        return:
+        A new Cell object.
+        """
         lattice = numpy.matmul(mat, self._lattice)
 
         smallest_cell = numpy.matmul(self._positions, numpy.linalg.inv(mat))
