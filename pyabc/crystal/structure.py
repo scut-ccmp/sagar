@@ -55,6 +55,7 @@ class Cell(object):
         """
         return spglib.get_spacegroup((self._lattice, self._positions, self._atoms), symprec)
 
+
 def _get_mat_frac(mat):
     """
     When giving mat -- a 3x3 matrix,

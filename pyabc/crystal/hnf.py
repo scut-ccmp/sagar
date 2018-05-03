@@ -5,6 +5,7 @@ from itertools import product
 
 from progressbar import ProgressBar
 
+
 def _factor(n):
     """
     https://rosettacode.org/wiki/Factors_of_an_integer#Python
@@ -27,10 +28,9 @@ def _hnfs(det):
             f = det // a // d
 
             for b, c, e in product(range(d), range(f), range(f)):
-                h.append(numpy.array([[a, b, c],
+                yield numpy.array([[a, b, c],
                                    [0, d, e],
-                                   [0, 0, f]]))
-    return h
+                                   [0, 0, f]])
 
 
 def hnf_cells(pcell, volume=1, symprec=1e-5, comprec=1e-5):
@@ -59,11 +59,13 @@ def hnf_cells(pcell, volume=1, symprec=1e-5, comprec=1e-5):
     nodup_cells = [pcell.extend(hnf) for hnf in nodup_hnfs]
     return nodup_cells
 
+
 def _not_contain(hnf_list, hnf, rot_list, prec):
     for h in hnf_list:
         if _is_hnf_dup(hnf, h, rot_list, prec):
             return False
     return True
+
 
 def _is_hnf_dup(hnf_x, hnf_y, rot_list, prec=1e-5):
     """
@@ -73,8 +75,8 @@ def _is_hnf_dup(hnf_x, hnf_y, rot_list, prec=1e-5):
     """
     for rot in rot_list:
         m = numpy.matmul(
-                numpy.matmul(hnf_x, numpy.linalg.inv(rot.T)),
-                numpy.linalg.inv(hnf_y))
+            numpy.matmul(hnf_x, numpy.linalg.inv(rot.T)),
+            numpy.linalg.inv(hnf_y))
         if numpy.allclose(numpy.mod(m, 1), numpy.zeros_like(m), atol=prec):
             return True
 

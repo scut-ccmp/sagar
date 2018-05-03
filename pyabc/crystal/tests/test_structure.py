@@ -2,6 +2,7 @@ import unittest
 
 from pyabc.crystal.structure import Cell
 
+
 class testCell(unittest.TestCase):
 
     def setUp(self):
@@ -18,11 +19,12 @@ class testCell(unittest.TestCase):
                      (0.50000, 0.75000, 0.50000),
                      (0.83333, 0.25000, 0.50000),
                      (0.83333, 0.75000, 0.50000)]
-        atoms = [6]*12
+        atoms = [6] * 12
         self.cell = Cell(lattice, positions, atoms)
 
     def test_extend(self):
         pass
+
 
 if __name__ == "__main__":
     import nose2
