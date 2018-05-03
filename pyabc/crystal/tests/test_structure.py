@@ -21,6 +21,9 @@ class testCell(unittest.TestCase):
         atoms = [6]*12
         self.cell = Cell(lattice, positions, atoms)
 
+    def test_extend(self):
+        pass
+
 if __name__ == "__main__":
     import nose2
     nose2.main()

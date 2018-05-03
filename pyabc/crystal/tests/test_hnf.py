@@ -1,7 +1,9 @@
 import unittest
+import numpy
 
 from pyabc.crystal.structure import Cell
-from pyabc.crystal.hnf import hnf_cells
+from pyabc.crystal.hnf import hnf_cells, _is_hnf_dup
+
 
 class testHnf(unittest.TestCase):
 
@@ -36,7 +38,18 @@ class testHnf(unittest.TestCase):
         self.assertEqual(got, wanted)
 
         # HCP
-        wanted = [1, 3, 5, 11, 7, 19, 11, 34, 23]
+        wanted = [1, 3, 5, 11, 7, 19, 11, 34]
         got = [len(hnf_cells(self.hcp_pcell, i))
-               for i in range(1, 10)]
+               for i in range(1, 9)]
         self.assertEqual(got, wanted)
+
+    def test_is_hnf_dup(self):
+        hnf_x = numpy.array([[1, 0, 0],
+                             [0, 1, 0],
+                             [0, 0, 2]])
+        hnf_y = numpy.array([[1, 0, 0],
+                             [0, 2, 0],
+                             [0, 0, 1]])
+        rot_syms = self.bcc_pcell.get_rotations(1e-3)
+        is_dup = _is_hnf_dup(hnf_x, hnf_y, rot_syms, prec=1e-3)
+        self.assertTrue(is_dup)
