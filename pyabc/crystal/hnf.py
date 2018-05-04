@@ -3,8 +3,6 @@ import numpy
 from math import sqrt
 from itertools import product
 
-from progressbar import ProgressBar
-
 
 def _factor(n):
     """
