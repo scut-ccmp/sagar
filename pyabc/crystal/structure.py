@@ -17,9 +17,15 @@ class Cell(object):
 
     def __init__(self, lattice, positions, atoms):
         self._lattice = numpy.array(lattice).reshape((3, 3))
-        self._positions = numpy.array(positions)
+        self._positions = numpy.array(positions).reshape((-1,3))
         self._atoms = numpy.array(atoms)
-        self._numbers = len(atoms)
+        self._atom_numbers = len(atoms)
+        # TODO: check if atom numbers is equal to position number
+        # TODO: initial with Cartesian coor
+        # TODO: initial with atoms symbol
+
+        self.lattice = self._lattice
+        self.positions = self._positions
 
     def extend(self, mat):
         """
@@ -40,7 +46,7 @@ class Cell(object):
         positions = numpy.concatenate(list_positions, axis=0)
 
         n = mat.diagonal().prod()
-        atoms = numpy.repeat(self._numbers, n)
+        atoms = numpy.repeat(self._atom_numbers, n)
 
         return self.__class__(lattice, positions, atoms)
 

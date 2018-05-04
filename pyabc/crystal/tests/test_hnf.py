@@ -5,7 +5,7 @@ from pyabc.crystal.structure import Cell
 from pyabc.crystal.hnf import hnf_cells, _is_hnf_dup
 
 
-class testHnf(unittest.TestCase):
+class TestHnf(unittest.TestCase):
 
     def test(self):
         pass

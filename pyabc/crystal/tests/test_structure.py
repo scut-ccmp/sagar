@@ -3,7 +3,7 @@ import unittest
 from pyabc.crystal.structure import Cell
 
 
-class testCell(unittest.TestCase):
+class TestCell(unittest.TestCase):
 
     def setUp(self):
         lattice = [3.0, 0, 0, 0, 2.0, 0, 0, 0, 1.0]
