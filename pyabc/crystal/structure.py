@@ -6,9 +6,24 @@ import spglib
 """
 periodic_table_dict
 """
-periodic_table_dict = {'H': 1, 'He': 2,
+periodic_table_dict = {'Vacc': 0,
+                       'H': 1, 'He': 2,
                        'Li': 3, 'Be': 4, 'B': 5, 'C': 6, 'N': 7, 'O': 8, 'F': 9, 'Ne': 10,
-                       'Na': 11, }
+                       'Na': 11, 'Mg': 12, 'Al': 13, 'Si': 14, 'P': 15, 'S': 16, 'Cl': 17, 'Ar': 18, }
+
+
+def get_symbol(atom):
+    """
+    get_symbol return symbol of atomic number
+
+    parameter:
+
+    atom: int, atomic number.
+    """
+    for key, value in periodic_table_dict.items():
+        if atom == value:
+            return str(key)
+    return "NaN_x"
 
 
 class Cell(object):
