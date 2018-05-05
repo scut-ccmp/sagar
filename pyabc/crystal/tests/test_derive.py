@@ -2,7 +2,7 @@ import unittest
 import numpy
 
 from pyabc.crystal.structure import Cell
-from pyabc.crystal.hnf import hnf_cells, _is_hnf_dup
+from pyabc.crystal.derive import hnf_cells, _is_hnf_dup
 
 
 class TestHnf(unittest.TestCase):
@@ -53,3 +53,8 @@ class TestHnf(unittest.TestCase):
         rot_syms = self.bcc_pcell.get_rotations(1e-3)
         is_dup = _is_hnf_dup(hnf_x, hnf_y, rot_syms, prec=1e-3)
         self.assertTrue(is_dup)
+
+class TestDeriveConfigurations(unittest.TestCase):
+
+    def test(self):
+        pass
