@@ -3,6 +3,7 @@ import numpy
 from math import sqrt
 from itertools import product
 
+from pyabc.crystal.structure import Cell
 
 def _factor(n):
     """
@@ -49,6 +50,9 @@ def hnf_cells(pcell, volume=1, symprec=1e-5, comprec=1e-5):
     A list of Cell objects.
     """
     # TODO: first make sure pcell is primitive
+    if not isinstance(pcell, Cell):
+        raise TypeError("Can't make hnf cells of {:} "
+                        "please provide pyabc.crystal.structure.Cell object.".format(type(pcell)))
     nodup_hnfs = []
     rot_list = pcell.get_rotations(symprec)
     for hnf in _hnfs(volume):
@@ -71,7 +75,12 @@ def _is_hnf_dup(hnf_x, hnf_y, rot_list, prec=1e-5):
     A hnf act in a cell,
     if H_x * R.T^-1 * H_y ^-1 is an int matrix:
         H_x and H_y produce the same supercell.
+
+    Algorithm: Hermite normal form (HNF) matrices remove translation symmetry duplications
+               However, rotation symmetry duplications also need to be removedself.
+               That is what this function ``_is_hnf_dup`` do.
     """
+    # TODO: efficiency!
     for rot in rot_list:
         m = numpy.matmul(
             numpy.matmul(hnf_x, numpy.linalg.inv(rot.T)),
