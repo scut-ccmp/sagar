@@ -26,9 +26,12 @@ class Cell(object):
     def __init__(self, lattice, positions, atoms):
         self._lattice = numpy.array(lattice).reshape((3, 3))
 
-        # TODO: check if atom numbers is equal to position number
         self._atom_numbers = len(atoms)
         self._positions = numpy.array(positions).reshape((-1, 3))
+        if self._positions.shape[0] != self._atom_numbers:
+            raise ValueError("When init Cell, number of atoms not equal to "
+                          "number of positions.\n"
+                          "CHECK YOUR INPUT!")
 
         a = []
         for s in atoms:
@@ -60,6 +63,9 @@ class Cell(object):
         return:
         A new Cell object.
         """
+        # TODO: now extend is proved right only for hnf matrixself.
+        #       1. 我们是否需要把旋转合并进来？
+        #       2. 针对非对角矩阵，是一样适用？
         lattice = numpy.matmul(mat, self._lattice)
 
         smallest_cell = numpy.matmul(self._positions, numpy.linalg.inv(mat))
@@ -69,7 +75,7 @@ class Cell(object):
         positions = numpy.concatenate(list_positions, axis=0)
 
         n = mat.diagonal().prod()
-        atoms = numpy.repeat(self._atom_numbers, n)
+        atoms = numpy.repeat(self._atoms, n)
 
         return self.__class__(lattice, positions, atoms)
 
