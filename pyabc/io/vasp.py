@@ -1,7 +1,9 @@
 import numpy
 import warnings
+import operator
+import collections
 
-from pyabc.crystal.structure import Cell
+from pyabc.crystal.structure import Cell, get_symbol
 
 
 def read(filename='POSCAR'):
@@ -13,13 +15,13 @@ def read(filename='POSCAR'):
 
     return: Cell object.
     """
-    # TODO: read velocities, now not supported.
+    # TODO: read velocities, now not supported. or not needed?
     with open(filename, "r") as f:
         # _read_string return Cell object.
-        return _read_cell_from_string(f.read())
+        return _read_string(f.read())
 
 
-def _read_cell_from_string(data):
+def _read_string(data):
     """
     _read_string make io easy to be tested.
 
@@ -90,7 +92,7 @@ def _read_cell_from_string(data):
         raise ValueError("Sorry! Cartesian coordinates "
                          "are not supported now, "
                          "please modify your input file.")
-                         
+
     if coortype[0] in "dD":
         line_first_pos = line_coortype + 1
 
@@ -104,5 +106,92 @@ def _read_cell_from_string(data):
     return Cell(lattice, positions, atoms)
 
 
-def write():
-    pass
+def write(cell, filename='POSCAR', suffix='.vasp', long_format=True):
+    """
+    write vasp POSCAR type into file, vasp5 format only.
+        always write atoms sorted POSCAR.
+
+    parameters:
+
+    cell: Cell object, the Cell that you wanna write into vasp POSCAR.
+    filename: string, filename of output file, default='POSCAR'
+    suffix: string, suffix of filename, default='.vasp'
+    long_format: bool, if True format %.16f will be write, else %.6f
+                 ref: https://gitlab.com/ase/ase/blob/master/ase/io/vasp.py
+
+    if optional parameters (filename and suffix) are not set,
+    the filename will be 'POSCAR.vasp'
+    """
+    # TODO: write Cartesian coor POSCAR
+    with open(filename, "w") as f:
+        f.write(_write_string(cell, long_format))
+
+
+def _write_string(cell, long_format):
+    """
+    _write_string make io easy to be tested.
+
+    return: string represtent POSCAR
+    """
+
+    # 对原子种类合并排序，用以产生体系名称和原子顺序数目和正确的坐标排序
+    # sorted is a list of tuple(atom, na)
+    atoms_dict = collections.Counter(cell.atoms)
+    sorted_symbols = sorted(atoms_dict.items(), key=operator.itemgetter(0))
+
+    list_symbols = ["{:}{:}".format(get_symbol(atom), na)
+                    for atom, na in sorted_symbols]
+
+    comment = ' '.join(list_symbols)
+    comment += '\n'
+
+    scale = '{:9.6f}'.format(1.0)
+    scale += '\n'
+
+    lattice_string = ""
+    if long_format:
+        latt_form = '21.16f'
+    else:
+        latt_form = '11.6f'
+
+    for vec in cell.lattice:
+        lattice_string += ' '
+        for v in vec:
+            lattice_string += '{:{form}}'.format(v, form=latt_form)
+        lattice_string += '\n'
+
+    # atom types and their numbers
+    atom_types = ' '.join([get_symbol(i[0]) for i in sorted_symbols])
+    atom_types += '\n'
+
+    atom_numbers = ' '.join([str(i[1]) for i in sorted_symbols])
+    atom_numbers += '\n'
+
+    # TODO: write Cartesian coor
+    coor_type = 'Direct\n'
+
+    # argsort atoms and resort coor
+    idx = numpy.argsort(cell.atoms)
+    coord = cell.positions[idx]
+    atoms = cell.atoms[idx]
+    positions_string = ""
+    if long_format:
+        pos_form = '19.16f'
+    else:
+        pos_form = '9.6f'
+
+    for i, vec in enumerate(coord):
+        positions_string += ' '
+        for v in vec:
+            positions_string += '{:{form}}'.format(v, form=pos_form)
+        positions_string += ' ' + get_symbol(atoms[i])
+        positions_string += '\n'
+
+    poscar_string = ''.join([comment,
+                             scale,
+                             lattice_string,
+                             atom_types,
+                             atom_numbers,
+                             coor_type,
+                             positions_string])
+    return poscar_string
