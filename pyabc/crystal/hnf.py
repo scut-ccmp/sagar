@@ -49,7 +49,6 @@ def hnf_cells(pcell, volume=1, symprec=1e-5, comprec=1e-5):
 
     A list of Cell objects.
     """
-    # TODO: first make sure pcell is primitive
     if not isinstance(pcell, Cell):
         raise TypeError("Can't make hnf cells of {:} "
                         "please provide pyabc.crystal.structure.Cell object.".format(type(pcell)))
