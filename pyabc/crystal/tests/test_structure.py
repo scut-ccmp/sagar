@@ -19,8 +19,15 @@ class TestCell(unittest.TestCase):
                      (0.50000, 0.75000, 0.50000),
                      (0.83333, 0.25000, 0.50000),
                      (0.83333, 0.75000, 0.50000)]
-        atoms = [6] * 12
+        atoms = ['C'] * 12
         self.cell = Cell(lattice, positions, atoms)
+
+    def test_init(self):
+        lattice = [1.0, 0, 0, 0, 1.0, 0, 0, 0, 1.0]
+        positions = [0,0,0]
+        atoms = ['NaN_10']
+        cell = Cell(lattice, positions, atoms)
+        self.assertEqual(cell.atoms.tolist(), [1010])
 
     def test_extend(self):
         pass

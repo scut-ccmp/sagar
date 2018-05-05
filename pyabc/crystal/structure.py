@@ -3,6 +3,13 @@ import numpy
 from itertools import product
 import spglib
 
+"""
+periodic_table_dict
+"""
+periodic_table_dict = {'H': 1, 'He': 2,
+                       'Li': 3, 'Be': 4, 'B': 5, 'C': 6, 'N': 7, 'O': 8, 'F': 9, 'Ne': 10,
+                       'Na': 11, }
+
 
 class Cell(object):
     """
@@ -12,20 +19,36 @@ class Cell(object):
 
     lattice: 3x3 1D-list, lattice of cell
     positions: n tuples(x,y,z) in fraction. 可多态初始化
-    atoms: list of numbers, represent atom in periodic table.
+    atoms: list of atoms, can be atomic number (int), can be atomic symbol (string),
+           represent atom in periodic table. (用全称初始化？？谁TM会这么用？)
     """
 
     def __init__(self, lattice, positions, atoms):
         self._lattice = numpy.array(lattice).reshape((3, 3))
-        self._positions = numpy.array(positions).reshape((-1,3))
-        self._atoms = numpy.array(atoms)
-        self._atom_numbers = len(atoms)
+
         # TODO: check if atom numbers is equal to position number
+        self._atom_numbers = len(atoms)
+        self._positions = numpy.array(positions).reshape((-1, 3))
+
+        a = []
+        for s in atoms:
+            if isinstance(s, str):
+                if s in periodic_table_dict:
+                    a.append(periodic_table_dict[s])
+                elif len(s.split("_")) == 2 and s.split("_")[0] == "NaN":
+                    i = int(s.split("_")[1])
+                    a.append(1000+i)
+                else:
+                    raise ValueError("Unkown atom symbols {:}".format(s))
+            elif isinstance(s, int):
+                a.append(s)
+
+        self._atoms = numpy.array(a)
         # TODO: initial with Cartesian coor
-        # TODO: initial with atoms symbol
 
         self.lattice = self._lattice
         self.positions = self._positions
+        self.atoms = self._atoms
 
     def extend(self, mat):
         """
