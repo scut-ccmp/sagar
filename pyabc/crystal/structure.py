@@ -30,8 +30,8 @@ class Cell(object):
         self._positions = numpy.array(positions).reshape((-1, 3))
         if self._positions.shape[0] != self._atom_numbers:
             raise ValueError("When init Cell, number of atoms not equal to "
-                          "number of positions.\n"
-                          "CHECK YOUR INPUT!")
+                             "number of positions.\n"
+                             "CHECK YOUR INPUT!")
 
         a = []
         for s in atoms:
@@ -40,7 +40,7 @@ class Cell(object):
                     a.append(periodic_table_dict[s])
                 elif len(s.split("_")) == 2 and s.split("_")[0] == "NaN":
                     i = int(s.split("_")[1])
-                    a.append(1000+i)
+                    a.append(1000 + i)
                 else:
                     raise ValueError("Unkown atom symbols {:}".format(s))
             elif isinstance(s, int):
@@ -115,3 +115,20 @@ def _get_mat_frac(mat):
         ((_all_frac > -prec) & (_all_frac < 1 - prec)), axis=1)
 
     return _all_frac[numpy.where(is_incell)[0]]
+
+
+def is_primitive_cell(cell, prec=1e-5):
+    """
+    is_primitive_cell decide if a cell is primitive
+
+    parameters:
+
+    cell: Cell object
+    prec: float, the precision to judge, default=1e-5
+
+    return: bool
+    """
+    natoms = len(cell.atoms)
+    spg_cell = (cell.lattice, cell.positions, cell.atoms)
+    pnatoms = len(spglib.find_primitive(spg_cell, prec)[2])
+    return natoms == pnatoms

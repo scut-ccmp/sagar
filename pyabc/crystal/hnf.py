@@ -3,7 +3,7 @@ import numpy
 from math import sqrt
 from itertools import product
 
-from pyabc.crystal.structure import Cell
+from pyabc.crystal.structure import Cell, is_primitive_cell
 
 def _factor(n):
     """
@@ -53,6 +53,12 @@ def hnf_cells(pcell, volume=1, symprec=1e-5, comprec=1e-5):
     if not isinstance(pcell, Cell):
         raise TypeError("Can't make hnf cells of {:} "
                         "please provide pyabc.crystal.structure.Cell object.".format(type(pcell)))
+
+    if not is_primitive_cell(pcell):
+        raise ValueError("cell object you provide is not a primitive cell "
+                         "Therefore meaningless to get non duplicated hnf cells "
+                         "You can use pcell.get_primitive() first.")
+
     nodup_hnfs = []
     rot_list = pcell.get_rotations(symprec)
     for hnf in _hnfs(volume):
