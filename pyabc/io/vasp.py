@@ -63,7 +63,7 @@ def _read_cell_from_string(data):
         numofatoms = lines[6].split()  # list of string here
 
     if not vasp5:
-        warnings.warn("symbols of elements in fifth line are missing,"
+        warnings.warn("symbols of elements in fifth line are missing, "
                       "all atoms are init to NaN_i (i=0,1,2...)", UserWarning, stacklevel=2)
         atomtypes = [str("NaN_{:}".format(i)) for i in range(len(numofatoms))]
 
@@ -81,13 +81,16 @@ def _read_cell_from_string(data):
     # TODO: Supporting Cartesian coordinates vasp input
     coortype = lines[line_coortype].split()[0]
     if coortype[0] in "sS":
-        warnings.warn("Sorry! Selective dynamics"
+        warnings.warn("Sorry! Selective dynamics "
                       "are not supported now", FutureWarning, stacklevel=2)
         line_coortype += 1
+        coortype = lines[line_coortype].split()[0]
+
     if coortype[0] in "cCkK":
-        raise ValueError("Sorry! Cartesian coordinates"
-                         "are not supported now,"
-                         "modify your input file.")
+        raise ValueError("Sorry! Cartesian coordinates "
+                         "are not supported now, "
+                         "please modify your input file.")
+                         
     if coortype[0] in "dD":
         line_first_pos = line_coortype + 1
 
