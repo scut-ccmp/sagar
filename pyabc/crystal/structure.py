@@ -39,6 +39,7 @@ class Cell(object):
     """
 
     def __init__(self, lattice, positions, atoms):
+        # TODO: magmoms init setting
         self._lattice = numpy.array(lattice).reshape((3, 3))
 
         self._atom_numbers = len(atoms)
@@ -48,6 +49,8 @@ class Cell(object):
                              "number of positions.\n"
                              "CHECK YOUR INPUT!")
 
+        if isinstance(atoms, numpy.ndarray):
+            atoms = atoms.tolist()
         a = []
         for s in atoms:
             if isinstance(s, str):
@@ -64,9 +67,17 @@ class Cell(object):
         self._atoms = numpy.array(a)
         # TODO: initial with Cartesian coor
 
-        self.lattice = self._lattice
-        self.positions = self._positions
-        self.atoms = self._atoms
+    @property
+    def lattice(self):
+        return self._lattice
+
+    @property
+    def positions(self):
+        return self._positions
+
+    @property
+    def atoms(self):
+        return self._atoms
 
     def extend(self, mat):
         """
