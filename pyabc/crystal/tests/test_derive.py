@@ -3,7 +3,7 @@ import numpy
 
 from pyabc.crystal.structure import Cell
 from pyabc.crystal.derive import hnf_cells, _is_hnf_dup
-from pyabc.crystal.derive import xgcd, Snf
+from pyabc.crystal.derive import xgcd, snf
 
 
 class TestHnf(unittest.TestCase):
@@ -77,24 +77,15 @@ class TestSnf(unittest.TestCase):
         mat = numpy.array([2, 4, 4,
                            -6, 6, 12,
                            10, -4, -16]).reshape((3, 3))
-        snf = Snf(mat)
-        # print()
-        # print(snf.A)
-        detA = numpy.linalg.det(snf.A)
-        # print(detA)
-        snf.run()
-
-        # print("PAQ:\n")
-        PAQ = numpy.dot(snf.P, numpy.dot(mat, snf.Q))
-        # print(PAQ)
-        detPAQ = numpy.linalg.det(PAQ)
-        # print(detPAQ)
+        snf_S, snf_A, snf_T = snf(mat)
+        SAT = numpy.dot(snf_S, numpy.dot(mat, snf_T))
 
         wanted_mat = numpy.array([2, 0, 0,
                                   0, 6, 0,
                                   0, 0, 12]).reshape((3, 3))
 
-        self.assertTrue(numpy.allclose(PAQ, wanted_mat))
+        self.assertTrue(numpy.allclose(SAT, wanted_mat))
+        self.assertTrue(numpy.allclose(snf_A, wanted_mat))
 
 
 if __name__ == "__main__":

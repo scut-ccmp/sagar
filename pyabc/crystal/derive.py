@@ -321,6 +321,10 @@ class Snf(object):
         self._L.append(L.copy())
         self._A = np.dot(L, self._A)
 
+def snf(mat):
+    a = Snf(mat)
+    a.run()
+    return a.P, a.A, a.Q
 
 def xgcd(vals):
     _xgcd = Xgcd(vals)
