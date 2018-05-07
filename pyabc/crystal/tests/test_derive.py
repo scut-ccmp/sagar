@@ -3,6 +3,7 @@ import numpy
 
 from pyabc.crystal.structure import Cell
 from pyabc.crystal.derive import hnf_cells, _is_hnf_dup
+from pyabc.crystal.derive import xgcd, Snf
 
 
 class TestHnf(unittest.TestCase):
@@ -54,7 +55,48 @@ class TestHnf(unittest.TestCase):
         is_dup = _is_hnf_dup(hnf_x, hnf_y, rot_syms, prec=1e-3)
         self.assertTrue(is_dup)
 
-class TestDeriveConfigurations(unittest.TestCase):
+
+class TestSnf(unittest.TestCase):
 
     def test(self):
         pass
+
+    def test_xgcd(self):
+        self._test_xgcd_n_times(100)
+
+    def _test_xgcd_n_times(self, n):
+        for i in range(n):
+            vals = numpy.random.randint(100, size=2) + 1
+            r, s, t = xgcd(vals)
+            # print("%d = %d * (%d) + %d * (%d)" %
+            #       (r, vals[0], s, vals[1], t))
+            wanted = vals[0] * s + vals[1] * t
+            self.assertEqual(r, wanted)
+
+    def test_smith_normal_form(self):
+        mat = numpy.array([2, 4, 4,
+                           -6, 6, 12,
+                           10, -4, -16]).reshape((3, 3))
+        snf = Snf(mat)
+        # print()
+        # print(snf.A)
+        detA = numpy.linalg.det(snf.A)
+        # print(detA)
+        snf.run()
+
+        # print("PAQ:\n")
+        PAQ = numpy.dot(snf.P, numpy.dot(mat, snf.Q))
+        # print(PAQ)
+        detPAQ = numpy.linalg.det(PAQ)
+        # print(detPAQ)
+
+        wanted_mat = numpy.array([2, 0, 0,
+                                  0, 6, 0,
+                                  0, 0, 12]).reshape((3, 3))
+
+        self.assertTrue(numpy.allclose(PAQ, wanted_mat))
+
+
+if __name__ == "__main__":
+    import nose2
+    nose2.main()
