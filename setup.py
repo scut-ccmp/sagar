@@ -15,7 +15,7 @@ setup(
     install_requires=["nose2", "numpy==1.13", "aenum", "hat-trie",
                       "spglib==1.9.9.18", "ruamel.yaml",
                       "scipy==0.18.1", "progressbar2", "xxhash",
-                      "click"],
+                      "click", "ase==3.16"],
     classifiers=[
         "Programming Language :: Python :: 3.6",
         "Intended Audience :: Science/Research",
