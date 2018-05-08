@@ -192,6 +192,7 @@ class Snf(object):
         if i > 0:
             self._swap_rows(0, i)
 
+        # TODO: 此处可做并发
         if self._A[1, 0] != 0:
             self._zero_first_column(1)
         if self._A[2, 0] != 0:
@@ -347,3 +348,13 @@ def extended_gcd(aa, bb):
         x, lastx = lastx - quotient * x, x
         y, lasty = lasty - quotient * y, y
     return lastremainder, lastx * (-1 if aa < 0 else 1), lasty * (-1 if bb < 0 else 1)
+
+# def mysnf(mat):
+#     pivot = _search_first_pivot(mat)
+#     pass
+#     return s, a, t
+#
+# def _search_first_pivot(mat):
+#     for i in range(3):
+#         if mat[i, 0] != 0:
+#             return i

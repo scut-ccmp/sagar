@@ -78,7 +78,7 @@ class TestSnf(unittest.TestCase):
                            -6, 6, 12,
                            10, -4, -16]).reshape((3, 3))
         snf_S, snf_A, snf_T = snf(mat)
-        SAT = numpy.dot(snf_S, numpy.dot(mat, snf_T))
+        SAT = numpy.matmul(snf_S, numpy.matmul(mat, snf_T))
 
         wanted_mat = numpy.array([2, 0, 0,
                                   0, 6, 0,
@@ -86,6 +86,26 @@ class TestSnf(unittest.TestCase):
 
         self.assertTrue(numpy.allclose(SAT, wanted_mat))
         self.assertTrue(numpy.allclose(snf_A, wanted_mat))
+
+    # strange but robust test
+    def test_smith_normal_form_random(self):
+        self._test_Instantiate(100)
+
+    def _test_Instantiate(self, n):
+        for i in range(n):
+            mat = self._get_random_mat()
+            snf_S, snf_A, snf_T = snf(mat)
+            SAT = numpy.matmul(snf_S, numpy.matmul(mat, snf_T))
+
+            numpy.testing.assert_almost_equal(numpy.linalg.det(snf_S), 1)
+            numpy.testing.assert_almost_equal(numpy.linalg.det(snf_T), 1)
+
+    def _get_random_mat(self):
+        k = 15
+        mat = numpy.random.randint(k, size=(3, 3)) - k // 2
+        if numpy.linalg.det(mat) < 0.5:
+            mat = self._get_random_mat()
+        return mat
 
 
 if __name__ == "__main__":
