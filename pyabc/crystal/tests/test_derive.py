@@ -5,6 +5,9 @@ from pyabc.crystal.structure import Cell
 from pyabc.crystal.derive import hnf_cells, _is_hnf_dup
 from pyabc.crystal.derive import snf, extended_gcd
 
+from pyabc.crystal.derive import _search_first_pivot, _swap_rows, \
+    _flip_sign_row, _set_zero, _zero_first_column
+
 
 class TestHnf(unittest.TestCase):
 
@@ -58,8 +61,13 @@ class TestHnf(unittest.TestCase):
 
 class TestSnf(unittest.TestCase):
 
-    def test(self):
-        pass
+    def setUp(self):
+        self.mat = numpy.array([0, 1, 2,
+                                3, 4, 5,
+                                6, 7, 8]).reshape((3, 3))
+        self.realmat = numpy.array([2, 4, 4,
+                                    -6, 6, 12,
+                                    10, -4, -16]).reshape((3, 3))
 
     def test_extended_gcd(self):
         self._test_extended_gcd_n_times(100)
@@ -74,9 +82,7 @@ class TestSnf(unittest.TestCase):
             self.assertEqual(r, wanted)
 
     def test_smith_normal_form(self):
-        mat = numpy.array([2, 4, 4,
-                           -6, 6, 12,
-                           10, -4, -16]).reshape((3, 3))
+        mat = self.realmat
         snf_S, snf_A, snf_T = snf(mat)
         SAT = numpy.matmul(snf_S, numpy.matmul(mat, snf_T))
 
@@ -106,6 +112,58 @@ class TestSnf(unittest.TestCase):
         if numpy.linalg.det(mat) < 0.5:
             mat = self._get_random_mat()
         return mat
+
+    def test_search_first_pivot(self):
+        self.assertEqual(_search_first_pivot(self.mat), 1)
+
+    def test_swap_rows(self):
+        mat, op = _swap_rows(self.mat, 0, 1)
+        wanted_mat = numpy.array([3, 4, 5,
+                                  0, 1, 2,
+                                  6, 7, 8]).reshape((3, 3))
+        wanted_op = numpy.array([0, 1, 0,
+                                 1, 0, 0,
+                                 0, 0, 1]).reshape((3, 3))
+        numpy.testing.assert_almost_equal(mat, wanted_mat)
+        numpy.testing.assert_almost_equal(op, wanted_op)
+
+    def test_flip_sign_row(self):
+        mat, op = _flip_sign_row(self.mat, 1)
+        wanted_mat = numpy.array([0, 1, 2,
+                                  -3, -4, -5,
+                                  6, 7, 8]).reshape((3, 3))
+        wanted_op = numpy.array([1, 0, 0,
+                                 0, -1, 0,
+                                 0, 0, 1]).reshape((3, 3))
+        numpy.testing.assert_almost_equal(mat, wanted_mat)
+        numpy.testing.assert_almost_equal(op, wanted_op)
+
+    def test_set_zero(self):
+        mat, _ = _swap_rows(self.mat, 0, 1)
+        # now_mat = numpy.array([3, 4, 5,
+        #                        0, 1, 2,
+        #                        6, 7, 8]).reshape((3, 3))
+        r, s, t = extended_gcd(mat[0, 0], mat[2, 0])
+        mat, op = _set_zero(mat, 0, 2, mat[0, 0], mat[2, 0], r, s, t)
+        wanted_mat = numpy.array([3, 4, 5,
+                                  0, 1, 2,
+                                  0, -1, -2]).reshape((3, 3))
+        wanted_op = numpy.array([1, 0, 0,
+                                 0, 1, 0,
+                                 -2, 0, 1]).reshape((3, 3))
+        numpy.testing.assert_almost_equal(mat, wanted_mat)
+        numpy.testing.assert_almost_equal(op, wanted_op)
+
+    def test_zero_first_column(self):
+        mat, op = _zero_first_column(self.realmat, 1)
+        wanted_mat = numpy.array([2, 4, 4,
+                                  0, -18, -24,
+                                  10, -4, -16]).reshape((3, 3))
+        wanted_op = numpy.array([1, 0, 0,
+                                 -3, -1, 0,
+                                 0, 0, 1]).reshape((3, 3))
+        numpy.testing.assert_almost_equal(mat, wanted_mat)
+        numpy.testing.assert_almost_equal(op, wanted_op)
 
 
 if __name__ == "__main__":

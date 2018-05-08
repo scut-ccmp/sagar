@@ -349,12 +349,72 @@ def extended_gcd(aa, bb):
         y, lasty = lasty - quotient * y, y
     return lastremainder, lastx * (-1 if aa < 0 else 1), lasty * (-1 if bb < 0 else 1)
 
-# def mysnf(mat):
-#     pivot = _search_first_pivot(mat)
-#     pass
-#     return s, a, t
-#
-# def _search_first_pivot(mat):
-#     for i in range(3):
-#         if mat[i, 0] != 0:
-#             return i
+
+def mysnf(mat):
+    opL = numpy.eye(3, dtype='int')
+    opR = numpy.eye(3, dtype='int')
+    pivot = _search_first_pivot(mat)
+    if i > 0:
+        mat, op = _swap_rows(mat, 0, i)
+    opL = numpy.matmul(op, opL)
+
+    if mat[1, 0] != 0:
+        op, mat = _zero_first_column(mat, 1)
+        opL = numpy.matmul(op, opL)
+    if mat[2, 0] != 0:
+        op, mat = _zero_first_column(mat, 2)
+        opL = numpy.matmul(op, opL)
+    # pass
+    # return s, a, t
+
+
+def _search_first_pivot(mat):
+    for i in range(3):
+        if mat[i, 0] != 0:
+            return i
+
+
+def _swap_rows(mat, i, j):
+    """
+    return:
+    mat: new row permuted mat
+    op: is a row permute matrix
+    """
+    op = numpy.eye(3, dtype='int')
+    op[i, i], op[j, j] = 0, 0
+    op[i, j], op[j, i] = 1, 1
+    mat = numpy.matmul(op, mat)
+    return mat, op
+
+
+def _zero_first_column(mat, i):
+    if mat[i, 0] < 0:
+        mat, op1 = _flip_sign_row(mat, i)
+    else:
+        op1 = numpy.eye(3, dtype='int')
+    r, s, t = extended_gcd(mat[0, 0], mat[i, 0])
+    mat, op2 = _set_zero(mat, 0, i, mat[0, 0], mat[i, 0], r, s, t)
+    return mat, numpy.matmul(op2, op1)
+
+def _flip_sign_row(mat, i):
+    """
+    mul -1 for i row
+    """
+    op = numpy.eye(3, dtype='int')
+    op[i, i] = -1
+    mat = numpy.matmul(op, mat)
+    return mat, op
+
+def _set_zero(mat, i, j, aa, bb, r, s, t):
+    """
+    Based on Bezout's identity
+
+    Let mat[i, j] be zero
+    """
+    op  = numpy.eye(3, dtype='int')
+    op[i, i] = s
+    op[i, j] = t
+    op[j, i] = -bb // r
+    op[j, j] = aa // r
+    mat = numpy.matmul(op, mat)
+    return mat, op
