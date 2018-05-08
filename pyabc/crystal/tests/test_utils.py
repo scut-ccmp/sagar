@@ -2,8 +2,8 @@ import unittest
 import numpy
 
 from pyabc.crystal.structure import Cell
-from pyabc.crystal.derive import non_dup_hnfs, _is_hnf_dup
-from pyabc.crystal.derive import snf, extended_gcd
+from pyabc.crystal.utils import non_dup_hnfs, _is_hnf_dup
+from pyabc.crystal.utils import snf, extended_gcd
 
 
 class TestHnf(unittest.TestCase):
