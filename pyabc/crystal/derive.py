@@ -1,9 +1,9 @@
 from pyabc.crystal.utils import non_dup_hnfs
 
 
-def non_dup_lattice(pcell, volume=1, symprec=1e-5, comprec=1e-5):
+def cells_nonredundant(pcell, volume=1, symprec=1e-5, comprec=1e-5):
     """
-    non_dup_lattice return all non duplicated hnf extend cells.
+    cells_nonredundant return all non duplicated hnf extend cells.
 
     parameters:
 
@@ -19,3 +19,9 @@ def non_dup_lattice(pcell, volume=1, symprec=1e-5, comprec=1e-5):
     A list of Cell objects.
     """
     return [pcell.extend(hnf) for hnf in non_dup_hnfs(pcell, volumn, symprec, comprec)]
+
+def configurations_nonredundant(pcell, volume=1, symprec=1e-5, comprec=1e-5):
+    """
+    在较大体积的构型中，可能有结构已经在小的体积中出现过。
+    """
+    pass
