@@ -97,238 +97,6 @@ def _is_hnf_dup(hnf_x, hnf_y, rot_list, prec=1e-5):
     return False
 
 
-class Snf(object):
-    """
-    snf 3x3
-    """
-
-    def __init__(self, A):
-        self._A_orig = numpy.array(A, dtype='int')
-        self._A = numpy.array(A, dtype='int')
-        self._Ps = []
-        self._Qs = []
-        self._L = []
-        self._P = None
-        self._Q = None
-        self._attempt = 0
-
-    def run(self):
-        for i in self:
-            pass
-
-    def __iter__(self):
-        return self
-
-    def __next__(self):
-        self._attempt += 1
-        if self._first():
-            if self._second():
-                self._set_PQ()
-                raise StopIteration
-        return self._attempt
-
-    def next(self):
-        self.__next__()
-
-    @property
-    def A(self):
-        return self._A
-
-    @property
-    def P(self):
-        return self._P
-
-    @property
-    def Q(self):
-        return self._Q
-
-    def _set_PQ(self):
-        if numpy.linalg.det(self._A) < 0:
-            for i in range(3):
-                if self._A[i, i] < 0:
-                    self._flip_sign_row(i)
-            self._Ps += self._L
-            self._L = []
-
-        P = numpy.eye(3, dtype='int')
-        for _P in self._Ps:
-            P = numpy.matmul(_P, P)
-        Q = numpy.eye(3, dtype='int')
-        for _Q in self._Qs:
-            Q = numpy.matmul(Q, _Q.T)
-
-        if numpy.linalg.det(P) < 0:
-            P = -P
-            Q = -Q
-
-        self._P = P
-        self._Q = Q
-
-    def _first(self):
-        self._first_one_loop()
-        A = self._A
-        if A[1, 0] == 0 and A[2, 0] == 0:
-            return True
-        elif A[1, 0] % A[0, 0] == 0 and A[2, 0] % A[0, 0] == 0:
-            self._first_finalize()
-            self._Ps += self._L
-            self._L = []
-            return True
-        else:
-            return False
-
-    def _first_one_loop(self):
-        self._first_column()
-        self._Ps += self._L
-        self._L = []
-        self._A = self._A.T
-        self._first_column()
-        self._Qs += self._L
-        self._L = []
-        self._A = self._A.T
-
-    def _first_column(self):
-        i = self._search_first_pivot()
-        if i > 0:
-            self._swap_rows(0, i)
-
-        # TODO: 此处可做并发
-        if self._A[1, 0] != 0:
-            self._zero_first_column(1)
-        if self._A[2, 0] != 0:
-            self._zero_first_column(2)
-
-    def _zero_first_column(self, j):
-        if self._A[j, 0] < 0:
-            self._flip_sign_row(j)
-        A = self._A
-        r, s, t = extended_gcd(A[0, 0], A[j, 0])
-        self._set_zero(0, j, A[0, 0], A[j, 0], r, s, t)
-
-    def _search_first_pivot(self):
-        A = self._A
-        for i in range(3):  # column index
-            if A[i, 0] != 0:
-                return i
-
-    def _first_finalize(self):
-        """Set zeros along the first colomn except for A[0, 0]
-
-        This is possible only when A[1,0] and A[2,0] are dividable by A[0,0].
-
-        """
-
-        A = self._A
-        L = numpy.eye(3, dtype='int')
-        L[1, 0] = -A[1, 0] // A[0, 0]
-        L[2, 0] = -A[2, 0] // A[0, 0]
-        self._L.append(L.copy())
-        self._A = numpy.matmul(L, self._A)
-
-    def _second(self):
-        """Find Smith normal form for Right-low 2x2 matrix"""
-
-        self._second_one_loop()
-        A = self._A
-        if A[2, 1] == 0:
-            return True
-        elif A[2, 1] % A[1, 1] == 0:
-            self._second_finalize()
-            self._Ps += self._L
-            self._L = []
-            return True
-        else:
-            return False
-
-    def _second_one_loop(self):
-        self._second_column()
-        self._Ps += self._L
-        self._L = []
-        self._A = self._A.T
-        self._second_column()
-        self._Qs += self._L
-        self._L = []
-        self._A = self._A.T
-
-    def _second_column(self):
-        """Right-low 2x2 matrix
-
-        Assume elements in first row and column are all zero except for A[0,0].
-
-        """
-
-        if self._A[1, 1] == 0 and self._A[2, 1] != 0:
-            self._swap_rows(1, 2)
-
-        if self._A[2, 1] != 0:
-            self._zero_second_column()
-
-    def _zero_second_column(self):
-        if self._A[2, 1] < 0:
-            self._flip_sign_row(2)
-        A = self._A
-        r, s, t = extended_gcd(A[1, 1], A[2, 1])
-        self._set_zero(1, 2, A[1, 1], A[2, 1], r, s, t)
-
-    def _second_finalize(self):
-        """Set zero at A[2, 1]
-
-        This is possible only when A[2,1] is dividable by A[1,1].
-
-        """
-
-        A = self._A
-        L = numpy.eye(3, dtype='int')
-        L[2, 1] = -A[2, 1] // A[1, 1]
-        self._L.append(L.copy())
-        self._A = numpy.matmul(L, self._A)
-
-    def _swap_rows(self, i, j):
-        """Swap i and j rows
-
-        As the side effect, determinant flips.
-
-        """
-
-        L = numpy.eye(3, dtype='int')
-        L[i, i] = 0
-        L[j, j] = 0
-        L[i, j] = 1
-        L[j, i] = 1
-        self._L.append(L.copy())
-        self._A = numpy.matmul(L, self._A)
-
-    def _flip_sign_row(self, i):
-        """Multiply -1 for all elements in row"""
-
-        L = numpy.eye(3, dtype='int')
-        L[i, i] = -1
-        self._L.append(L.copy())
-        self._A = numpy.matmul(L, self._A)
-
-    def _set_zero(self, i, j, a, b, r, s, t):
-        """Let A[i, j] be zero based on Bezout's identity
-
-           [ii ij]
-           [ji jj] is a (k,k) minor of original 3x3 matrix.
-
-        """
-
-        L = numpy.eye(3, dtype='int')
-        L[i, i] = s
-        L[i, j] = t
-        L[j, i] = -b // r
-        L[j, j] = a // r
-        self._L.append(L.copy())
-        self._A = numpy.matmul(L, self._A)
-
-
-def snf(mat):
-    a = Snf(mat)
-    a.run()
-    return a.P, a.A, a.Q
-
-
 def extended_gcd(aa, bb):
     """
     Algorithm: https://en.wikipedia.org/wiki/Extended_Euclidean_algorithm#Iterative_method_2
@@ -350,22 +118,48 @@ def extended_gcd(aa, bb):
     return lastremainder, lastx * (-1 if aa < 0 else 1), lasty * (-1 if bb < 0 else 1)
 
 
-def mysnf(mat):
+def snf(mat):
     opL = numpy.eye(3, dtype='int')
     opR = numpy.eye(3, dtype='int')
-    pivot = _search_first_pivot(mat)
-    if i > 0:
-        mat, op = _swap_rows(mat, 0, i)
-    opL = numpy.matmul(op, opL)
+    while not is_diag(mat):
+        pivot = _search_first_pivot(mat)
+        if pivot > 0:
+            mat, op = _swap_rows(mat, 0, pivot)
+            opL = numpy.matmul(op, opL)
 
-    if mat[1, 0] != 0:
-        op, mat = _zero_first_column(mat, 1)
+        if mat[1, 0] % mat[0, 0] == 0 and mat[2, 0] % mat[0, 0] == 0:
+            mat, op = _first_exact_division(mat)
+            opL = numpy.matmul(op, opL)
+
+        mat, op = _zero_first_column(mat)
         opL = numpy.matmul(op, opL)
-    if mat[2, 0] != 0:
-        op, mat = _zero_first_column(mat, 2)
+
+        mat, op = _zero_first_row(mat)
+        opR = numpy.matmul(opR, op)
+
+        if mat[1, 1] == 0 and mat[2, 1] != 0:
+            mat, op = _swap_rows(mat, 1, 2)
+            opL = numpy.matmul(op, opL)
+
+        if mat[2, 1] % mat[1, 1] == 0:
+            mat, op = _second_exact_division(mat)
+            opL = numpy.matmul(op, opL)
+
+        mat, op = _zero_second_column(mat)
         opL = numpy.matmul(op, opL)
-    # pass
-    # return s, a, t
+
+        mat, op = _zero_second_row(mat)
+        opR = numpy.matmul(opR, op)
+
+        if mat[2, 2] < 0:
+            mat, op = _flip_sign_row(mat, 2)
+            opL = numpy.matmul(op, opL)
+
+    return opL, mat, opR
+
+
+def is_diag(mat):
+    return numpy.all(mat == numpy.diag(numpy.diagonal(mat)))
 
 
 def _search_first_pivot(mat):
@@ -387,14 +181,61 @@ def _swap_rows(mat, i, j):
     return mat, op
 
 
-def _zero_first_column(mat, i):
+def _zero_first_column(mat):
+    op_return = numpy.eye(3, dtype='int')
+    for i in [1, 2]:
+        if mat[i, 0] != 0:
+            mat, op = _zero_first_ele_in_row_i(mat, i)
+            op_return = numpy.matmul(op, op_return)
+    return mat, op_return
+
+
+def _zero_first_ele_in_row_i(mat, i):
+    op_return = numpy.eye(3, dtype='int')
     if mat[i, 0] < 0:
-        mat, op1 = _flip_sign_row(mat, i)
-    else:
-        op1 = numpy.eye(3, dtype='int')
+        mat, op = _flip_sign_row(mat, i)
+        op_return = numpy.matmul(op, op_return)
     r, s, t = extended_gcd(mat[0, 0], mat[i, 0])
-    mat, op2 = _set_zero(mat, 0, i, mat[0, 0], mat[i, 0], r, s, t)
-    return mat, numpy.matmul(op2, op1)
+    mat, op = _set_zero(mat, 0, i, mat[0, 0], mat[i, 0], r, s, t)
+    op_return = numpy.matmul(op, op_return)
+    return mat, op_return
+
+
+def _first_exact_division(mat):
+    op = numpy.eye(3, dtype='int')
+    op[1, 0] = -mat[1, 0] // mat[0, 0]
+    op[2, 0] = -mat[2, 0] // mat[0, 0]
+    mat = numpy.matmul(op, mat)
+    return mat, op
+
+
+def _zero_first_row(mat):
+    mat, op = _zero_first_column(mat.T)
+    return mat.T, op.T
+
+
+def _zero_second_column(mat):
+    op_return = numpy.eye(3, dtype='int')
+    if mat[2, 1] < 0:
+        mat, op = _flip_sign_row(mat, 2)
+        op_return = numpy.matmul(op, op_return)
+    r, s, t = extended_gcd(mat[1, 1], mat[2, 1])
+    mat, op = _set_zero(mat, 1, 2, mat[1, 1], mat[2, 1], r, s, t)
+    op_return = numpy.matmul(op, op_return)
+    return mat, op_return
+
+
+def _second_exact_division(mat):
+    op = numpy.eye(3, dtype='int')
+    op[2, 1] = -mat[2, 1] // mat[1, 1]
+    mat = numpy.matmul(op, mat)
+    return mat, op
+
+
+def _zero_second_row(mat):
+    mat, op = _zero_second_column(mat.T)
+    return mat.T, op.T
+
 
 def _flip_sign_row(mat, i):
     """
@@ -405,13 +246,14 @@ def _flip_sign_row(mat, i):
     mat = numpy.matmul(op, mat)
     return mat, op
 
+
 def _set_zero(mat, i, j, aa, bb, r, s, t):
     """
     Based on Bezout's identity
 
     Let mat[i, j] be zero
     """
-    op  = numpy.eye(3, dtype='int')
+    op = numpy.eye(3, dtype='int')
     op[i, i] = s
     op[i, j] = t
     op[j, i] = -bb // r

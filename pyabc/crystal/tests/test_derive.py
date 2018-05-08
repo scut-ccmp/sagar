@@ -6,7 +6,8 @@ from pyabc.crystal.derive import hnf_cells, _is_hnf_dup
 from pyabc.crystal.derive import snf, extended_gcd
 
 from pyabc.crystal.derive import _search_first_pivot, _swap_rows, \
-    _flip_sign_row, _set_zero, _zero_first_column
+    _flip_sign_row, _set_zero, _zero_first_column, _zero_first_ele_in_row_i, \
+    _zero_first_row
 
 
 class TestHnf(unittest.TestCase):
@@ -69,18 +70,6 @@ class TestSnf(unittest.TestCase):
                                     -6, 6, 12,
                                     10, -4, -16]).reshape((3, 3))
 
-    def test_extended_gcd(self):
-        self._test_extended_gcd_n_times(100)
-
-    def _test_extended_gcd_n_times(self, n):
-        for i in range(n):
-            aa, bb = numpy.random.randint(100, size=2) + 1
-            r, s, t = extended_gcd(aa, bb)
-            # print("%d = %d * (%d) + %d * (%d)" %
-            #       (r, aa, s, bb, t))
-            wanted = aa * s + bb * t
-            self.assertEqual(r, wanted)
-
     def test_smith_normal_form(self):
         mat = self.realmat
         snf_S, snf_A, snf_T = snf(mat)
@@ -89,29 +78,50 @@ class TestSnf(unittest.TestCase):
         wanted_mat = numpy.array([2, 0, 0,
                                   0, 6, 0,
                                   0, 0, 12]).reshape((3, 3))
+        numpy.testing.assert_almost_equal(SAT, wanted_mat)
+        numpy.testing.assert_almost_equal(snf_A, wanted_mat)
 
-        self.assertTrue(numpy.allclose(SAT, wanted_mat))
-        self.assertTrue(numpy.allclose(snf_A, wanted_mat))
+    def test_dead_loop_bug(self):
+        mat = numpy.array([1, 0, 0,
+                           1, 1, 0,
+                           0, 0, 7]).reshape((3, 3))
+        # import pdb; pdb.set_trace()
+        snf_S, snf_A, snf_T = snf(mat)
+        SAT = numpy.matmul(snf_S, numpy.matmul(mat, snf_T))
 
-    # strange but robust test
-    def test_smith_normal_form_random(self):
-        self._test_Instantiate(100)
+        wanted_mat = numpy.array([1, 0, 0,
+                                  0, 1, 0,
+                                  0, 0, 7]).reshape((3, 3))
+        numpy.testing.assert_almost_equal(SAT, wanted_mat)
+        numpy.testing.assert_almost_equal(snf_A, wanted_mat)
 
-    def _test_Instantiate(self, n):
-        for i in range(n):
-            mat = self._get_random_mat()
+    def test_snf_random(self):
+        for i in range(10):
+            mat = numpy.random.randint(100, size=9).reshape((3, 3))
             snf_S, snf_A, snf_T = snf(mat)
             SAT = numpy.matmul(snf_S, numpy.matmul(mat, snf_T))
+            numpy.testing.assert_almost_equal(SAT, snf_A)
 
-            numpy.testing.assert_almost_equal(numpy.linalg.det(snf_S), 1)
-            numpy.testing.assert_almost_equal(numpy.linalg.det(snf_T), 1)
+    def test_snf_diag(self):
+        for i in range(10):
+            mat = numpy.random.randint(100, size=9).reshape((3, 3))
+            _, snf_A, _ = snf(mat)
+            self.assertTrue(self.is_diag(snf_A))
 
-    def _get_random_mat(self):
-        k = 15
-        mat = numpy.random.randint(k, size=(3, 3)) - k // 2
-        if numpy.linalg.det(mat) < 0.5:
-            mat = self._get_random_mat()
-        return mat
+    def is_diag(self, mat):
+        return numpy.all(mat == numpy.diag(numpy.diagonal(mat)))
+
+    def test_extended_gcd(self):
+        self._test_extended_gcd_n_times(100)
+
+    def _test_extended_gcd_n_times(self, n):
+        for i in range(n):
+            aa, bb = numpy.random.randint(10, size=2) + 1
+            r, s, t = extended_gcd(aa, bb)
+            # print("%d = %d * (%d) + %d * (%d)" %
+            #       (r, aa, s, bb, t))
+            wanted = aa * s + bb * t
+            self.assertEqual(r, wanted)
 
     def test_search_first_pivot(self):
         self.assertEqual(_search_first_pivot(self.mat), 1)
@@ -155,12 +165,34 @@ class TestSnf(unittest.TestCase):
         numpy.testing.assert_almost_equal(op, wanted_op)
 
     def test_zero_first_column(self):
-        mat, op = _zero_first_column(self.realmat, 1)
+        mat, op = _zero_first_column(self.realmat)
+        wanted_mat = numpy.array([2, 4, 4,
+                                  0, -18, -24,
+                                  0, -24, -36]).reshape((3, 3))
+        wanted_op = numpy.array([1, 0, 0,
+                                 -3, -1, 0,
+                                 -5, 0, 1]).reshape((3, 3))
+        numpy.testing.assert_almost_equal(mat, wanted_mat)
+        numpy.testing.assert_almost_equal(op, wanted_op)
+
+    def test_zero_first_ele_in_row_i(self):
+        mat, op = _zero_first_ele_in_row_i(self.realmat, 1)
         wanted_mat = numpy.array([2, 4, 4,
                                   0, -18, -24,
                                   10, -4, -16]).reshape((3, 3))
         wanted_op = numpy.array([1, 0, 0,
                                  -3, -1, 0,
+                                 0, 0, 1]).reshape((3, 3))
+        numpy.testing.assert_almost_equal(mat, wanted_mat)
+        numpy.testing.assert_almost_equal(op, wanted_op)
+
+    def test_zero_first_row(self):
+        mat, op = _zero_first_row(self.realmat)
+        wanted_mat = numpy.array([2, 0, 0,
+                                  -6, 18, 24,
+                                  10, -24, -36]).reshape((3, 3))
+        wanted_op = numpy.array([1, -2, -2,
+                                 0, 1, 0,
                                  0, 0, 1]).reshape((3, 3))
         numpy.testing.assert_almost_equal(mat, wanted_mat)
         numpy.testing.assert_almost_equal(op, wanted_op)
