@@ -1,5 +1,4 @@
 import numpy
-import numpy as np
 
 from math import sqrt
 from itertools import product
@@ -104,8 +103,8 @@ class Snf(object):
     """
 
     def __init__(self, A):
-        self._A_orig = np.array(A, dtype='intc')
-        self._A = np.array(A, dtype='intc')
+        self._A_orig = numpy.array(A, dtype='int')
+        self._A = numpy.array(A, dtype='int')
         self._Ps = []
         self._Qs = []
         self._L = []
@@ -144,21 +143,21 @@ class Snf(object):
         return self._Q
 
     def _set_PQ(self):
-        if np.linalg.det(self._A) < 0:
+        if numpy.linalg.det(self._A) < 0:
             for i in range(3):
                 if self._A[i, i] < 0:
                     self._flip_sign_row(i)
             self._Ps += self._L
             self._L = []
 
-        P = np.eye(3, dtype='intc')
+        P = numpy.eye(3, dtype='int')
         for _P in self._Ps:
-            P = np.dot(_P, P)
-        Q = np.eye(3, dtype='intc')
+            P = numpy.matmul(_P, P)
+        Q = numpy.eye(3, dtype='int')
         for _Q in self._Qs:
-            Q = np.dot(Q, _Q.T)
+            Q = numpy.matmul(Q, _Q.T)
 
-        if np.linalg.det(P) < 0:
+        if numpy.linalg.det(P) < 0:
             P = -P
             Q = -Q
 
@@ -219,11 +218,11 @@ class Snf(object):
         """
 
         A = self._A
-        L = np.eye(3, dtype='intc')
+        L = numpy.eye(3, dtype='int')
         L[1, 0] = -A[1, 0] // A[0, 0]
         L[2, 0] = -A[2, 0] // A[0, 0]
         self._L.append(L.copy())
-        self._A = np.dot(L, self._A)
+        self._A = numpy.matmul(L, self._A)
 
     def _second(self):
         """Find Smith normal form for Right-low 2x2 matrix"""
@@ -278,10 +277,10 @@ class Snf(object):
         """
 
         A = self._A
-        L = np.eye(3, dtype='intc')
+        L = numpy.eye(3, dtype='int')
         L[2, 1] = -A[2, 1] // A[1, 1]
         self._L.append(L.copy())
-        self._A = np.dot(L, self._A)
+        self._A = numpy.matmul(L, self._A)
 
     def _swap_rows(self, i, j):
         """Swap i and j rows
@@ -290,21 +289,21 @@ class Snf(object):
 
         """
 
-        L = np.eye(3, dtype='intc')
+        L = numpy.eye(3, dtype='int')
         L[i, i] = 0
         L[j, j] = 0
         L[i, j] = 1
         L[j, i] = 1
         self._L.append(L.copy())
-        self._A = np.dot(L, self._A)
+        self._A = numpy.matmul(L, self._A)
 
     def _flip_sign_row(self, i):
         """Multiply -1 for all elements in row"""
 
-        L = np.eye(3, dtype='intc')
+        L = numpy.eye(3, dtype='int')
         L[i, i] = -1
         self._L.append(L.copy())
-        self._A = np.dot(L, self._A)
+        self._A = numpy.matmul(L, self._A)
 
     def _set_zero(self, i, j, a, b, r, s, t):
         """Let A[i, j] be zero based on Bezout's identity
@@ -314,13 +313,13 @@ class Snf(object):
 
         """
 
-        L = np.eye(3, dtype='intc')
+        L = numpy.eye(3, dtype='int')
         L[i, i] = s
         L[i, j] = t
         L[j, i] = -b // r
         L[j, j] = a // r
         self._L.append(L.copy())
-        self._A = np.dot(L, self._A)
+        self._A = numpy.matmul(L, self._A)
 
 
 def snf(mat):
