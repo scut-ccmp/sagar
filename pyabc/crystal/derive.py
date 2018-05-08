@@ -121,7 +121,7 @@ def extended_gcd(aa, bb):
 def snf(mat):
     opL = numpy.eye(3, dtype='int')
     opR = numpy.eye(3, dtype='int')
-    while not is_diag(mat):
+    while not _is_diag(mat):
         pivot = _search_first_pivot(mat)
         if pivot > 0:
             mat, op = _swap_rows(mat, 0, pivot)
@@ -137,6 +137,7 @@ def snf(mat):
         mat, op = _zero_first_row(mat)
         opR = numpy.matmul(opR, op)
 
+        # lower 2x2 matrix
         if mat[1, 1] == 0 and mat[2, 1] != 0:
             mat, op = _swap_rows(mat, 1, 2)
             opL = numpy.matmul(op, opL)
@@ -151,14 +152,10 @@ def snf(mat):
         mat, op = _zero_second_row(mat)
         opR = numpy.matmul(opR, op)
 
-        if mat[2, 2] < 0:
-            mat, op = _flip_sign_row(mat, 2)
-            opL = numpy.matmul(op, opL)
-
     return opL, mat, opR
 
 
-def is_diag(mat):
+def _is_diag(mat):
     return numpy.all(mat == numpy.diag(numpy.diagonal(mat)))
 
 
