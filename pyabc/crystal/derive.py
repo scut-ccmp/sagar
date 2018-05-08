@@ -33,7 +33,7 @@ def _hnfs(det):
                                    [0, 0, f]])
 
 
-def hnf_cells(pcell, volume=1, symprec=1e-5, comprec=1e-5):
+def non_dup_hnfs(pcell, volume=1, symprec=1e-5, comprec=1e-5):
     """
     hnf_cells return all non duplicated hnf extend cells.
 
@@ -48,7 +48,7 @@ def hnf_cells(pcell, volume=1, symprec=1e-5, comprec=1e-5):
 
     return:
 
-    A list of Cell objects.
+    A list of 2D numpy.ndarray.
     """
     if not isinstance(pcell, Cell):
         raise TypeError("Can't make hnf cells of {:} "
@@ -61,12 +61,13 @@ def hnf_cells(pcell, volume=1, symprec=1e-5, comprec=1e-5):
 
     nodup_hnfs = []
     rot_list = pcell.get_rotations(symprec)
+    # rot_list = pcell.get_rotations_without_inversion(symprec)
+    # print(len(rot_list))
     for hnf in _hnfs(volume):
         if _not_contain(nodup_hnfs, hnf, rot_list, comprec):
             nodup_hnfs.append(hnf)
 
-    nodup_cells = [pcell.extend(hnf) for hnf in nodup_hnfs]
-    return nodup_cells
+    return nodup_hnfs
 
 
 def _not_contain(hnf_list, hnf, rot_list, prec):
@@ -74,6 +75,26 @@ def _not_contain(hnf_list, hnf, rot_list, prec):
         if _is_hnf_dup(hnf, h, rot_list, prec):
             return False
     return True
+
+
+def non_dup_lattice(pcell, volume=1, symprec=1e-5, comprec=1e-5):
+    """
+    non_dup_lattice return all non duplicated hnf extend cells.
+
+    parameters:
+
+    pcell: Cell object, The primitive cell to be extended
+    volume: int, Extend to how large supercellself, default=1
+    symprec: int, symmetry precision
+                When finding duplicated hnfs the precesion, default=1e-5
+    comprec: float, compare precision
+                When finding the rotations symmetry of primitive cell, defalut=1e-5
+
+    return:
+
+    A list of Cell objects.
+    """
+    return [pcell.extend(hnf) for hnf in non_dup_hnfs(pcell, volumn, symprec, comprec)]
 
 
 def _is_hnf_dup(hnf_x, hnf_y, rot_list, prec=1e-5):

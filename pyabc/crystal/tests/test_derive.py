@@ -2,12 +2,8 @@ import unittest
 import numpy
 
 from pyabc.crystal.structure import Cell
-from pyabc.crystal.derive import hnf_cells, _is_hnf_dup
+from pyabc.crystal.derive import non_dup_hnfs, _is_hnf_dup
 from pyabc.crystal.derive import snf, extended_gcd
-
-from pyabc.crystal.derive import _search_first_pivot, _swap_rows, \
-    _flip_sign_row, _set_zero, _zero_first_column, _zero_first_ele_in_row_i, \
-    _zero_first_row
 
 
 class TestHnf(unittest.TestCase):
@@ -38,13 +34,13 @@ class TestHnf(unittest.TestCase):
 
         # BCC
         wanted = [1, 2, 3, 7, 5, 10, 7]
-        got = [len(hnf_cells(self.bcc_pcell, i))
+        got = [len(non_dup_hnfs(self.bcc_pcell, i))
                for i in range(1, 8)]
         self.assertEqual(got, wanted)
 
         # HCP
         wanted = [1, 3, 5, 11, 7, 19, 11, 34]
-        got = [len(hnf_cells(self.hcp_pcell, i))
+        got = [len(non_dup_hnfs(self.hcp_pcell, i))
                for i in range(1, 9)]
         self.assertEqual(got, wanted)
 

@@ -117,6 +117,27 @@ class Cell(object):
         """
         return spglib.get_symmetry((self._lattice, self._positions, self._atoms), symprec)['rotations']
 
+    def get_rotations_without_inversion(self, symprec=1e-5):
+        """
+        All rotations but remove inversion and its derive operation
+        """
+        rot_list = self.get_rotations(symprec)
+        rot_list_noinv = []
+        for rot in rot_list:
+            if self._not_contain(rot_list_noinv, rot):
+                rot_list_noinv.append(rot)
+        return rot_list_noinv
+
+    def _not_contain(self, rot_list_noinv, rot):
+        sym_inv = numpy.array([-1, 0, 0,
+                               0, -1, 0,
+                               0, 0, -1]).reshape((3, 3))
+        for r in rot_list_noinv:
+            rot_inv = numpy.matmul(rot, sym_inv)
+            if numpy.allclose(r, rot) or numpy.allclose(r, rot_inv):
+                return False
+        return True
+
     def get_spacegroup(self, symprec=1e-5):
         """
         dependent on spglib https://atztogo.github.io/spglib/
