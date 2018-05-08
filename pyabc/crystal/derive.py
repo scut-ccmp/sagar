@@ -102,6 +102,7 @@ class Snf(object):
     """
     snf 3x3
     """
+
     def __init__(self, A):
         self._A_orig = np.array(A, dtype='intc')
         self._A = np.array(A, dtype='intc')
@@ -201,12 +202,12 @@ class Snf(object):
         if self._A[j, 0] < 0:
             self._flip_sign_row(j)
         A = self._A
-        r, s, t = xgcd([A[0, 0], A[j, 0]])
+        r, s, t = extended_gcd(A[0, 0], A[j, 0])
         self._set_zero(0, j, A[0, 0], A[j, 0], r, s, t)
 
     def _search_first_pivot(self):
         A = self._A
-        for i in range(3): # column index
+        for i in range(3):  # column index
             if A[i, 0] != 0:
                 return i
 
@@ -266,7 +267,7 @@ class Snf(object):
         if self._A[2, 1] < 0:
             self._flip_sign_row(2)
         A = self._A
-        r, s, t = xgcd([A[1, 1], A[2, 1]])
+        r, s, t = extended_gcd(A[1, 1], A[2, 1])
         self._set_zero(1, 2, A[1, 1], A[2, 1], r, s, t)
 
     def _second_finalize(self):
@@ -321,41 +322,29 @@ class Snf(object):
         self._L.append(L.copy())
         self._A = np.dot(L, self._A)
 
+
 def snf(mat):
     a = Snf(mat)
     a.run()
     return a.P, a.A, a.Q
 
-def xgcd(vals):
-    _xgcd = Xgcd(vals)
-    return _xgcd.run()
 
+def extended_gcd(aa, bb):
+    """
+    Algorithm: https://en.wikipedia.org/wiki/Extended_Euclidean_algorithm#Iterative_method_2
 
-class Xgcd(object):
-    def __init__(self, vals):
-        self._vals = numpy.array(vals, dtype='int')
+    parameters:
+    aa, bb: int
 
-    def run(self):
-        r0, r1 = self._vals
-        s0 = 1
-        s1 = 0
-        t0 = 0
-        t1 = 1
-        for i in range(1000):
-            r0, r1, s0, s1, t0, t1 = self._step(r0, r1, s0, s1, t0, t1)
-            if r1 == 0:
-                break
-        self._rst = numpy.array([r0, s0, t0], dtype='int')
-        return self._rst
+    return: r, s, t
 
-    def _step(self, r0, r1, s0, s1, t0, t1):
-        q, m = divmod(r0, r1)
-        r2 = m
-        s2 = s0 - q * s1
-        t2 = t0 - q * t1
-        return r1, r2, s1, s2, t1, t2
-
-    def __str__(self):
-        v = self._vals
-        r, s, t = self._rst
-        return "%d = %d * (%d) + %d * (%d)" % (r, v[0], s, v[1], t)
+    r = s * aa + t * bb
+    """
+    lastremainder, remainder = abs(aa), abs(bb)
+    x, lastx, y, lasty = 0, 1, 1, 0
+    while remainder:
+        lastremainder, (quotient, remainder) = remainder, divmod(
+            lastremainder, remainder)
+        x, lastx = lastx - quotient * x, x
+        y, lasty = lasty - quotient * y, y
+    return lastremainder, lastx * (-1 if aa < 0 else 1), lasty * (-1 if bb < 0 else 1)

@@ -3,7 +3,7 @@ import numpy
 
 from pyabc.crystal.structure import Cell
 from pyabc.crystal.derive import hnf_cells, _is_hnf_dup
-from pyabc.crystal.derive import xgcd, snf
+from pyabc.crystal.derive import snf, extended_gcd
 
 
 class TestHnf(unittest.TestCase):
@@ -61,16 +61,16 @@ class TestSnf(unittest.TestCase):
     def test(self):
         pass
 
-    def test_xgcd(self):
-        self._test_xgcd_n_times(100)
+    def test_extended_gcd(self):
+        self._test_extended_gcd_n_times(100)
 
-    def _test_xgcd_n_times(self, n):
+    def _test_extended_gcd_n_times(self, n):
         for i in range(n):
-            vals = numpy.random.randint(100, size=2) + 1
-            r, s, t = xgcd(vals)
+            aa, bb = numpy.random.randint(100, size=2) + 1
+            r, s, t = extended_gcd(aa, bb)
             # print("%d = %d * (%d) + %d * (%d)" %
-            #       (r, vals[0], s, vals[1], t))
-            wanted = vals[0] * s + vals[1] * t
+            #       (r, aa, s, bb, t))
+            wanted = aa * s + bb * t
             self.assertEqual(r, wanted)
 
     def test_smith_normal_form(self):
