@@ -16,7 +16,7 @@ class TestCellIO(unittest.TestCase):
         self.numbers = [2, 3]
 
     # TODO: deadloop import, maybe ase bugs to be report.
-    
+
     # def test_read(self):
     #     from ase import Atoms
     #
