@@ -20,22 +20,22 @@ class TestHnf(unittest.TestCase):
         bcc_atoms = [0]
         self.bcc_pcell = Cell(bcc_latt, bcc_pos, bcc_atoms)
 
-        # # FCC
-        # fcc_latt = [0, 5, 5,
-        #             5, 0, 5,
-        #             5, 5, 0]
-        # fcc_pos = [(0, 0, 0)]
-        # fcc_atoms = [0]
-        # self.fcc_pcell = Cell(fcc_latt, fcc_pos, fcc_atoms)
-        #
-        # # HCP
-        # hcp_b = [2.51900005,  0.,  0.,
-        #          -1.25950003,  2.18151804, 0.,
-        #          0., 0.,  4.09100008]
-        # hcp_positions = [(0.33333334,  0.66666669,  0.25),
-        #                  (0.66666663,  0.33333331,  0.75)]
-        # hcp_numbers = [0, 0]
-        # self.hcp_pcell = Cell(hcp_b, hcp_positions, hcp_numbers)
+        # FCC
+        fcc_latt = [0, 5, 5,
+                    5, 0, 5,
+                    5, 5, 0]
+        fcc_pos = [(0, 0, 0)]
+        fcc_atoms = [0]
+        self.fcc_pcell = Cell(fcc_latt, fcc_pos, fcc_atoms)
+
+        # HCP
+        hcp_b = [2.51900005,  0.,  0.,
+                 -1.25950003,  2.18151804, 0.,
+                 0., 0.,  4.09100008]
+        hcp_positions = [(0.33333334,  0.66666669,  0.25),
+                         (0.66666663,  0.33333331,  0.75)]
+        hcp_numbers = [0, 0]
+        self.hcp_pcell = Cell(hcp_b, hcp_positions, hcp_numbers)
 
     def test_hnf_cells(self):
         # Results from <PHYSICAL REVIEW B 80, 014120 (2009)>
@@ -47,16 +47,16 @@ class TestHnf(unittest.TestCase):
         self.assertEqual(got, wanted)
 
         # FCC
-        # wanted = [1, 2, 3, 7, 5, 10, 7]
-        # got = [len(non_dup_hnfs(self.fcc_pcell, i))
-        #        for i in range(1, 8)]
-        # self.assertEqual(got, wanted)
+        wanted = [1, 2, 3, 7, 5, 10, 7]
+        got = [len(non_dup_hnfs(self.fcc_pcell, i))
+               for i in range(1, 8)]
+        self.assertEqual(got, wanted)
 
         # HCP
-        # wanted = [1, 3, 5, 11, 7, 19, 11, 34]
-        # got = [len(non_dup_hnfs(self.hcp_pcell, i))
-        #        for i in range(1, 9)]
-        # self.assertEqual(got, wanted)
+        wanted = [1, 3, 5, 11, 7, 19, 11, 34]
+        got = [len(non_dup_hnfs(self.hcp_pcell, i))
+               for i in range(1, 9)]
+        self.assertEqual(got, wanted)
 
     def test_is_hnf_dup(self):
         hnf_x = numpy.array([[1, 0, 0],

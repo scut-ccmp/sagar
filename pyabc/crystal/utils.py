@@ -60,8 +60,8 @@ def non_dup_hnfs(pcell, volume=1, symprec=1e-5, comprec=1e-5):
                          "You can use pcell.get_primitive() first.")
 
     nodup_hnfs = []
-    # rot_list = pcell.get_rotations(symprec)
-    rot_list = pcell.get_rotations_without_inversion(symprec)
+    rot_list = pcell.get_rotations(symprec)
+    # rot_list = pcell.get_rotations_without_inversion(symprec)
     # print(len(rot_list))
     for hnf in _hnfs(volume):
         if _not_contain(nodup_hnfs, hnf, rot_list, comprec):
