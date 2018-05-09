@@ -153,6 +153,15 @@ def snf(mat):
         mat, op = _zero_second_row(mat)
         opR = numpy.matmul(opR, op)
 
+        if mat[2, 2] < 0:
+            op = numpy.array([1, 0, 0,
+                              0, 1, 0,
+                              0, 0, -1]).reshape((3, 3))
+            opL = numpy.matmul(op, opL)
+            mat = numpy.matmul(op, mat)
+
+        # TODO: sort snf diag
+
     return opL, mat, opR
 
 

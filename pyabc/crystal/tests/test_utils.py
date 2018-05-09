@@ -2,7 +2,7 @@ import unittest
 import numpy
 
 from pyabc.crystal.structure import Cell
-from pyabc.crystal.utils import non_dup_hnfs, _is_hnf_dup
+from pyabc.crystal.utils import non_dup_hnfs, _is_hnf_dup, _hnfs
 from pyabc.crystal.utils import snf, extended_gcd
 
 
@@ -206,6 +206,38 @@ class TestSnf(unittest.TestCase):
     #     numpy.testing.assert_almost_equal(mat, wanted_mat)
     #     numpy.testing.assert_almost_equal(op, wanted_op)
 
+class TestSnfHnf(unittest.TestCase):
+
+    def setUp(self):
+        # BCC
+        bcc_latt = [0.5, 0.5, -0.5,
+                    -0.5, 0.5, 0.5,
+                    0.5, -0.5, 0.5]
+        bcc_pos = [(0, 0, 0)]
+        bcc_atoms = [0]
+        self.bcc_pcell = Cell(bcc_latt, bcc_pos, bcc_atoms)
+
+    def test_hart_forcade_2008_table_III(self):
+        wanted_a = [1, 7, 13, 35, 31, 91, 57, 155, 130, 217, 133, 455, 183, 399, 403, 651]
+        wanted_b = [1, 1, 1, 2, 1, 1, 1, 3, 2, 1, 1, 2, 1, 1, 1, 4]
+
+        # duplicated hnfs: b
+        a = []
+        for i in range(1, 17):
+            len_volume = len([h for h in _hnfs(i)])
+            a.append(len_volume)
+        self.assertEqual(a, wanted_a)
+
+        b = []
+        for i in range(1, 17):
+            s_set = set()
+            for h in _hnfs(i):
+                _,s,_ = snf(h)
+                s_flat_tuple = tuple(numpy.diagonal(s).tolist())
+                s_set.add(s_flat_tuple)
+            print(s_set)
+            b.append(len(s_set))
+        self.assertEqual(b, wanted_b)
 
 if __name__ == "__main__":
     import nose2
