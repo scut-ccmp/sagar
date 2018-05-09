@@ -60,8 +60,8 @@ def non_dup_hnfs(pcell, volume=1, symprec=1e-5, comprec=1e-5):
                          "You can use pcell.get_primitive() first.")
 
     nodup_hnfs = []
-    rot_list = pcell.get_rotations(symprec)
-    # rot_list = pcell.get_rotations_without_inversion(symprec)
+    # rot_list = pcell.get_rotations(symprec)
+    rot_list = pcell.get_rotations_without_inversion(symprec)
     # print(len(rot_list))
     for hnf in _hnfs(volume):
         if _not_contain(nodup_hnfs, hnf, rot_list, comprec):
@@ -122,7 +122,7 @@ def extended_gcd(aa, bb):
 def snf(mat):
     opL = numpy.eye(3, dtype='int')
     opR = numpy.eye(3, dtype='int')
-    while not _is_diag(mat):
+    while not _is_incremental_diag(mat):
         pivot = _search_first_pivot(mat)
         if pivot > 0:
             mat, op = _swap_rows(mat, 0, pivot)
@@ -160,7 +160,15 @@ def snf(mat):
             opL = numpy.matmul(op, opL)
             mat = numpy.matmul(op, mat)
 
-        # TODO: sort snf diag
+        # sort the diag and get the opL matrix
+        mat_flat = numpy.diagonal(mat)
+        idx = numpy.argsort(mat_flat)
+        op = numpy.eye(3, dtype='int')[idx]
+        mat_tmp = numpy.matmul(op, mat)
+        opL = numpy.matmul(op, opL)
+
+        mat = numpy.matmul(mat_tmp, op.T)
+        opR = numpy.matmul(opR, op.T)
 
     return opL, mat, opR
 
@@ -168,6 +176,11 @@ def snf(mat):
 def _is_diag(mat):
     return numpy.all(mat == numpy.diag(numpy.diagonal(mat)))
 
+def _is_incremental_diag(mat):
+    is_diag = numpy.all(mat == numpy.diag(numpy.diagonal(mat)))
+    list_mat_flat = numpy.diagonal(mat).tolist()
+    is_incremental = sorted(list_mat_flat) == list_mat_flat
+    return is_diag and is_incremental
 
 def _search_first_pivot(mat):
     for i in range(3):
