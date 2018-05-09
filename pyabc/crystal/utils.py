@@ -60,9 +60,10 @@ def non_dup_hnfs(pcell, volume=1, symprec=1e-5, comprec=1e-5):
                          "You can use pcell.get_primitive() first.")
 
     nodup_hnfs = []
-    rot_list = pcell.get_rotations(symprec)
-    # rot_list = pcell.get_rotations_without_inversion(symprec)
-    # print(len(rot_list))
+
+    # Using rot without inversion class double speed
+    # rot_list = pcell.get_rotations(symprec)
+    rot_list = pcell.get_rotations_without_inversion(symprec)
     for hnf in _hnfs(volume):
         if _not_contain(nodup_hnfs, hnf, rot_list, comprec):
             nodup_hnfs.append(hnf)
@@ -87,12 +88,14 @@ def _is_hnf_dup(hnf_x, hnf_y, rot_list, prec=1e-5):
                However, rotation symmetry duplications also need to be removedself.
                That is what this function ``_is_hnf_dup`` do.
     """
-    # TODO: efficiency!
     for rot in rot_list:
         m = numpy.matmul(
             numpy.matmul(hnf_x, numpy.linalg.inv(rot.T)),
             numpy.linalg.inv(hnf_y))
-        if numpy.allclose(numpy.mod(m, 1), numpy.zeros_like(m), atol=prec):
+        # is_int1 = numpy.all(numpy.isclose(m, m.astype(numpy.int), atol=1e-3))
+        # is_int2 = numpy.allclose(numpy.mod(m, 1), numpy.zeros_like(m), atol=prec)
+        is_array_int = numpy.all(numpy.isclose(m, numpy.around(m), atol=1e-3))
+        if is_array_int:
             return True
 
     return False
@@ -176,11 +179,13 @@ def snf(mat):
 def _is_diag(mat):
     return numpy.all(mat == numpy.diag(numpy.diagonal(mat)))
 
+
 def _is_incremental_diag(mat):
     is_diag = numpy.all(mat == numpy.diag(numpy.diagonal(mat)))
     list_mat_flat = numpy.diagonal(mat).tolist()
     is_incremental = sorted(list_mat_flat) == list_mat_flat
     return is_diag and is_incremental
+
 
 def _search_first_pivot(mat):
     for i in range(3):

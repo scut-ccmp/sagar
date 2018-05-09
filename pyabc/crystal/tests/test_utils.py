@@ -13,9 +13,9 @@ class TestHnf(unittest.TestCase):
 
     def setUp(self):
         # BCC
-        bcc_latt = [5, 5, -5,
-                    -5, 5, 5,
-                    5, -5, 5]
+        bcc_latt = [1, 1, -1,
+                    -1, 1, 1,
+                    1, -1, 1]
         bcc_pos = [(0, 0, 0)]
         bcc_atoms = [0]
         self.bcc_pcell = Cell(bcc_latt, bcc_pos, bcc_atoms)
@@ -44,6 +44,8 @@ class TestHnf(unittest.TestCase):
         wanted = [1, 2, 3, 7, 5, 10, 7]
         got = [len(non_dup_hnfs(self.bcc_pcell, i))
                for i in range(1, 8)]
+        # for h in non_dup_hnfs(self.bcc_pcell, 7):
+        #     print(h)
         self.assertEqual(got, wanted)
 
         # FCC
@@ -67,6 +69,32 @@ class TestHnf(unittest.TestCase):
                              [0, 0, 1]])
         rot_syms = self.bcc_pcell.get_rotations(1e-3)
         is_dup = _is_hnf_dup(hnf_x, hnf_y, rot_syms, prec=1e-3)
+        self.assertTrue(is_dup)
+
+        # debug for compare method
+        # numpy.mod problem!
+        hnf_x = numpy.array([[1, 0, 0],
+                             [0, 1, 2],
+                             [0, 0, 5]])
+        hnf_y = numpy.array([[1, 0, 3],
+                             [0, 1, 3],
+                             [0, 0, 5]])
+        rot_syms = self.bcc_pcell.get_rotations(1e-3)
+
+        is_dup = _is_hnf_dup(hnf_x, hnf_y, rot_syms, prec=1e-5)
+        self.assertTrue(is_dup)
+
+        # debug for compare method
+        # numpy.astype problem!
+        hnf_x = numpy.array([[1, 0, 6],
+                             [0, 1, 6],
+                             [0, 0, 7]])
+        hnf_y = numpy.array([[1, 0, 3],
+                             [0, 1, 6],
+                             [0, 0, 7]])
+        rot_syms = self.bcc_pcell.get_rotations(1e-3)
+
+        is_dup = _is_hnf_dup(hnf_x, hnf_y, rot_syms, prec=1e-5)
         self.assertTrue(is_dup)
 
 
