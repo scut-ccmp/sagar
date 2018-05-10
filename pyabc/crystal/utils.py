@@ -122,116 +122,149 @@ def extended_gcd(aa, bb):
     return lastremainder, lastx * (-1 if aa < 0 else 1), lasty * (-1 if bb < 0 else 1)
 
 
-def snf(mat):
-    opL = numpy.eye(3, dtype='int')
-    opR = numpy.eye(3, dtype='int')
-    while not _is_incremental_diag(mat):
-        pivot = _search_first_pivot(mat)
-        if pivot > 0:
-            mat, op = _swap_rows(mat, 0, pivot)
-            opL = numpy.matmul(op, opL)
-
-        if mat[1, 0] % mat[0, 0] == 0 and mat[2, 0] % mat[0, 0] == 0:
-            mat, op = _first_exact_division(mat)
-            opL = numpy.matmul(op, opL)
-
-        mat, op = _zero_first_column(mat)
-        opL = numpy.matmul(op, opL)
-
-        mat, op = _zero_first_row(mat)
-        opR = numpy.matmul(opR, op)
-
-        # lower 2x2 matrix
-        if mat[1, 1] == 0 and mat[2, 1] != 0:
-            mat, op = _swap_rows(mat, 1, 2)
-            opL = numpy.matmul(op, opL)
-
-        if mat[2, 1] % mat[1, 1] == 0:
-            mat, op = _second_exact_division(mat)
-            opL = numpy.matmul(op, opL)
-
-        mat, op = _zero_second_column(mat)
-        opL = numpy.matmul(op, opL)
-
-        mat, op = _zero_second_row(mat)
-        opR = numpy.matmul(opR, op)
-
-        if mat[2, 2] < 0:
-            op = numpy.array([1, 0, 0,
-                              0, 1, 0,
-                              0, 0, -1]).reshape((3, 3))
-            opL = numpy.matmul(op, opL)
-            mat = numpy.matmul(op, mat)
-
-        # sort the diag and get the opL matrix
-        mat_flat = numpy.diagonal(mat)
-        idx = numpy.argsort(mat_flat)
-        op = numpy.eye(3, dtype='int')[idx]
-        mat_tmp = numpy.matmul(op, mat)
-        opL = numpy.matmul(op, opL)
-
-        mat = numpy.matmul(mat_tmp, op.T)
-        opR = numpy.matmul(opR, op.T)
-
-    return opL, mat, opR
-
-
-def _is_diag(mat):
-    return numpy.all(mat == numpy.diag(numpy.diagonal(mat)))
+# def snf(mat):
+#     opL = numpy.eye(3, dtype='int')
+#     opR = numpy.eye(3, dtype='int')
+#     while not _is_incremental_diag(mat):
+#         pivot = _search_first_pivot(mat)
+#         if pivot > 0:
+#             mat, op = _swap_rows(mat, 0, pivot)
+#             opL = numpy.matmul(op, opL)
+#
+#         if mat[1, 0] % mat[0, 0] == 0 and mat[2, 0] % mat[0, 0] == 0:
+#             mat, op = _first_exact_division(mat)
+#             opL = numpy.matmul(op, opL)
+#
+#         mat, op = _zero_first_column(mat)
+#         opL = numpy.matmul(op, opL)
+#
+#         mat, op = _zero_first_row(mat)
+#         opR = numpy.matmul(opR, op)
+#
+#         # lower 2x2 matrix
+#         if mat[1, 1] == 0 and mat[2, 1] != 0:
+#             mat, op = _swap_rows(mat, 1, 2)
+#             opL = numpy.matmul(op, opL)
+#
+#         if mat[2, 1] % mat[1, 1] == 0:
+#             mat, op = _second_exact_division(mat)
+#             opL = numpy.matmul(op, opL)
+#
+#         mat, op = _zero_second_column(mat)
+#         opL = numpy.matmul(op, opL)
+#
+#         mat, op = _zero_second_row(mat)
+#         opR = numpy.matmul(opR, op)
+#
+#         if mat[2, 2] < 0:
+#             op = numpy.array([1, 0, 0,
+#                               0, 1, 0,
+#                               0, 0, -1]).reshape((3, 3))
+#             opL = numpy.matmul(op, opL)
+#             mat = numpy.matmul(op, mat)
+#
+#         # sort the diag and get the opL matrix
+#         mat_flat = numpy.diagonal(mat)
+#         idx = numpy.argsort(mat_flat)
+#         op = numpy.eye(3, dtype='int')[idx]
+#         mat_tmp = numpy.matmul(op, mat)
+#         opL = numpy.matmul(op, opL)
+#
+#         mat = numpy.matmul(mat_tmp, op.T)
+#         opR = numpy.matmul(opR, op.T)
+#
+#     return opL, mat, opR
 
 
-def _is_incremental_diag(mat):
-    is_diag = numpy.all(mat == numpy.diag(numpy.diagonal(mat)))
-    list_mat_flat = numpy.diagonal(mat).tolist()
-    is_incremental = sorted(list_mat_flat) == list_mat_flat
-    return is_diag and is_incremental
+class Mat3x3(object):
+
+    def __init__(self, mat):
+        self._mat = numpy.array(mat).reshape((3, 3))
+        self._opL = numpy.eye(3, dtype='int')
+        self._opR = numpy.eye(3, dtype='int')
+
+    @property
+    def mat(self):
+        return self._mat
+
+    @property
+    def opL(self):
+        return self._opL
+
+    @property
+    def opR(self):
+        return self._opR
+
+    def is_diag(self):
+        return numpy.all(self._mat == numpy.diag(numpy.diagonal(self._mat)))
+
+    def is_incremental_diag(self):
+        is_diag = numpy.all(self._mat == numpy.diag(numpy.diagonal(self._mat)))
+        list_mat_flat = numpy.diagonal(self._mat).tolist()
+        is_incremental = sorted(list_mat_flat) == list_mat_flat
+        return is_diag and is_incremental
+
+    def search_first_pivot(self):
+        for i in range(3):
+            if self._mat[i, 0] != 0:
+                return i
+
+    def swap_rows(self, i, j):
+        """
+        return:
+        mat: new row permuted mat
+        op: is a row permute matrix
+        """
+        op = numpy.eye(3, dtype='int')
+        op[i, i], op[j, j] = 0, 0
+        op[i, j], op[j, i] = 1, 1
+        self._mat = numpy.matmul(op, self._mat)
+        self._opL = numpy.matmul(op, self._opL)
+
+    def flip_sign_row(self, i):
+        """
+        mul -1 for i row
+        """
+        op = numpy.eye(3, dtype='int')
+        op[i, i] = -1
+        self._mat = numpy.matmul(op, self._mat)
+        self._opL = numpy.matmul(op, self._opL)
+
+    def set_zero(self, i, j, aa, bb, r, s, t):
+        """
+        Based on Bezout's identity
+
+        Let mat[i, j] be zero
+
+        return:
+        op: is a numpy.ndarray, represent the operations
+        """
+        op = numpy.eye(3, dtype='int')
+        op[i, i] = s
+        op[i, j] = t
+        op[j, i] = -bb // r
+        op[j, j] = aa // r
+        self._mat = numpy.matmul(op, self._mat)
+        self._opL = numpy.matmul(op, self._opL)
+
+    def zero_first_ele_in_row_i(self, i):
+        if self._mat[i, 0] < 0:
+            self.flip_sign_row(i)
+        r, s, t = extended_gcd(self._mat[0, 0], self._mat[i, 0])
+        self.set_zero(0, i, self._mat[0, 0], self._mat[i, 0], r, s, t)
+
+    def zero_first_column(self):
+        for i in [1, 2]:
+            if self._mat[i, 0] != 0:
+                self.zero_first_ele_in_row_i(i)
 
 
-def _search_first_pivot(mat):
-    for i in range(3):
-        if mat[i, 0] != 0:
-            return i
-
-
-def _swap_rows(mat, i, j):
-    """
-    return:
-    mat: new row permuted mat
-    op: is a row permute matrix
-    """
-    op = numpy.eye(3, dtype='int')
-    op[i, i], op[j, j] = 0, 0
-    op[i, j], op[j, i] = 1, 1
-    mat = numpy.matmul(op, mat)
-    return mat, op
-
-
-def _zero_first_column(mat):
-    op_return = numpy.eye(3, dtype='int')
-    for i in [1, 2]:
-        if mat[i, 0] != 0:
-            mat, op = _zero_first_ele_in_row_i(mat, i)
-            op_return = numpy.matmul(op, op_return)
-    return mat, op_return
-
-
-def _zero_first_ele_in_row_i(mat, i):
-    op_return = numpy.eye(3, dtype='int')
-    if mat[i, 0] < 0:
-        mat, op = _flip_sign_row(mat, i)
-        op_return = numpy.matmul(op, op_return)
-    r, s, t = extended_gcd(mat[0, 0], mat[i, 0])
-    mat, op = _set_zero(mat, 0, i, mat[0, 0], mat[i, 0], r, s, t)
-    op_return = numpy.matmul(op, op_return)
-    return mat, op_return
-
-
-def _first_exact_division(mat):
-    op = numpy.eye(3, dtype='int')
-    op[1, 0] = -mat[1, 0] // mat[0, 0]
-    op[2, 0] = -mat[2, 0] // mat[0, 0]
-    mat = numpy.matmul(op, mat)
-    return mat, op
+    def first_exact_division(self):
+        op = numpy.eye(3, dtype='int')
+        op[1, 0] = -self._mat[1, 0] // self._mat[0, 0]
+        op[2, 0] = -self._mat[2, 0] // self._mat[0, 0]
+        self._mat = numpy.matmul(op, self._mat)
+        self._opL = numpy.matmul(op, self._opL)
 
 
 def _zero_first_row(mat):
@@ -260,28 +293,3 @@ def _second_exact_division(mat):
 def _zero_second_row(mat):
     mat, op = _zero_second_column(mat.T)
     return mat.T, op.T
-
-
-def _flip_sign_row(mat, i):
-    """
-    mul -1 for i row
-    """
-    op = numpy.eye(3, dtype='int')
-    op[i, i] = -1
-    mat = numpy.matmul(op, mat)
-    return mat, op
-
-
-def _set_zero(mat, i, j, aa, bb, r, s, t):
-    """
-    Based on Bezout's identity
-
-    Let mat[i, j] be zero
-    """
-    op = numpy.eye(3, dtype='int')
-    op[i, i] = s
-    op[i, j] = t
-    op[j, i] = -bb // r
-    op[j, j] = aa // r
-    mat = numpy.matmul(op, mat)
-    return mat, op
