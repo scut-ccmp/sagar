@@ -128,6 +128,18 @@ class Cell(object):
                 rot_list_noinv.append(rot)
         return rot_list_noinv
 
+    def get_pure_translations(self, symprec=1e-5):
+        """
+        get_pure_translations return pure translations.
+
+        Info:
+        For the supercell, translations and ratations can be seperated.
+            total length of symmetry operations is len(rot)*len(trans)
+        For the primitive cell, the translation is (0, 0, 0)
+        """
+        trans_all = self.get_symmetry(symprec)['translations']
+        return numpy.unique(trans_all, axis=0)
+
     def _not_contain(self, rot_list_noinv, rot):
         sym_inv = numpy.array([-1, 0, 0,
                                0, -1, 0,
