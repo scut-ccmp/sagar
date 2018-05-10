@@ -307,3 +307,55 @@ class IntMat3x3(object):
         self._opR = numpy.matmul(self._opR, op.T)
 
 # TODO: utils for Hart-Forcade algorithm
+
+
+class HartForcadePermutationGroup(object):
+
+    def __init__(self, pcell, hnf):
+        if not isinstance(pcell, Cell):
+            raise TypeError(
+                "want pyabc.crystal.structure.Cell, got {:}".format(type(cell)))
+        self._cell = pcell
+        self._hnf = hnf
+        self._snf, _, _ = snf(hnf)
+        self._quotient = numpy.diagonal(self._snf).tolist()
+        self._volume = numpy.diagonal(self._snf).prod()
+        self._nsites = len(pcell.atoms)  # 最小原胞中原子个数 如：hcp为2
+
+    def get_symmetry(self, symprec=1e-5):
+        pass
+
+    def get_pure_translations(self, symprec=1e-5):
+        itertrans = [list(range(self._quotient[0])),
+                     list(range(self._quotient[1])),
+                     list(range(self._quotient[2]))]
+        size = self._volume
+        result = numpy.zeros((size - 1, self._nsites * size), dtype='int') - 1
+        iterable = product(*itertrans)
+
+        # remove (0,0,0) 因为它对应的是单位操作，保持原来的构型
+        a = next(iterable)  # avoid null translation
+        assert a == (0, 0, 0)  # check that first element (0,0,0) is remove
+
+        for t, (i, j, k) in enumerate(iterable):
+            for l, m, n in product(*itertrans):
+                u = (i + l) % self._quotient[0]
+                v = (j + m) % self._quotient[1]
+                w = (k + n) % self._quotient[2]
+                for s in range(self._nsites):
+                    result[t, self._flatten_indices(
+                        l, m, n, s)] = self._flatten_indices(u, v, w, s)
+
+        return result
+
+    def _flatten_indices(self, i, j, k, site=0):
+        iq = i + site * self._quotient[0]
+        jq = j + iq * self._quotient[1]
+        kq = k + jq * self._quotient[2]
+        return kq
+
+    def get_pure_rotations(self, symprec=1e-5):
+        pass
+
+    def get_pure_rotations_without_inversion(self, symprec=1e-5):
+        pass

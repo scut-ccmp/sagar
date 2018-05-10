@@ -474,6 +474,32 @@ class TestSnfHnf(unittest.TestCase):
         self.assertEqual(b, wanted_b_quick)
 
 
+class TestHFPG(object):
+
+    def setUp(self):
+        # FCC
+        fcc_latt = [0, 5, 5,
+                    5, 0, 5,
+                    5, 5, 0]
+        fcc_pos = [(0, 0, 0)]
+        fcc_atoms = [0]
+        self.fcc_pcell = Cell(fcc_latt, fcc_pos, fcc_atoms)
+
+    def test_get_pure_translations(self):
+        from pyabc.crystal.utils import HartForcadePermutationGroup as HFPG
+        hnfs = non_dup_hnfs(self.fcc_pcell, 4)
+        for h in hnfs:
+            print("hnf is:")
+            print(h)
+            print("snf is:")
+            snf_D, _, _ = snf(h)
+            print(snf_D)
+            hfpg = HFPG(self.fcc_pcell, h)
+            print("pure translation is:")
+            print(hfpg.get_pure_translations())
+            print('\n')
+
+
 class TestCommonUtils(unittest.TestCase):
 
     def test_extended_gcd(self):
