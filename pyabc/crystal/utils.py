@@ -305,3 +305,5 @@ class IntMat3x3(object):
 
         self._mat = numpy.matmul(self._mat, op.T)
         self._opR = numpy.matmul(self._opR, op.T)
+
+# TODO: utils for Hart-Forcade algorithm
