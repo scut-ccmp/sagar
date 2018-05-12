@@ -326,11 +326,19 @@ class HartForcadePermutationGroup(object):
         pass
 
     def get_pure_translations(self, symprec=1e-5):
+        """
+        get_pure_translations get all pure translations of one
+        kind of Smith Normal Form of a cell.
+        """
+        # 所有的平移操作以商群的形式被划分为三组，每组是一个周期轮回。
+        # 迭代拼接所有组，得到所有的操作。
+        # 最后得到操作的数量就是一种位点时位点的数量。因为(1, 1, n)的商群产生n个平移操作对应的
+        # 置换列表。
         itertrans = [list(range(self._quotient[0])),
                      list(range(self._quotient[1])),
                      list(range(self._quotient[2]))]
         size = self._volume
-        result = numpy.zeros((size - 1, self._nsites * size), dtype='int') - 1
+        result = numpy.zeros((size - 1, self._nsites * size), dtype='int')
         iterable = product(*itertrans)
 
         # remove (0,0,0) 因为它对应的是单位操作，保持原来的构型
