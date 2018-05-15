@@ -79,6 +79,23 @@ class Cell(object):
     def atoms(self):
         return self._atoms
 
+    def __repr__(self):
+        def _repr(number):
+            return "{:9.6f}".format(number)
+        out_latt = ["Lattice:",
+                    "   a: " + ' '.join(map(_repr, self._lattice[0])),
+                    "   b: " + ' '.join(map(_repr, self._lattice[1])),
+                    "   c: " + ' '.join(map(_repr, self._lattice[2]))]
+        sites = zip(self._positions, self._atoms)
+        out_pos = []
+        out_pos.append("Sites:")
+        for s in sites:
+            o = ' '.join(map(_repr, s[0])) + ' ' + get_symbol(s[1])
+            out_pos.append(o)
+
+        outs = out_latt + out_pos
+        return "\n".join(outs)
+
     def extend(self, mat):
         """
         extend transform a cell by mat
