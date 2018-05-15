@@ -4,7 +4,8 @@ import copy
 
 from pyabc.crystal.structure import Cell
 from pyabc.crystal.utils import non_dup_hnfs, _is_hnf_dup, _hnfs
-from pyabc.crystal.utils import IntMat3x3, extended_gcd, snf
+from pyabc.crystal.utils import IntMat3x3, extended_gcd, snf, atoms_gen
+from pyabc.crystal.utils import HartForcadePermutationGroup as HFPG
 
 
 class TestHnf(unittest.TestCase):
@@ -475,6 +476,10 @@ class TestSnfHnf(unittest.TestCase):
 
 
 class TestHFPG(object):
+    """
+    有关该类的测试均为输出型测试，因都是中间件，所有不容易对输出有一个良好的正确的评估。
+    在使用时取消各个函数的注释来查看函数的输出，以理解函数的行为和作用。
+    """
 
     def setUp(self):
         # FCC
@@ -486,8 +491,23 @@ class TestHFPG(object):
         self.fcc_pcell = Cell(fcc_latt, fcc_pos, fcc_atoms)
 
     def test_get_pure_translations(self):
-        from pyabc.crystal.utils import HartForcadePermutationGroup as HFPG
-        hnfs = non_dup_hnfs(self.fcc_pcell, 4)
+        # fcc_latt = [0, 5, 5,
+        #             5, 0, 5,
+        #             5, 5, 0]
+        # fcc_pos = [(0, 0, 0),
+        #            (0.5,0.5,0.5)]
+        # fcc_atoms = [0, 2]
+        # fcc_pcell = Cell(fcc_latt, fcc_pos, fcc_atoms)
+        # hnfs = non_dup_hnfs(fcc_pcell, 4)
+        # h = hnfs[4]
+        # print("hnf is:")
+        # hfpg = HFPG(fcc_pcell, h)
+        # print("pure translations is:")
+        # print(hfpg.get_pure_translations())
+        # print('\n')
+        # pass
+
+        # hnfs = non_dup_hnfs(self.fcc_pcell, 8)
         # for h in hnfs:
         #     print("hnf is:")
         #     print(h)
@@ -498,6 +518,53 @@ class TestHFPG(object):
         #     print("pure translation is:")
         #     print(hfpg.get_pure_translations())
         #     print('\n')
+        pass
+
+    def test_exchanged_new_labels(self):
+        # hnfs = non_dup_hnfs(self.fcc_pcell, 4)
+        # for h in hnfs:
+        #     print("hnf is:")
+        #     print(h)
+        #     print("super cell atoms is:")
+        #     print(self.fcc_pcell.extend(h).atoms)
+        #     hfpg = HFPG(self.fcc_pcell, h)
+        #     print("label exchange is:")
+        #     print(hfpg.get_exchanged_new_labels())
+        pass
+
+    def test_get_pure_rotations(self):
+        # fcc_latt = [0, 5, 5,
+        #             5, 0, 5,
+        #             5, 5, 0]
+        # fcc_pos = [(0, 0, 0),
+        #            (0.5,0.5,0.5)]
+        # fcc_atoms = [0, 2]
+        # fcc_pcell = Cell(fcc_latt, fcc_pos, fcc_atoms)
+        # hnfs = non_dup_hnfs(fcc_pcell, 4)
+        # h = hnfs[4]
+        # print("hnf is:")
+        # print(h)
+        # hfpg = HFPG(fcc_pcell, h)
+        # print("pure rotation is:")
+        # print(hfpg.get_pure_rotations())
+        # print('\n')
+        pass
+
+    def test_get_symmetry(self):
+        # fcc_latt = [0, 5, 5,
+        #             5, 0, 5,
+        #             5, 5, 0]
+        # fcc_pos = [(0, 0, 0),
+        #            (0.5,0.5,0.5)]
+        # fcc_atoms = [0, 2]
+        # fcc_pcell = Cell(fcc_latt, fcc_pos, fcc_atoms)
+        # hnfs = non_dup_hnfs(fcc_pcell, 4)
+        # h = hnfs[4]
+        # print("hnf is:")
+        # hfpg = HFPG(fcc_pcell, h)
+        # print("perm is:")
+        # print(hfpg.get_symmetry())
+        # print('\n')
         pass
 
 
@@ -518,6 +585,18 @@ class TestCommonUtils(unittest.TestCase):
     def test_is_int_np_array(self):
         pass
 
+    def test_atoms_gen(self):
+        input = [2, 2, 2]
+        wanted = [(0, 0, 0),
+                  (0, 0, 1),
+                  (0, 1, 0),
+                  (0, 1, 1),
+                  (1, 0, 0),
+                  (1, 0, 1),
+                  (1, 1, 0),
+                  (1, 1, 1)]
+        for i, got in enumerate(atoms_gen(input)):
+            self.assertEqual(got, wanted[i])
 
 if __name__ == "__main__":
     import nose2

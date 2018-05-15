@@ -102,31 +102,6 @@ def _is_hnf_dup(hnf_x, hnf_y, rot_list, prec=1e-5):
     return False
 
 
-def is_int_np_array(npa, atol=1e-5):
-    return numpy.all(numpy.isclose(npa, numpy.around(npa), atol=atol))
-
-
-def extended_gcd(aa, bb):
-    """
-    Algorithm: https://en.wikipedia.org/wiki/Extended_Euclidean_algorithm#Iterative_method_2
-
-    parameters:
-    aa, bb: int
-
-    return: r, s, t
-
-    r = s * aa + t * bb
-    """
-    lastremainder, remainder = abs(aa), abs(bb)
-    x, lastx, y, lasty = 0, 1, 1, 0
-    while remainder:
-        lastremainder, (quotient, remainder) = remainder, divmod(
-            lastremainder, remainder)
-        x, lastx = lastx - quotient * x, x
-        y, lasty = lasty - quotient * y, y
-    return lastremainder, lastx * (-1 if aa < 0 else 1), lasty * (-1 if bb < 0 else 1)
-
-
 def snf(mat):
     """
     snf return Smith Normal Form of a 3x3 int matrix
@@ -310,6 +285,11 @@ class IntMat3x3(object):
 
 
 class HartForcadePermutationGroup(object):
+    """
+    Algorithm from Hart and Forcade 2008 prb
+
+    所有的对称操作都是以置换矩阵的形式，作用在一个元素排列上。
+    """
 
     def __init__(self, pcell, hnf):
         if not isinstance(pcell, Cell):
@@ -322,28 +302,31 @@ class HartForcadePermutationGroup(object):
         self._volume = numpy.diagonal(self._snf).prod()
         self._nsites = len(pcell.atoms)  # 最小原胞中原子个数 如：hcp为2
 
-    def get_symmetry(self, symprec=1e-5):
-        pass
-
     def get_pure_translations(self, symprec=1e-5):
         """
         get_pure_translations get all pure translations of one
         kind of Smith Normal Form of a cell.
+
+        每一个平移操作作用在一个特定超胞上可以得到一个新的超胞，产生的所有超胞用于和其他
+        一个特定超胞作为比较，若有重复，则两种构型是等价的。
         """
         # 所有的平移操作以商群的形式被划分为三组，每组是一个周期轮回。
         # 迭代拼接所有组，得到所有的操作。
         # 最后得到操作的数量就是一种位点时位点的数量。因为(1, 1, n)的商群产生n个平移操作对应的
         # 置换列表。
+
+        # TODO: 使用更加直观的代码，数据结构 itertools.deque and method: rotate
         itertrans = [list(range(self._quotient[0])),
                      list(range(self._quotient[1])),
                      list(range(self._quotient[2]))]
         size = self._volume
-        result = numpy.zeros((size - 1, self._nsites * size), dtype='int')
+        result = numpy.zeros(
+            (size, self._nsites * self._volume), dtype='int')
         iterable = product(*itertrans)
 
         # remove (0,0,0) 因为它对应的是单位操作，保持原来的构型
-        a = next(iterable)  # avoid null translation
-        assert a == (0, 0, 0)  # check that first element (0,0,0) is remove
+        # a = next(iterable)  # avoid null translation
+        # assert a == (0, 0, 0)  # check that first element (0,0,0) is remove
 
         for t, (i, j, k) in enumerate(iterable):
             for l, m, n in product(*itertrans):
@@ -363,7 +346,92 @@ class HartForcadePermutationGroup(object):
         return kq
 
     def get_pure_rotations(self, symprec=1e-5):
-        pass
+        supercell = self._cell.extend(self._hnf)
+        list_rots = supercell.get_rotations(symprec)[:]  # 第一个是单位矩阵
+        result = numpy.zeros(
+            (len(list_rots), self._nsites * self._volume), dtype='int')
+
+        #   每一个格点上都有一个原子，可以用整数直接表示，该整数坐标和分数坐标一一对应？？？
+        iterpos = [list(range(self._quotient[0])),
+                   list(range(self._quotient[1])),
+                   list(range(self._quotient[2]))]
+        for i, rot in enumerate(list_rots):
+            for s, (p0, p1, p2) in enumerate(product(*iterpos)):
+                newpos = numpy.matmul(rot, [p0, p1, p2])
+                l = newpos[0] % self._quotient[0]
+                m = newpos[1] % self._quotient[1]
+                n = newpos[2] % self._quotient[2]
+                for s in range(self._nsites):
+                    result[i, self._flatten_indices(
+                        p0, p1, p2, s)] = self._flatten_indices(l, m, n, s)
+
+        result = numpy.unique(result, axis=0)
+        return result
+
+    def get_symmetry(self, symprec=1e-5):
+        perm_rots = self.get_pure_rotations(symprec)
+        perm_trans = self.get_pure_translations(symprec)
+        nrot = perm_rots.shape[0]
+        ntran = perm_trans.shape[0]
+
+        size = nrot * ntran
+        result = numpy.zeros((size, self._nsites * self._volume), dtype='int')
+        idx = 0
+        for r in perm_rots:
+            for t in perm_trans:
+                perm = r[t]
+                result[idx] = perm
+                idx += 1
+
+        return result
 
     def get_pure_rotations_without_inversion(self, symprec=1e-5):
         pass
+
+    def get_exchanged_new_labels(self):
+        """
+        For a specific supercell, when acting this function, all
+        derived configurations got.
+        """
+        pass
+
+
+def is_int_np_array(npa, atol=1e-5):
+    return numpy.all(numpy.isclose(npa, numpy.around(npa), atol=atol))
+
+
+def extended_gcd(aa, bb):
+    """
+    Algorithm: https://en.wikipedia.org/wiki/Extended_Euclidean_algorithm#Iterative_method_2
+
+    parameters:
+    aa, bb: int
+
+    return: r, s, t
+
+    r = s * aa + t * bb
+    """
+    lastremainder, remainder = abs(aa), abs(bb)
+    x, lastx, y, lasty = 0, 1, 1, 0
+    while remainder:
+        lastremainder, (quotient, remainder) = remainder, divmod(
+            lastremainder, remainder)
+        x, lastx = lastx - quotient * x, x
+        y, lasty = lasty - quotient * y, y
+    return lastremainder, lastx * (-1 if aa < 0 else 1), lasty * (-1 if bb < 0 else 1)
+
+
+def atoms_gen(args):
+    """
+    给定每个位点原子无序的数目，产生所有可能的原子排列，共k^n种。
+    """
+    p = []
+    for i in args:
+        p.append(range(i))
+    return product(*p)
+
+def hash_atoms(atoms):
+    """
+    给出一个atoms排列，返回一个string代表该排列。可用于hash表。
+    """
+    return ''.join(str(i) for i in atoms)
