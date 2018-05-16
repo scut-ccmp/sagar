@@ -1,7 +1,7 @@
 import unittest
 
 from pyabc.crystal.structure import Cell
-from pyabc.crystal.derive import configurations_nonredundant, confs_nondup_specific_volume
+from pyabc.crystal.derive import ConfigurationGenerator as CG
 
 
 class TestDerive(unittest.TestCase):
@@ -18,8 +18,9 @@ class TestDerive(unittest.TestCase):
         # 最大体积下可能产生的所有结构的总和，不包含超胞。
         wanted = [2, 4, 10, 29]
         got = []
+        cg = CG(self.fcc_pcell)
         for v in [1, 2, 3, 4]:
-            con = configurations_nonredundant(self.fcc_pcell, [[1, 5], [2]], v)
+            con = cg.cons_max_volume([[1, 5], [2]], v)
             got.append(len([i for i in con]))
 
         self.assertEqual(got, wanted)
@@ -28,8 +29,9 @@ class TestDerive(unittest.TestCase):
         # confs_nondup_specific_volume(fcc_pcell, [[1, 5]], 5)
         wanted = [2, 6, 12, 41]
         got = []
+        cg = CG(self.fcc_pcell)
         for v in [1, 2, 3, 4]:
-            con = confs_nondup_specific_volume(self.fcc_pcell, [[1, 5], [2]], v)
+            con = cg.cons_specific_volume([[1, 5], [2]], v)
             got.append(len([i for i in con]))
 
         self.assertEqual(got, wanted)
