@@ -302,6 +302,12 @@ class HartForcadePermutationGroup(object):
         self._volume = numpy.diagonal(self._snf).prod()
         self._nsites = len(pcell.atoms)  # 最小原胞中原子个数 如：hcp为2
 
+    def get_quotient(self):
+        """
+        return a tuple, for as dict key.
+        """
+        return tuple(self._quotient)
+
     def get_pure_translations(self, symprec=1e-5):
         """
         get_pure_translations get all pure translations of one
@@ -384,6 +390,9 @@ class HartForcadePermutationGroup(object):
                 idx += 1
 
         return result
+
+    def get_supercell(self):
+        return self._cell.extend(self._hnf)
 
     def get_pure_rotations_without_inversion(self, symprec=1e-5):
         pass

@@ -53,35 +53,40 @@ def configurations_nonredundant(pcell, sites, max_volume, min_volume=1, symprec=
     # 该函数产生所有构型用于确定基态相图
     for v in range(min_volume, max_volume + 1):
         hnfs = non_dup_hnfs(pcell, v, symprec)
+        dict_trans = {} # 记录已经产生过的snf，相同snf的平移操作相同。
         for h in hnfs:
             hfpg = HFPG(pcell, h)
-            # TODO: 此处的平移操作不必每次重新计算，因为相同snf平移操作相同
+            # 此处的平移操作不必每次重新计算，因为相同snf平移操作相同
             # 可以用字典来标记查询。若没有这样的操作，那么就没有snf带来的效率提升。
-            translations = hfpg.get_pure_translations(symprec)
-            supercell = pcell.extend(h)
+            quotient = hfpg.get_quotient()
+            if not quotient in dict_trans:
+                dict_trans[quotient] = hfpg.get_pure_translations(symprec)
+            trans = dict_trans[quotient]
+
+            supercell = hfpg.get_supercell()
+
+            # 产生所有可能操作的置换操作
+            # perms = hfpg.get_symmetry()
+            rots = hfpg.get_pure_rotations(symprec)
+            perms = _get_perms_from_rots_and_trans(rots, trans)
+
             # TODO: 加入一个机制，来清晰的设定位点上无序的状态
-            perm = hfpg.get_symmetry()
             arg_sites_pcell = [len(i) for i in sites]
             arg_sites = numpy.repeat(arg_sites_pcell, v)
 
-            # actual results
-            res = []
             # redundant configurations do not want see again
             # 用于记录在操作作用后已经存在的构型排列，而无序每次都再次对每个结构作用所有操作
             redundant = set()
 
             # loop over configurations
             for atoms_mark in atoms_gen(arg_sites):
-                # import pdb; pdb.set_trace()
                 arr_atoms_mark = numpy.array(atoms_mark)
-                # import pdb; pdb.set_trace()
-                flag_super = _is_super(arr_atoms_mark, translations)
+                flag_super = _is_super(arr_atoms_mark, trans)
                 ahash = hash_atoms(atoms_mark)
-                # import pdb; pdb.set_trace()
                 if (ahash in redundant) or flag_super:
                     continue
                 else:
-                    for p in perm:
+                    for p in perms:
                         atoms_transmuted = arr_atoms_mark[p]
                         redundant.add(hash_atoms(atoms_transmuted))
 
@@ -89,11 +94,20 @@ def configurations_nonredundant(pcell, sites, max_volume, min_volume=1, symprec=
                     # print("{:}".format(h.flatten()) +
                     #       '  ' + str(atoms))
 
-                    # c = Cell(supercell.lattice, supercell.positions, atoms)
                     yield Cell(supercell.lattice, supercell.positions, atoms_mark)
-                    # print(c)
-                    # yield c
 
+def _get_perms_from_rots_and_trans(rots, trans):
+    nrot = rots.shape[0]
+    ntran = trans.shape[0]
+    size = nrot * ntran
+    perms = numpy.zeros((size, trans.shape[1]), dtype='int')
+    idx = 0
+    for r in rots:
+        for t in trans:
+            p = r[t]
+            perms[idx] = p
+            idx += 1
+    return perms
 
 def _is_super(arr_atoms_mark, translations):
     for t in translations[1:]:
@@ -115,8 +129,6 @@ def _mark_to_atoms(arr_mark, sites):
     return atoms.flatten().tolist()
 
 # 特定体积胞
-
-
 def confs_nondup_specific_volume(pcell, sites, volume=2, symprec=1e-5):
     """
     parameters:
@@ -134,20 +146,28 @@ def confs_nondup_specific_volume(pcell, sites, volume=2, symprec=1e-5):
     """
     # 该函数产生特定体积下所有构型（包括超胞）和简并度，用于统计平均
     hnfs = non_dup_hnfs(pcell, volume, symprec)
+    dict_trans = {}
     for h in hnfs:
         hfpg = HFPG(pcell, h)
-        # TODO: 此处的平移操作不必每次重新计算，因为相同snf平移操作相同
+        # 此处的平移操作不必每次重新计算，因为相同snf平移操作相同
         # 可以用字典来标记查询。若没有这样的操作，那么就没有snf带来的效率提升。
         # For hnf with same snf, translations are same.
-        translations = hfpg.get_pure_translations(symprec)
+        quotient = hfpg.get_quotient()
+        if not quotient in dict_trans:
+            dict_trans[quotient] = hfpg.get_pure_translations(symprec)
+        trans = dict_trans[quotient]
+
         supercell = pcell.extend(h)
+
+        # 产生所有可能操作的置换操作
+        # perm = hfpg.get_symmetry()
+        rots = hfpg.get_pure_rotations(symprec)
+        perms = _get_perms_from_rots_and_trans(rots, trans)
+
         # TODO: 加入一个机制，来清晰的设定位点上无序的状态
-        perm = hfpg.get_symmetry()
         arg_sites_pcell = [len(i) for i in sites]
         arg_sites = numpy.repeat(arg_sites_pcell, volume)
 
-        # actual results
-        res = []
         # redundant configurations do not want see again
         # 用于记录在操作作用后已经存在的构型排列，而无序每次都再次对每个结构作用所有操作
         redundant = set()
@@ -161,7 +181,7 @@ def confs_nondup_specific_volume(pcell, sites, volume=2, symprec=1e-5):
                 continue
             else:
                 list_all_transmuted = []
-                for p in perm:
+                for p in perms:
                     atoms_transmuted = arr_atoms_mark[p]
                     redundant.add(hash_atoms(atoms_transmuted))
                     # degeneracy
@@ -170,15 +190,9 @@ def confs_nondup_specific_volume(pcell, sites, volume=2, symprec=1e-5):
                 arr_all_transmuted = numpy.array(list_all_transmuted)
                 deg = numpy.unique(arr_all_transmuted, axis=0).shape[0]
 
-                # deg_total += deg
                 atoms = _mark_to_atoms(arr_atoms_mark, sites)
                 # print("{:}".format(h.flatten()) +
                 #       '  ' + str(atoms) + '  ' + str(den))
 
                 c = Cell(supercell.lattice, supercell.positions, atoms)
-                print(c)
-                # yield Cell(supercell.lattice, supercell.positions, atoms_mark)
-                # print(c)
                 yield (c, deg)
-        # print("{:}".format(h.flatten()) +
-        #       '  ' + str(den_total))
