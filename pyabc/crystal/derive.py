@@ -179,7 +179,7 @@ class ConfigurationGenerator(object):
             # 用于记录在操作作用后已经存在的构型排列，而无序每次都再次对每个结构作用所有操作
             redundant = set()
 
-            den_total = 0
+            # den_total = 0
             # loop over configurations
             for atoms_mark in atoms_gen(arg_sites):
                 arr_atoms_mark = numpy.array(atoms_mark)
