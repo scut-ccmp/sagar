@@ -1,26 +1,49 @@
 import unittest
 
 from pyabc.crystal.structure import Cell
-from pyabc.crystal.derive import configurations_nonredundant
+from pyabc.crystal.derive import configurations_nonredundant, confs_nondup_specific_volume
 
 
 class TestDerive(unittest.TestCase):
 
-    def test_conf_non_redun(self):
+    def setUp(self):
         fcc_latt = [0, 5, 5,
                     5, 0, 5,
                     5, 5, 0]
         fcc_pos = [(0, 0, 0), (0.5, 0.5, 0.5)]
         fcc_atoms = [1, 2]
-        fcc_pcell = Cell(fcc_latt, fcc_pos, fcc_atoms)
-        configurations_nonredundant(fcc_pcell, [[1, 5], [2]], 4)
-        # sc_latt = [5, 0, 0,
-        #            0, 5, 0,
-        #            0, 0, 5]
-        # sc_pos = [(0, 0, 0)]
-        # sc_atoms = [0]
-        # sc_pcell = Cell(sc_latt, sc_pos, sc_atoms)
-        # configurations_nonredundant(sc_pcell, [[3, 5]], 4)
+        self.fcc_pcell = Cell(fcc_latt, fcc_pos, fcc_atoms)
+
+    def test_conf_non_redun(self):
+        # 最大体积下可能产生的所有结构的总和，不包含超胞。
+        wanted = [2, 4, 10, 29]
+        got = []
+        for v in [1, 2, 3, 4]:
+            con = configurations_nonredundant(self.fcc_pcell, [[1, 5], [2]], v)
+            got.append(len([i for i in con]))
+
+        self.assertEqual(got, wanted)
+
+    def test_confs_nondup_specific_volume(self):
+        # confs_nondup_specific_volume(fcc_pcell, [[1, 5]], 5)
+        wanted = [2, 6, 12, 41]
+        got = []
+        for v in [1, 2, 3, 4]:
+            con = confs_nondup_specific_volume(self.fcc_pcell, [[1, 5], [2]], v)
+            got.append(len([i for i in con]))
+
+        self.assertEqual(got, wanted)
+
+    # def test_degeneracy_of_confs_nondup_specific_volume(self):
+    #     wanted = [1, 2, 4, 16, 32]
+    #     got = []
+    #     for v in [1, 2, 3, 4, 5]:
+    #         deg_all = 0
+    #         cons = confs_nondup_specific_volume(self.fcc_pcell, [[1, 5], [2]], v)
+    #         for c in cons:
+    #             deg_all += c[1]
+    #         print(deg_all)
+
 
 
 if __name__ == "__main__":

@@ -38,7 +38,7 @@ def cells_nonredundant(pcell, volume=1, symprec=1e-5, comprec=1e-5):
 #
 # 该函数中没有comprec参数，是因为构型(configurations)之间的对比
 # 通过原子排列的对比实现，没有坐标的比较。
-def configurations_nonredundant(pcell, sites, max_volume=2, symprec=1e-5):
+def configurations_nonredundant(pcell, sites, max_volume, min_volume=1, symprec=1e-5):
     """
     parameters:
 
@@ -47,11 +47,11 @@ def configurations_nonredundant(pcell, sites, max_volume=2, symprec=1e-5):
 
     yield:
 
-    Cell object, a list of non-redundant configurations
+    Cell object, a list of non-redundant configurations to max volume supercells.
 
     """
     # 该函数产生所有构型用于确定基态相图
-    for v in range(1, max_volume + 1):
+    for v in range(min_volume, max_volume + 1):
         hnfs = non_dup_hnfs(pcell, v, symprec)
         for h in hnfs:
             hfpg = HFPG(pcell, h)
@@ -86,11 +86,11 @@ def configurations_nonredundant(pcell, sites, max_volume=2, symprec=1e-5):
                         redundant.add(hash_atoms(atoms_transmuted))
 
                     atoms = _mark_to_atoms(arr_atoms_mark, sites)
-                    print("{:}".format(h.flatten()) +
-                          '  ' + str(atoms))
+                    # print("{:}".format(h.flatten()) +
+                    #       '  ' + str(atoms))
 
                     # c = Cell(supercell.lattice, supercell.positions, atoms)
-                    # yield Cell(supercell.lattice, supercell.positions, atoms_mark)
+                    yield Cell(supercell.lattice, supercell.positions, atoms_mark)
                     # print(c)
                     # yield c
 
@@ -102,6 +102,7 @@ def _is_super(arr_atoms_mark, translations):
             return True
     return False
 
+
 def _mark_to_atoms(arr_mark, sites):
     num_of_site_groups = len(sites)
     arr_atoms = arr_mark.reshape(num_of_site_groups, -1)
@@ -112,3 +113,72 @@ def _mark_to_atoms(arr_mark, sites):
             atoms[i][j] = sites[i][v]
 
     return atoms.flatten().tolist()
+
+# 特定体积胞
+
+
+def confs_nondup_specific_volume(pcell, sites, volume=2, symprec=1e-5):
+    """
+    parameters:
+
+    pcell: Cell object, The primitive cell to be extended
+    sites: 2D list, disorderd sites infomation.
+    volume: int, certain volume with subperiodic.
+    symprec: float, precision for symmetry find.
+
+    yield:
+
+    a tuple
+    tuple[0]: Cell object, a list of non-redundant configurations of certain volume supercell.
+    tuple[1]: int object, degeneracy of the configuration in all configurations of this volume.
+    """
+    # 该函数产生特定体积下所有构型（包括超胞）和简并度，用于统计平均
+    hnfs = non_dup_hnfs(pcell, volume, symprec)
+    for h in hnfs:
+        hfpg = HFPG(pcell, h)
+        # TODO: 此处的平移操作不必每次重新计算，因为相同snf平移操作相同
+        # 可以用字典来标记查询。若没有这样的操作，那么就没有snf带来的效率提升。
+        # For hnf with same snf, translations are same.
+        translations = hfpg.get_pure_translations(symprec)
+        supercell = pcell.extend(h)
+        # TODO: 加入一个机制，来清晰的设定位点上无序的状态
+        perm = hfpg.get_symmetry()
+        arg_sites_pcell = [len(i) for i in sites]
+        arg_sites = numpy.repeat(arg_sites_pcell, volume)
+
+        # actual results
+        res = []
+        # redundant configurations do not want see again
+        # 用于记录在操作作用后已经存在的构型排列，而无序每次都再次对每个结构作用所有操作
+        redundant = set()
+
+        den_total = 0
+        # loop over configurations
+        for atoms_mark in atoms_gen(arg_sites):
+            arr_atoms_mark = numpy.array(atoms_mark)
+            ahash = hash_atoms(atoms_mark)
+            if (ahash in redundant):
+                continue
+            else:
+                list_all_transmuted = []
+                for p in perm:
+                    atoms_transmuted = arr_atoms_mark[p]
+                    redundant.add(hash_atoms(atoms_transmuted))
+                    # degeneracy
+                    list_all_transmuted.append(atoms_transmuted)
+
+                arr_all_transmuted = numpy.array(list_all_transmuted)
+                deg = numpy.unique(arr_all_transmuted, axis=0).shape[0]
+
+                # deg_total += deg
+                atoms = _mark_to_atoms(arr_atoms_mark, sites)
+                # print("{:}".format(h.flatten()) +
+                #       '  ' + str(atoms) + '  ' + str(den))
+
+                c = Cell(supercell.lattice, supercell.positions, atoms)
+                print(c)
+                # yield Cell(supercell.lattice, supercell.positions, atoms_mark)
+                # print(c)
+                yield (c, deg)
+        # print("{:}".format(h.flatten()) +
+        #       '  ' + str(den_total))
