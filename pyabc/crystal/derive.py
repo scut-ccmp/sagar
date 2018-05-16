@@ -73,23 +73,42 @@ def configurations_nonredundant(pcell, sites, max_volume=2, symprec=1e-5):
             # loop over configurations
             for atoms_mark in atoms_gen(arg_sites):
                 # import pdb; pdb.set_trace()
-                atoms_mark_arr = numpy.array(atoms_mark)
-                flag_super = _is_super(atoms_mark_arr, translations)
+                arr_atoms_mark = numpy.array(atoms_mark)
+                # import pdb; pdb.set_trace()
+                flag_super = _is_super(arr_atoms_mark, translations)
                 ahash = hash_atoms(atoms_mark)
                 # import pdb; pdb.set_trace()
                 if (ahash in redundant) or flag_super:
                     continue
                 else:
                     for p in perm:
-                        atoms_transmuted = atoms_mark_arr[p]
+                        atoms_transmuted = arr_atoms_mark[p]
                         redundant.add(hash_atoms(atoms_transmuted))
+
+                    atoms = _mark_to_atoms(arr_atoms_mark, sites)
                     print("{:}".format(h.flatten()) +
-                          '  ' + hash_atoms(atoms_mark))
+                          '  ' + str(atoms))
+
+                    # c = Cell(supercell.lattice, supercell.positions, atoms)
+                    # yield Cell(supercell.lattice, supercell.positions, atoms_mark)
+                    # print(c)
+                    # yield c
 
 
-def _is_super(atoms_mark_arr, translations):
+def _is_super(arr_atoms_mark, translations):
     for t in translations[1:]:
-        transmuted = atoms_mark_arr[t]
-        if numpy.array_equal(transmuted, atoms_mark_arr):
+        transmuted = arr_atoms_mark[t]
+        if numpy.array_equal(transmuted, arr_atoms_mark):
             return True
     return False
+
+def _mark_to_atoms(arr_mark, sites):
+    num_of_site_groups = len(sites)
+    arr_atoms = arr_mark.reshape(num_of_site_groups, -1)
+    # import pdb; pdb.set_trace()
+    atoms = numpy.zeros_like(arr_atoms)
+    for i, row in enumerate(arr_atoms):
+        for j, v in enumerate(row):
+            atoms[i][j] = sites[i][v]
+
+    return atoms.flatten().tolist()

@@ -10,10 +10,10 @@ class TestDerive(unittest.TestCase):
         fcc_latt = [0, 5, 5,
                     5, 0, 5,
                     5, 5, 0]
-        fcc_pos = [(0, 0, 0)]
-        fcc_atoms = [0]
+        fcc_pos = [(0, 0, 0), (0.5, 0.5, 0.5)]
+        fcc_atoms = [1, 2]
         fcc_pcell = Cell(fcc_latt, fcc_pos, fcc_atoms)
-        configurations_nonredundant(fcc_pcell, [[3, 5]], 8)
+        configurations_nonredundant(fcc_pcell, [[1, 5], [2]], 4)
         # sc_latt = [5, 0, 0,
         #            0, 5, 0,
         #            0, 0, 5]
