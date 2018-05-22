@@ -1,6 +1,7 @@
 import unittest
 
-from pyabc.crystal.structure import Cell, is_primitive_cell
+from pyabc.crystal.structure import Cell
+# from pyabc.crystal.structure import is_primitive_cell, get_primitive_cell
 
 
 class TestCell(unittest.TestCase):
@@ -38,17 +39,27 @@ class TestCell(unittest.TestCase):
     def test_trans(self):
         pass
 
-
-class TestUtils(unittest.TestCase):
-
-    def test_is_primitive_cell(self):
+    def test_is_primitive(self):
         bcc_latt = [0.5, 0.5, -0.5,
                     -0.5, 0.5, 0.5,
                     0.5, -0.5, 0.5]
         bcc_pos = [(0, 0, 0)]
         bcc_atoms = [0]
         bcc_pcell = Cell(bcc_latt, bcc_pos, bcc_atoms)
-        self.assertTrue(is_primitive_cell(bcc_pcell))
+        self.assertTrue(bcc_pcell.is_primitive())
+
+    def test_get_primitive(self):
+        fcc_latt = [5, 0, 0,
+                    0, 5, 0,
+                    0, 0, 5]
+        fcc_pos = [(0, 0, 0),
+                   (0, 0.5, 0.5),
+                   (0.5, 0, 0.5),
+                   (0.5, 0.5, 0)]
+        fcc_atoms = [0, 0, 0, 0]
+        con_cell = Cell(fcc_latt, fcc_pos, fcc_atoms)
+        pcell = con_cell.get_primitive_cell()
+        self.assertEqual(pcell.atoms, [0])
 
 
 if __name__ == "__main__":

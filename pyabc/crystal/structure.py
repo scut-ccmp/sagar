@@ -173,6 +173,26 @@ class Cell(object):
         """
         return spglib.get_spacegroup((self._lattice, self._positions, self._atoms), symprec)
 
+    def is_primitive(self, symprec=1e-5):
+        """
+        is_primitive_cell decide if a cell is primitive
+
+        parameters:
+
+        cell: Cell object
+        prec: float, the precision to judge, default=1e-5
+
+        return: bool
+        """
+        natoms = len(self.atoms)
+        spg_cell = (self.lattice, self.positions, self.atoms)
+        pnatoms = len(spglib.find_primitive(spg_cell, symprec)[2])
+        return natoms == pnatoms
+
+    def get_primitive_cell(self, symprec=1e-5):
+        spg_cell = (self.lattice, self.positions, self.atoms)
+        lattice, positions, atoms = spglib.find_primitive(spg_cell, symprec)
+        return self.__class__(lattice, positions, atoms)
 
 def _get_mat_frac(mat):
     """
@@ -191,20 +211,3 @@ def _get_mat_frac(mat):
         ((_all_frac > -prec) & (_all_frac < 1 - prec)), axis=1)
 
     return _all_frac[numpy.where(is_incell)[0]]
-
-
-def is_primitive_cell(cell, prec=1e-5):
-    """
-    is_primitive_cell decide if a cell is primitive
-
-    parameters:
-
-    cell: Cell object
-    prec: float, the precision to judge, default=1e-5
-
-    return: bool
-    """
-    natoms = len(cell.atoms)
-    spg_cell = (cell.lattice, cell.positions, cell.atoms)
-    pnatoms = len(spglib.find_primitive(spg_cell, prec)[2])
-    return natoms == pnatoms
