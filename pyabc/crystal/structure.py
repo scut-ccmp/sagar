@@ -109,6 +109,7 @@ class Cell(object):
         # TODO: now extend is proved right only for hnf matrixself.
         #       1. 我们是否需要把旋转合并进来？
         #       2. 针对非对角矩阵，是一样适用？
+        # TODO: mat必须是一个整数矩阵，做一个判断，给出异常
         lattice = numpy.matmul(mat, self._lattice)
 
         smallest_cell = numpy.matmul(self._positions, numpy.linalg.inv(mat))
