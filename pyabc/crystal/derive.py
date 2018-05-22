@@ -43,8 +43,11 @@ class ConfigurationGenerator(object):
     pcell: Cell object, The primitive cell to be extended
     """
 
-    def __init__(self, pcell):
-        self._cell = pcell
+    def __init__(self, cell, symprec=1e-5):
+        if not cell.is_primitive(symprec):
+            self._pcell = cell.get_primitive_cell(symprec)
+        else:
+            self._pcell = cell
 
     def cons_max_volume(self, sites, max_volume, min_volume=1, symprec=1e-5):
         """
@@ -60,10 +63,10 @@ class ConfigurationGenerator(object):
         """
         # 该函数产生所有构型用于确定基态相图
         for v in range(min_volume, max_volume + 1):
-            hnfs = non_dup_hnfs(self._cell, v, symprec)
+            hnfs = non_dup_hnfs(self._pcell, v, symprec)
             dict_trans = {} # 记录已经产生过的snf，相同snf的平移操作相同。
             for h in hnfs:
-                hfpg = HFPG(self._cell, h)
+                hfpg = HFPG(self._pcell, h)
                 # 此处的平移操作不必每次重新计算，因为相同snf平移操作相同
                 # 可以用字典来标记查询。若没有这样的操作，那么就没有snf带来的效率提升。
                 quotient = hfpg.get_quotient()
@@ -152,10 +155,10 @@ class ConfigurationGenerator(object):
         tuple[1]: int object, degeneracy of the configuration in all configurations of this volume.
         """
         # 该函数产生特定体积下所有构型（包括超胞）和简并度，用于统计平均
-        hnfs = non_dup_hnfs(self._cell, volume, symprec)
+        hnfs = non_dup_hnfs(self._pcell, volume, symprec)
         dict_trans = {}
         for h in hnfs:
-            hfpg = HFPG(self._cell, h)
+            hfpg = HFPG(self._pcell, h)
             # 此处的平移操作不必每次重新计算，因为相同snf平移操作相同
             # 可以用字典来标记查询。若没有这样的操作，那么就没有snf带来的效率提升。
             # For hnf with same snf, translations are same.
@@ -164,7 +167,7 @@ class ConfigurationGenerator(object):
                 dict_trans[quotient] = hfpg.get_pure_translations(symprec)
             trans = dict_trans[quotient]
 
-            supercell = self._cell.extend(h)
+            supercell = self._pcell.extend(h)
 
             # 产生所有可能操作的置换操作
             # perm = hfpg.get_symmetry()

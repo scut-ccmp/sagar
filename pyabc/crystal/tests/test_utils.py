@@ -452,7 +452,7 @@ class TestSnfHnf(unittest.TestCase):
             a.append(len_volume)
         self.assertEqual(a, wanted_a)
 
-        # non-duplicated snfs: b slow test 258s
+        # non-duplicated snfs: b slow test 100+s
         b = []
         for i in range(1, 17):
             s_set = set()

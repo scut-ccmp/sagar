@@ -1,7 +1,6 @@
 import unittest
 
 from pyabc.crystal.structure import Cell
-# from pyabc.crystal.structure import is_primitive_cell, get_primitive_cell
 
 
 class TestCell(unittest.TestCase):

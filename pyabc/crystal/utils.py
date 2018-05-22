@@ -4,7 +4,7 @@ import copy
 from math import sqrt
 from itertools import product
 
-from pyabc.crystal.structure import Cell, is_primitive_cell
+from pyabc.crystal.structure import Cell
 
 
 def _factor(n):
@@ -55,7 +55,7 @@ def non_dup_hnfs(pcell, volume=1, symprec=1e-5, comprec=1e-5):
         raise TypeError("Can't make hnf cells of {:} "
                         "please provide pyabc.crystal.structure.Cell object.".format(type(pcell)))
 
-    if not is_primitive_cell(pcell):
+    if not pcell.is_primitive(symprec):
         raise ValueError("cell object you provide is not a primitive cell "
                          "Therefore meaningless to get non duplicated hnf cells "
                          "You can use pcell.get_primitive() first.")
