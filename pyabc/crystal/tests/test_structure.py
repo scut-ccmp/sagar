@@ -1,4 +1,5 @@
 import unittest
+import numpy
 
 from pyabc.crystal.structure import Cell
 
@@ -30,7 +31,61 @@ class TestCell(unittest.TestCase):
         self.assertEqual(cell.atoms.tolist(), [1010])
 
     def test_extend(self):
-        pass
+        fcc_latt = [0, 5, 5,
+                    5, 0, 5,
+                    5, 5, 0]
+        fcc_pos = [(0, 0, 0)]
+        fcc_atoms = [0]
+        fcc_pcell = Cell(fcc_latt, fcc_pos, fcc_atoms)
+        # op_ext = numpy.array([-1, 1, 1,
+        #                       1, -1, 1,
+        #                       1, 1, -1]).reshape((3, 3))
+        op_ext = numpy.array([1, 0, 1,
+                              0, 2, 1,
+                              0, 0, 2]).reshape((3, 3))
+        ext_fcc = fcc_pcell.extend(op_ext)
+
+        wanted_latt = numpy.array([5, 10, 5,
+                                   15, 5, 10,
+                                   10, 10, 0]).reshape((3, 3))
+        wanted_pos = numpy.array([(0, 0, 0),
+                                  (0, 0, 0.5),
+                                  (0, 0.5, 0.25),
+                                  (0, 0.5, 0.75)])
+        wanted_atoms = numpy.array([0, 0, 0, 0])
+        numpy.testing.assert_almost_equal(ext_fcc.lattice, wanted_latt)
+        numpy.testing.assert_almost_equal(ext_fcc.positions, wanted_pos)
+        numpy.testing.assert_almost_equal(ext_fcc.atoms, wanted_atoms)
+
+    def test_extend_not_hnf(self):
+        fcc_latt = [0, 5, 5,
+                    5, 0, 5,
+                    5, 5, 0]
+        fcc_pos = [(0, 0, 0),
+        (0.5, 0.5, 0.5)]
+        fcc_atoms = [1, 2]
+        fcc_pcell = Cell(fcc_latt, fcc_pos, fcc_atoms)
+        op_ext = numpy.array([-1, 1, 1,
+                              1, -1, 1,
+                              1, 1, -1]).reshape((3, 3))
+        import pdb; pdb.set_trace()
+        ext_fcc = fcc_pcell.extend(op_ext)
+
+        wanted_latt = numpy.array([10, 0, 0,
+                                   0, 10, 0,
+                                   0, 0, 10]).reshape((3, 3))
+        wanted_pos = numpy.array([(0, 0, 0),
+                                  (0.5, 0.5, 0),
+                                  (0.5, 0, 0.5),
+                                  (0, 0.5, 0.5),
+                                  (0.5, 0.5, 0.5),
+                                  (0, 0, 0.5),
+                                  (0, 0.5, 0),
+                                  (0.5, 0, 0)])
+        wanted_atoms = numpy.array([1,1,1,1,2,2,2,2])
+        numpy.testing.assert_almost_equal(ext_fcc.lattice, wanted_latt)
+        numpy.testing.assert_almost_equal(ext_fcc.positions, wanted_pos)
+        numpy.testing.assert_almost_equal(ext_fcc.atoms, wanted_atoms)
 
     def test_rotate(self):
         pass

@@ -109,19 +109,40 @@ class Cell(object):
         # TODO: now extend is proved right only for hnf matrixself.
         #       1. 我们是否需要把旋转合并进来？
         #       2. 针对非对角矩阵，是一样适用？
+        # TODO: 不必是hnf矩阵
         # TODO: mat必须是一个整数矩阵，做一个判断，给出异常
         lattice = numpy.matmul(mat, self._lattice)
 
         smallest_cell = numpy.matmul(self._positions, numpy.linalg.inv(mat))
-        grids = _get_mat_frac(mat)
+        grids = self._get_mat_frac(mat)
         list_positions = [i for i in map(
             lambda x: x + grids, list(smallest_cell))]
         positions = numpy.concatenate(list_positions, axis=0)
 
-        n = mat.diagonal().prod()
+        # n = mat.diagonal().prod()
+        n = numpy.linalg.det(mat)
+        # TODO: 有问题
         atoms = numpy.repeat(self._atoms, n)
 
         return self.__class__(lattice, positions, atoms)
+
+    def _get_mat_frac(self, mat):
+        """
+        When giving mat -- a 3x3 matrix,
+        export a numpy.array represent the
+        grid points between 0~1.
+
+        Used in producing the new positions extended by a matrix
+        """
+        prec = 1e-5
+        m = numpy.amax(mat)
+        _int_coor = numpy.array([i for i in product(range(m * 3), repeat=3)])
+        _all_frac = numpy.matmul(_int_coor, numpy.linalg.inv(mat))
+
+        is_incell = numpy.all(
+            ((_all_frac > -prec) & (_all_frac < 1 - prec)), axis=1)
+
+        return _all_frac[numpy.where(is_incell)[0]]
 
     def get_symmetry(self, symprec=1e-5):
         """
@@ -193,6 +214,11 @@ class Cell(object):
     def get_primitive_cell(self, symprec=1e-5):
         spg_cell = (self.lattice, self.positions, self.atoms)
         lattice, positions, atoms = spglib.find_primitive(spg_cell, symprec)
+        return self.__class__(lattice, positions, atoms)
+
+    def get_refine_cell(self, symprec=1e-5):
+        spg_cell = (self.lattice, self.positions, self.atoms)
+        lattice, positions, atoms = spglib.refine_cell(spg_cell, symprec)
         return self.__class__(lattice, positions, atoms)
 
 def _get_mat_frac(mat):

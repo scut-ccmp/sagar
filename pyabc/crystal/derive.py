@@ -209,11 +209,55 @@ class ConfigurationGenerator(object):
                     yield (c, deg)
 
     def cons_specific_cell(self, sites, symprec=1e-5):
-        print(self._cell)
-        print(self._pcell)
         lat_cell = self._cell.lattice
         lat_pcell = self._pcell.lattice
         mat = numpy.matmul(lat_cell, numpy.linalg.inv(lat_pcell))
-        print("expect hnf:")
-        print(mat)
         hfpg = HFPG(self._pcell, mat)
+        # # 此处的平移操作不必每次重新计算，因为相同snf平移操作相同
+        # # 可以用字典来标记查询。若没有这样的操作，那么就没有snf带来的效率提升。
+        # # For hnf with same snf, translations are same.
+        # quotient = hfpg.get_quotient()
+        # if not quotient in dict_trans:
+        #     dict_trans[quotient] = hfpg.get_pure_translations(symprec)
+        # trans = dict_trans[quotient]
+        #
+        # supercell = self._pcell.extend(hfpg.hnf)
+        #
+        #
+        # # 产生所有可能操作的置换操作
+        # # perm = hfpg.get_symmetry()
+        # rots = hfpg.get_pure_rotations(symprec)
+        # perms = self._get_perms_from_rots_and_trans(rots, trans)
+        #
+        # # TODO: 加入一个机制，来清晰的设定位点上无序的状态
+        # arg_sites_pcell = [len(i) for i in sites]
+        # arg_sites = numpy.repeat(arg_sites_pcell, volume)
+        #
+        # # redundant configurations do not want see again
+        # # 用于记录在操作作用后已经存在的构型排列，而无序每次都再次对每个结构作用所有操作
+        # redundant = set()
+        #
+        # # den_total = 0
+        # # loop over configurations
+        # for atoms_mark in atoms_gen(arg_sites):
+        #     arr_atoms_mark = numpy.array(atoms_mark)
+        #     ahash = hash_atoms(atoms_mark)
+        #     if (ahash in redundant):
+        #         continue
+        #     else:
+        #         list_all_transmuted = []
+        #         for p in perms:
+        #             atoms_transmuted = arr_atoms_mark[p]
+        #             redundant.add(hash_atoms(atoms_transmuted))
+        #             # degeneracy
+        #             list_all_transmuted.append(atoms_transmuted)
+        #
+        #         arr_all_transmuted = numpy.array(list_all_transmuted)
+        #         deg = numpy.unique(arr_all_transmuted, axis=0).shape[0]
+        #
+        #         atoms = self._mark_to_atoms(arr_atoms_mark, sites)
+        #         # print("{:}".format(h.flatten()) +
+        #         #       '  ' + str(atoms) + '  ' + str(den))
+        #
+        #         c = Cell(supercell.lattice, supercell.positions, atoms)
+        #         yield (c, deg)

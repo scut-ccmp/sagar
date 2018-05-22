@@ -541,20 +541,20 @@ class TestHFPG(object):
         self.fcc_pcell = Cell(fcc_latt, fcc_pos, fcc_atoms)
 
     def test_get_pure_translations(self):
-        # fcc_latt = [0, 5, 5,
-        #             5, 0, 5,
-        #             5, 5, 0]
-        # fcc_pos = [(0, 0, 0),
-        #            (0.5,0.5,0.5)]
-        # fcc_atoms = [0, 2]
-        # fcc_pcell = Cell(fcc_latt, fcc_pos, fcc_atoms)
-        # hnfs = non_dup_hnfs(fcc_pcell, 4)
-        # h = hnfs[4]
-        # print("hnf is:")
-        # hfpg = HFPG(fcc_pcell, h)
-        # print("pure translations is:")
-        # print(hfpg.get_pure_translations())
-        # print('\n')
+        fcc_latt = [0, 5, 5,
+                    5, 0, 5,
+                    5, 5, 0]
+        fcc_pos = [(0, 0, 0),
+                   (0.5,0.5,0.5)]
+        fcc_atoms = [0, 2]
+        fcc_pcell = Cell(fcc_latt, fcc_pos, fcc_atoms)
+        hnfs = non_dup_hnfs(fcc_pcell, 4)
+        h = hnfs[4]
+        print("hnf is:")
+        hfpg = HFPG(fcc_pcell, h)
+        print("pure translations is:")
+        print(hfpg.get_pure_translations())
+        print('\n')
         # pass
 
         # hnfs = non_dup_hnfs(self.fcc_pcell, 8)
@@ -568,7 +568,7 @@ class TestHFPG(object):
         #     print("pure translation is:")
         #     print(hfpg.get_pure_translations())
         #     print('\n')
-        pass
+        # pass
 
     def test_exchanged_new_labels(self):
         # hnfs = non_dup_hnfs(self.fcc_pcell, 4)
@@ -583,22 +583,22 @@ class TestHFPG(object):
         pass
 
     def test_get_pure_rotations(self):
-        # fcc_latt = [0, 5, 5,
-        #             5, 0, 5,
-        #             5, 5, 0]
-        # fcc_pos = [(0, 0, 0),
-        #            (0.5,0.5,0.5)]
-        # fcc_atoms = [0, 2]
-        # fcc_pcell = Cell(fcc_latt, fcc_pos, fcc_atoms)
-        # hnfs = non_dup_hnfs(fcc_pcell, 4)
-        # h = hnfs[4]
-        # print("hnf is:")
-        # print(h)
-        # hfpg = HFPG(fcc_pcell, h)
-        # print("pure rotation is:")
-        # print(hfpg.get_pure_rotations())
-        # print('\n')
-        pass
+        fcc_latt = [0, 5, 5,
+                    5, 0, 5,
+                    5, 5, 0]
+        fcc_pos = [(0, 0, 0),
+                   (0.5,0.5,0.5)]
+        fcc_atoms = [0, 2]
+        fcc_pcell = Cell(fcc_latt, fcc_pos, fcc_atoms)
+        hnfs = non_dup_hnfs(fcc_pcell, 4)
+        h = hnfs[4]
+        print("hnf is:")
+        print(h)
+        hfpg = HFPG(fcc_pcell, h)
+        print("pure rotation is:")
+        print(hfpg.get_pure_rotations())
+        print('\n')
+        # pass
 
     def test_get_symmetry(self):
         # fcc_latt = [0, 5, 5,
