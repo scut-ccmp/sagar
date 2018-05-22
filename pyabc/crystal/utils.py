@@ -192,12 +192,23 @@ class IntMat3x3(object):
             self._zero_second_column()
             self._zero_second_row()
 
-            self._positive_mat_2_2()
+            # self._positive_mat_2_2()
+            self._positive_diag()
 
         if not self._is_incremental_diag():
             self._sort_diag()
 
+        if numpy.linalg.det(self._opL) < 0:
+            self._opL = self._hand_flip(self._opL)
+            self._opR = self._hand_flip(self._opR)
+
         return self._mat, self._opL, self._opR
+
+    def _hand_flip(self, mat):
+        neg = numpy.array([-1, 0, 0,
+                           0, -1, 0,
+                           0, 0, -1]).reshape((3, 3))
+        return numpy.matmul(mat, neg)
 
     def _set_zero(self, i, j, aa, bb, r, s, t):
         """
@@ -247,7 +258,7 @@ class IntMat3x3(object):
         self._opR = numpy.matmul(self._opR, op)
 
     def _zero_second_column(self):
-        if self._mat[2, 1] % self._mat[1, 1] == 0:
+        if self._mat[1, 1] == 0 or self._mat[2, 1] % self._mat[1, 1] == 0:
             self._second_exact_division()
         if self._mat[2, 1] < 0:
             self.flip_sign_row(2)
@@ -256,7 +267,10 @@ class IntMat3x3(object):
 
     def _second_exact_division(self):
         op = numpy.eye(3, dtype='int')
-        op[2, 1] = -self._mat[2, 1] // self._mat[1, 1]
+        if self._mat[1, 1] == 0:
+            op[2, 1] = 0
+        else:
+            op[2, 1] = -self._mat[2, 1] // self._mat[1, 1]
         self._mat = numpy.matmul(op, self._mat)
         self._opL = numpy.matmul(op, self._opL)
 
@@ -267,9 +281,10 @@ class IntMat3x3(object):
         self._mat = numpy.matmul(self._mat, op)
         self._opR = numpy.matmul(self._opR, op)
 
-    def _positive_mat_2_2(self):
-        if self._mat[2, 2] < 0:
-            self.flip_sign_row(2)
+    def _positive_diag(self):
+        for i in range(0, 3):
+            if self._mat[i, i] < 0:
+                self.flip_sign_row(i)
 
     def _sort_diag(self):
         mat_flat = numpy.diagonal(self._mat)
@@ -281,8 +296,6 @@ class IntMat3x3(object):
         self._mat = numpy.matmul(self._mat, op.T)
         self._opR = numpy.matmul(self._opR, op.T)
 
-# TODO: utils for Hart-Forcade algorithm
-
 
 class HartForcadePermutationGroup(object):
     """
@@ -291,13 +304,20 @@ class HartForcadePermutationGroup(object):
     所有的对称操作都是以置换矩阵的形式，作用在一个元素排列上。
     """
 
-    def __init__(self, pcell, hnf):
+    def __init__(self, pcell, mat):
         if not isinstance(pcell, Cell):
             raise TypeError(
                 "want pyabc.crystal.structure.Cell, got {:}".format(type(cell)))
         self._cell = pcell
-        self._hnf = hnf
-        self._snf, _, _ = snf(hnf)
+        self._snf, L, R = snf(mat)
+        self._hnf = numpy.matmul(L, mat).astype('intc')
+        print("mat det", numpy.linalg.det(mat))
+        print("L", L)
+        print("R", R)
+        print("mat", mat)
+        print("hnf", self._hnf)
+        print("snf", self._snf)
+        print("after", pcell.extend(self._hnf))
         self._quotient = numpy.diagonal(self._snf).tolist()
         self._volume = numpy.diagonal(self._snf).prod()
         self._nsites = len(pcell.atoms)  # 最小原胞中原子个数 如：hcp为2
@@ -438,6 +458,7 @@ def atoms_gen(args):
     for i in args:
         p.append(range(i))
     return product(*p)
+
 
 def hash_atoms(atoms):
     """

@@ -44,6 +44,7 @@ class ConfigurationGenerator(object):
     """
 
     def __init__(self, cell, symprec=1e-5):
+        self._cell = cell
         if not cell.is_primitive(symprec):
             self._pcell = cell.get_primitive_cell(symprec)
         else:
@@ -206,3 +207,13 @@ class ConfigurationGenerator(object):
 
                     c = Cell(supercell.lattice, supercell.positions, atoms)
                     yield (c, deg)
+
+    def cons_specific_cell(self, sites, symprec=1e-5):
+        print(self._cell)
+        print(self._pcell)
+        lat_cell = self._cell.lattice
+        lat_pcell = self._pcell.lattice
+        mat = numpy.matmul(lat_cell, numpy.linalg.inv(lat_pcell))
+        print("expect hnf:")
+        print(mat)
+        hfpg = HFPG(self._pcell, mat)

@@ -121,6 +121,20 @@ class TestMat3x3(unittest.TestCase):
         numpy.testing.assert_almost_equal(SAT, wanted_mat)
         numpy.testing.assert_almost_equal(snf_D, wanted_mat)
 
+    def test_bugs_get_snf(self):
+        mat = IntMat3x3([-1, 1, 1,
+                         1, -1, 1,
+                         1, 1, -1])
+        ori_mat = copy.copy(mat)
+        snf_D, snf_S, snf_T = mat.get_snf()
+        SAT = numpy.matmul(snf_S, numpy.matmul(ori_mat.mat, snf_T))
+
+        wanted_mat = numpy.array([1, 0, 0,
+                                  0, 2, 0,
+                                  0, 0, 2]).reshape((3, 3))
+        numpy.testing.assert_almost_equal(SAT, wanted_mat)
+        numpy.testing.assert_almost_equal(snf_D, wanted_mat)
+
     def test_dead_loop_bug(self):
         mat = IntMat3x3([1, 0, 0,
                          1, 1, 0,
@@ -152,12 +166,48 @@ class TestMat3x3(unittest.TestCase):
 
     def test_snf_random(self):
         for i in range(100):
-            mat = numpy.random.randint(100, size=9).reshape((3, 3))
+            mat = self._get_random_mat()
             mat = IntMat3x3(mat)
             ori_mat = copy.copy(mat)
             snf_D, snf_S, snf_T = mat.get_snf()
             SAT = numpy.matmul(snf_S, numpy.matmul(ori_mat.mat, snf_T))
+            # print("mat", ori_mat.mat)
+            # print("snf_D", snf_D)
+            # print("snf_S", snf_S)
+            # print("snf_T", snf_T)
+            # print("det S", numpy.linalg.det(snf_S))
+            # print("det T", numpy.linalg.det(snf_T))
             numpy.testing.assert_almost_equal(SAT, snf_D)
+            numpy.testing.assert_almost_equal(numpy.linalg.det(snf_S), 1)
+            numpy.testing.assert_almost_equal(numpy.linalg.det(snf_T), 1)
+
+    def _get_random_mat(self):
+        k = 15
+        mat = numpy.random.randint(k, size=(3, 3)) - k // 2
+        if numpy.linalg.det(mat) < 0.5:
+            mat = self._get_random_mat()
+        return mat
+
+    def test_det_1_bug(self):
+        """
+        需要保证左乘和右乘矩阵的行列式为1
+        """
+        mat = IntMat3x3([7, -5, -3,
+                         3, 1, 6,
+                         -5, -5, 5])
+        ori_mat = copy.copy(mat)
+        # import pdb; pdb.set_trace()
+        snf_D, snf_S, snf_T = mat.get_snf()
+        SAT = numpy.matmul(snf_S, numpy.matmul(ori_mat.mat, snf_T))
+
+        wanted_mat = numpy.array([1, 0, 0,
+                                  0, 1, 0,
+                                  0, 0, 500]).reshape((3, 3))
+        numpy.testing.assert_almost_equal(SAT, wanted_mat)
+        numpy.testing.assert_almost_equal(snf_D, wanted_mat)
+        numpy.testing.assert_almost_equal(numpy.linalg.det(snf_S), 1)
+        numpy.testing.assert_almost_equal(numpy.linalg.det(snf_T), 1)
+
 
     def test_snf_diag(self):
         for i in range(100):
@@ -371,12 +421,12 @@ class TestMat3x3(unittest.TestCase):
         got = numpy.matmul(mat.opL, numpy.matmul(ori_mat.mat, mat.opR))
         numpy.testing.assert_almost_equal(got, wanted)
 
-    def test_positive_mat_2_2(self):
+    def test_positive_diag(self):
         mat = IntMat3x3([2, 0, 0,
                          0, 6, 0,
                          0, 0, -12])
         ori_mat = copy.copy(mat)
-        mat._positive_mat_2_2()
+        mat._positive_diag()
         wanted_mat = numpy.array([2, 0, 0,
                                   0, 6, 0,
                                   0, 0, 12]).reshape((3, 3))

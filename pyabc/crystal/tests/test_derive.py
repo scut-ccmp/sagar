@@ -14,7 +14,7 @@ class TestDerive(unittest.TestCase):
         fcc_atoms = [1, 2]
         self.fcc_pcell = Cell(fcc_latt, fcc_pos, fcc_atoms)
 
-    def test_conf_non_redun(self):
+    def test_cons_non_redun(self):
         # 最大体积下可能产生的所有结构的总和，不包含超胞。
         wanted = [2, 4, 10, 29]
         got = []
@@ -25,7 +25,7 @@ class TestDerive(unittest.TestCase):
 
         self.assertEqual(got, wanted)
 
-    def test_confs_nondup_specific_volume(self):
+    def test_cons_nondup_specific_volume(self):
         # confs_nondup_specific_volume(fcc_pcell, [[1, 5]], 5)
         wanted = [2, 6, 12, 41]
         got = []
@@ -46,6 +46,18 @@ class TestDerive(unittest.TestCase):
     #             deg_all += c[1]
     #         print(deg_all)
 
+    def test_cons_specific_cell(self):
+        fcc_latt = [5, 0, 0,
+                    0, 5, 0,
+                    0, 0, 5]
+        fcc_pos = [(0, 0, 0),
+                   (0, 0.5, 0.5),
+                   (0.5, 0, 0.5),
+                   (0.5, 0.5, 0)]
+        fcc_atoms = [0, 0, 0, 0]
+        con_cell = Cell(fcc_latt, fcc_pos, fcc_atoms)
+        cg = CG(con_cell)
+        cg.cons_specific_cell([[2, 3], [2, 3], [2, 3], [2, 3]])
 
 
 if __name__ == "__main__":
