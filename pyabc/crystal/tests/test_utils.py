@@ -598,6 +598,7 @@ class TestCommonUtils(unittest.TestCase):
         for i, got in enumerate(atoms_gen(input)):
             self.assertEqual(got, wanted[i])
 
+
 if __name__ == "__main__":
     import nose2
     nose2.main()
