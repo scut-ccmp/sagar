@@ -210,6 +210,8 @@ class ConfigurationGenerator(object):
             # print(deg_total)
 
     def cons_specific_cell(self, sites, symprec=1e-5):
+        """
+        """
         lat_cell = self._cell.lattice
         lat_pcell = self._pcell.lattice
         # import pdb; pdb.set_trace()
@@ -222,9 +224,15 @@ class ConfigurationGenerator(object):
         # perm = hfpg.get_symmetry()
         perms = hfpg.get_symmetry(symprec)
 
+        # # TODO: 加入一个机制，来清晰的设定位点上无序的状态
+        # arg_sites = [len(i) for i in sites]
+
+        for c, d in self._remove_redundant(sites, perms):
+            yield (c, d)
+
+    def _remove_redundant(self, sites, perms):
         # TODO: 加入一个机制，来清晰的设定位点上无序的状态
         arg_sites = [len(i) for i in sites]
-
         # redundant configurations do not want see again
         # 用于记录在操作作用后已经存在的构型排列，而无序每次都再次对每个结构作用所有操作
         redundant = set()
@@ -249,7 +257,8 @@ class ConfigurationGenerator(object):
 
                 atoms = self._mark_to_atoms(arr_atoms_mark, sites)
                 # print("{:}".format(mat.flatten()) +
-                #       '  ' + str(atoms) + '  ' + str(deg))
+                #       '  ' +str(atoms) + '  ' + str(deg))
+                # print(str(atoms) + '  ' + str(deg))
 
                 c = Cell(self._cell.lattice, self._cell.positions, atoms)
                 yield (c, deg)
