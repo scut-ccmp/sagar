@@ -592,7 +592,7 @@ class TestHFPG(object):
         fcc_pcell = Cell(fcc_latt, fcc_pos, fcc_atoms)
         hnfs = non_dup_hnfs(fcc_pcell, 4)
         h = hnfs[4]
-        print("hnf is:")
+        print("mat is:")
         print(h)
         hfpg = HFPG(fcc_pcell, h)
         print("pure rotation is:")

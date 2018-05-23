@@ -305,13 +305,14 @@ class HartForcadePermutationGroup(object):
     所有的对称操作都是以置换矩阵的形式，作用在一个元素排列上。
     """
 
-    def __init__(self, pcell, hnf):
+    def __init__(self, pcell, mat):
         if not isinstance(pcell, Cell):
             raise TypeError(
                 "want pyabc.crystal.structure.Cell, got {:}".format(type(cell)))
         self._pcell = pcell
-        self._snf, L, R = snf(hnf)
-        self._hnf = numpy.matmul(L, hnf).astype('intc')
+        self._snf, L, R = snf(mat)
+        self._mat = mat
+        # self._hnf = numpy.matmul(L, hnf).astype('intc')
         self._quotient = numpy.diagonal(self._snf).tolist()
         self._volume = numpy.diagonal(self._snf).prod()
         self._nsites = len(pcell.atoms)  # 最小原胞中原子个数 如：hcp为2
@@ -366,10 +367,8 @@ class HartForcadePermutationGroup(object):
         return kq
 
     def get_pure_rotations(self, symprec=1e-5):
-        supercell = self._pcell.extend(self._hnf)
+        supercell = self._pcell.extend(self._mat)
         list_rots = supercell.get_rotations(symprec)[:]  # 第一个是单位矩阵
-        # list_rots = self._pcell.get_rotations(symprec)[:]  # 第一个是单位矩阵
-        print(len(list_rots))
         result = numpy.zeros(
             (len(list_rots), self._nsites * self._volume), dtype='int')
 
@@ -408,7 +407,7 @@ class HartForcadePermutationGroup(object):
         return result
 
     def get_supercell(self):
-        return self._pcell.extend(self._hnf)
+        return self._pcell.extend(self._mat)
 
     def get_pure_rotations_without_inversion(self, symprec=1e-5):
         pass
