@@ -34,20 +34,6 @@ class TestDerive(unittest.TestCase):
             got.append(len([i for i in con]))
 
         self.assertEqual(got, wanted)
-        # fcc_latt = [0, 5, 5,
-        #             5, 0, 5,
-        #             5, 5, 0]
-        # fcc_pos = [(0, 0, 0)]
-        # fcc_atoms = [1]
-        # fcc_pcell = Cell(fcc_latt, fcc_pos, fcc_atoms)
-        # wanted = [41]
-        # got = []
-        # cg = CG(fcc_pcell)
-        # for v in [4]:
-        #     con = cg.cons_specific_volume([[1, 5]], v)
-        #     got.append(len([i for i in con]))
-        #
-        # self.assertEqual(got, wanted)
 
     # def test_degeneracy_of_confs_nondup_specific_volume(self):
     #     wanted = [1, 2, 4, 16, 32]
@@ -70,7 +56,13 @@ class TestDerive(unittest.TestCase):
         fcc_atoms = [0, 0, 0, 0]
         con_cell = Cell(fcc_latt, fcc_pos, fcc_atoms)
         cg = CG(con_cell)
-        cg.cons_specific_cell([[2, 3], [2, 3], [2, 3], [2, 3]])
+        con = cg.cons_specific_cell([[2, 3], [2, 3], [2, 3], [2, 3]])
+
+        # number of all configurations
+        wanted = 5
+        got = len([i for i in con])
+
+        self.assertEqual(got, wanted)
 
 
 if __name__ == "__main__":

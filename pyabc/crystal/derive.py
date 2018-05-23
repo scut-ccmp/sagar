@@ -65,7 +65,7 @@ class ConfigurationGenerator(object):
         # 该函数产生所有构型用于确定基态相图
         for v in range(min_volume, max_volume + 1):
             hnfs = non_dup_hnfs(self._pcell, v, symprec)
-            dict_trans = {} # 记录已经产生过的snf，相同snf的平移操作相同。
+            dict_trans = {}  # 记录已经产生过的snf，相同snf的平移操作相同。
             for h in hnfs:
                 hfpg = HFPG(self._pcell, h)
                 # 此处的平移操作不必每次重新计算，因为相同snf平移操作相同
@@ -128,7 +128,6 @@ class ConfigurationGenerator(object):
                 return True
         return False
 
-
     def _mark_to_atoms(self, arr_mark, sites):
         num_of_site_groups = len(sites)
         arr_atoms = arr_mark.reshape(num_of_site_groups, -1)
@@ -159,8 +158,6 @@ class ConfigurationGenerator(object):
         hnfs = non_dup_hnfs(self._pcell, volume, symprec)
         dict_trans = {}
         for h in hnfs:
-            # print("hnf", h)
-            # import pdb; pdb.set_trace()
             hfpg = HFPG(self._pcell, h)
             # 此处的平移操作不必每次重新计算，因为相同snf平移操作相同
             # 可以用字典来标记查询。若没有这样的操作，那么就没有snf带来的效率提升。
@@ -185,7 +182,7 @@ class ConfigurationGenerator(object):
             # 用于记录在操作作用后已经存在的构型排列，而无序每次都再次对每个结构作用所有操作
             redundant = set()
 
-            # den_total = 0
+            # deg_total = 0
             # loop over configurations
             for atoms_mark in atoms_gen(arg_sites):
                 arr_atoms_mark = numpy.array(atoms_mark)
@@ -205,10 +202,12 @@ class ConfigurationGenerator(object):
 
                     atoms = self._mark_to_atoms(arr_atoms_mark, sites)
                     # print("{:}".format(h.flatten()) +
-                    #       '  ' + str(atoms))
-
+                    #       '  ' + str(atoms) + '  ' + str(deg))
                     c = Cell(supercell.lattice, supercell.positions, atoms)
                     yield (c, deg)
+
+            #     deg_total += deg
+            # print(deg_total)
 
     def cons_specific_cell(self, sites, symprec=1e-5):
         lat_cell = self._cell.lattice
@@ -230,7 +229,7 @@ class ConfigurationGenerator(object):
         # 用于记录在操作作用后已经存在的构型排列，而无序每次都再次对每个结构作用所有操作
         redundant = set()
 
-        # den_total = 0
+        # deg_total = 0
         # loop over configurations
         for atoms_mark in atoms_gen(arg_sites):
             arr_atoms_mark = numpy.array(atoms_mark)
@@ -238,15 +237,22 @@ class ConfigurationGenerator(object):
             if (ahash in redundant):
                 continue
             else:
-                # import pdb; pdb.set_trace()
+                list_all_transmuted = []
                 for p in perms:
                     atoms_transmuted = arr_atoms_mark[p]
                     redundant.add(hash_atoms(atoms_transmuted))
+                    # degeneracy
+                    list_all_transmuted.append(atoms_transmuted)
+
+                arr_all_transmuted = numpy.array(list_all_transmuted)
+                deg = numpy.unique(arr_all_transmuted, axis=0).shape[0]
 
                 atoms = self._mark_to_atoms(arr_atoms_mark, sites)
-                print("{:}".format(mat.flatten()) +
-                      '  ' + str(atoms))
+                # print("{:}".format(mat.flatten()) +
+                #       '  ' + str(atoms) + '  ' + str(deg))
 
-                # c = Cell(self._cell.lattice, self._cell.positions, atoms)
-                # print(c)
-                # yield (c, deg)
+                c = Cell(self._cell.lattice, self._cell.positions, atoms)
+                yield (c, deg)
+
+        #     deg_total += deg
+        # print(deg_total)
