@@ -63,8 +63,8 @@ class ConfigurationGenerator(object):
 
         """
         # 该函数产生所有构型用于确定基态相图
-        for v in range(min_volume, max_volume + 1):
-            hnfs = non_dup_hnfs(self._pcell, v, symprec)
+        for volume in range(min_volume, max_volume + 1):
+            hnfs = non_dup_hnfs(self._pcell, volume, symprec)
             dict_trans = {}  # 记录已经产生过的snf，相同snf的平移操作相同。
             for h in hnfs:
                 hfpg = HFPG(self._pcell, h)
@@ -74,39 +74,106 @@ class ConfigurationGenerator(object):
                 if not quotient in dict_trans:
                     dict_trans[quotient] = hfpg.get_pure_translations(symprec)
                 trans = dict_trans[quotient]
+                rots = hfpg.get_pure_rotations(symprec)
 
                 supercell = hfpg.get_supercell()
 
-                # 产生所有可能操作的置换操作
-                # perms = hfpg.get_symmetry()
-                rots = hfpg.get_pure_rotations(symprec)
-                perms = self._get_perms_from_rots_and_trans(rots, trans)
+                for c, _ in self._remove_redundant(supercell, sites, rots, trans, volume, remove_super=True):
+                    yield c
 
-                # TODO: 加入一个机制，来清晰的设定位点上无序的状态
-                arg_sites_pcell = [len(i) for i in sites]
-                arg_sites = numpy.repeat(arg_sites_pcell, v)
+    # 特定体积胞
 
-                # redundant configurations do not want see again
-                # 用于记录在操作作用后已经存在的构型排列，而无序每次都再次对每个结构作用所有操作
-                redundant = set()
+    def cons_specific_volume(self, sites, volume=2, symprec=1e-5):
+        """
+        parameters:
 
-                # loop over configurations
-                for atoms_mark in atoms_gen(arg_sites):
-                    arr_atoms_mark = numpy.array(atoms_mark)
-                    flag_super = self._is_super(arr_atoms_mark, trans)
-                    ahash = hash_atoms(atoms_mark)
-                    if (ahash in redundant) or flag_super:
-                        continue
-                    else:
-                        for p in perms:
-                            atoms_transmuted = arr_atoms_mark[p]
-                            redundant.add(hash_atoms(atoms_transmuted))
+        sites: 2D list, disorderd sites infomation.
+        volume: int, certain volume with subperiodic.
+        symprec: float, precision for symmetry find.
 
-                        atoms = self._mark_to_atoms(arr_atoms_mark, sites)
-                        # print("{:}".format(h.flatten()) +
-                        #       '  ' + str(atoms))
+        yield:
 
-                        yield Cell(supercell.lattice, supercell.positions, atoms_mark)
+        a tuple
+        tuple[0]: Cell object, a list of non-redundant configurations of certain volume supercell.
+        tuple[1]: int object, degeneracy of the configuration in all configurations of this volume.
+        """
+        # 该函数产生特定体积下所有构型（包括超胞）和简并度，用于统计平均
+        hnfs = non_dup_hnfs(self._pcell, volume, symprec)
+        dict_trans = {}
+        for h in hnfs:
+            hfpg = HFPG(self._pcell, h)
+            # 此处的平移操作不必每次重新计算，因为相同snf平移操作相同
+            # 可以用字典来标记查询。若没有这样的操作，那么就没有snf带来的效率提升。
+            # For hnf with same snf, translations are same.
+            quotient = hfpg.get_quotient()
+            if not quotient in dict_trans:
+                dict_trans[quotient] = hfpg.get_pure_translations(symprec)
+            trans = dict_trans[quotient]
+            rots = hfpg.get_pure_rotations(symprec)
+
+            supercell = self._pcell.extend(h)
+
+            for c, d in self._remove_redundant(supercell, sites, rots, trans, volume):
+                yield (c, d)
+
+    def cons_specific_cell(self, sites, symprec=1e-5):
+        """
+        """
+        lat_cell = self._cell.lattice
+        lat_pcell = self._pcell.lattice
+        # import pdb; pdb.set_trace()
+        # TODO: use is_int_np_array
+        mat = numpy.matmul(lat_cell, numpy.linalg.inv(lat_pcell))
+        mat = mat.astype('intc')
+        hfpg = HFPG(self._pcell, mat)
+
+        rots = hfpg.get_pure_rotations(symprec)
+        trans = hfpg.get_pure_translations(symprec)
+
+        for c, d in self._remove_redundant(self._cell, sites, rots, trans):
+            yield (c, d)
+
+    def _remove_redundant(self, cell, sites, rots, trans, volume=1, remove_super=False):
+        perms = self._get_perms_from_rots_and_trans(rots, trans)
+        # TODO: 加入一个机制，来清晰的设定位点上无序的状态
+        arg_sites = [len(i) for i in sites]
+        arg_sites = numpy.repeat(arg_sites, volume)
+        # redundant configurations do not want see again
+        # 用于记录在操作作用后已经存在的构型排列，而无序每次都再次对每个结构作用所有操作
+        redundant = set()
+
+        deg_total = 0
+        # loop over configurations
+        for atoms_mark in atoms_gen(arg_sites):
+            arr_atoms_mark = numpy.array(atoms_mark)
+            ahash = hash_atoms(atoms_mark)
+
+            if remove_super:
+                flag = (ahash in redundant) or self._is_super(
+                    arr_atoms_mark, trans)
+            else:
+                flag = ahash in redundant
+            if flag:
+                continue
+            else:
+                list_all_transmuted = []
+                for p in perms:
+                    atoms_transmuted = arr_atoms_mark[p]
+                    redundant.add(hash_atoms(atoms_transmuted))
+                    # degeneracy
+                    list_all_transmuted.append(atoms_transmuted)
+
+                arr_all_transmuted = numpy.array(list_all_transmuted)
+                deg = numpy.unique(arr_all_transmuted, axis=0).shape[0]
+
+                atoms = self._mark_to_atoms(arr_atoms_mark, sites)
+                print(str(atoms) + '  ' + str(deg))
+
+                c = Cell(cell.lattice, cell.positions, atoms)
+                yield (c, deg)
+
+            deg_total += deg
+        print(deg_total)
 
     def _get_perms_from_rots_and_trans(self, rots, trans):
         nrot = rots.shape[0]
@@ -138,130 +205,3 @@ class ConfigurationGenerator(object):
                 atoms[i][j] = sites[i][v]
 
         return atoms.flatten().tolist()
-
-    # 特定体积胞
-    def cons_specific_volume(self, sites, volume=2, symprec=1e-5):
-        """
-        parameters:
-
-        sites: 2D list, disorderd sites infomation.
-        volume: int, certain volume with subperiodic.
-        symprec: float, precision for symmetry find.
-
-        yield:
-
-        a tuple
-        tuple[0]: Cell object, a list of non-redundant configurations of certain volume supercell.
-        tuple[1]: int object, degeneracy of the configuration in all configurations of this volume.
-        """
-        # 该函数产生特定体积下所有构型（包括超胞）和简并度，用于统计平均
-        hnfs = non_dup_hnfs(self._pcell, volume, symprec)
-        dict_trans = {}
-        for h in hnfs:
-            hfpg = HFPG(self._pcell, h)
-            # 此处的平移操作不必每次重新计算，因为相同snf平移操作相同
-            # 可以用字典来标记查询。若没有这样的操作，那么就没有snf带来的效率提升。
-            # For hnf with same snf, translations are same.
-            quotient = hfpg.get_quotient()
-            if not quotient in dict_trans:
-                dict_trans[quotient] = hfpg.get_pure_translations(symprec)
-            trans = dict_trans[quotient]
-
-            supercell = self._pcell.extend(h)
-
-            # 产生所有可能操作的置换操作
-            # perm = hfpg.get_symmetry()
-            rots = hfpg.get_pure_rotations(symprec)
-            perms = self._get_perms_from_rots_and_trans(rots, trans)
-
-            # TODO: 加入一个机制，来清晰的设定位点上无序的状态
-            arg_sites_pcell = [len(i) for i in sites]
-            arg_sites = numpy.repeat(arg_sites_pcell, volume)
-
-            # redundant configurations do not want see again
-            # 用于记录在操作作用后已经存在的构型排列，而无序每次都再次对每个结构作用所有操作
-            redundant = set()
-
-            # deg_total = 0
-            # loop over configurations
-            for atoms_mark in atoms_gen(arg_sites):
-                arr_atoms_mark = numpy.array(atoms_mark)
-                ahash = hash_atoms(atoms_mark)
-                if (ahash in redundant):
-                    continue
-                else:
-                    list_all_transmuted = []
-                    for p in perms:
-                        atoms_transmuted = arr_atoms_mark[p]
-                        redundant.add(hash_atoms(atoms_transmuted))
-                        # degeneracy
-                        list_all_transmuted.append(atoms_transmuted)
-
-                    arr_all_transmuted = numpy.array(list_all_transmuted)
-                    deg = numpy.unique(arr_all_transmuted, axis=0).shape[0]
-
-                    atoms = self._mark_to_atoms(arr_atoms_mark, sites)
-                    # print("{:}".format(h.flatten()) +
-                    #       '  ' + str(atoms) + '  ' + str(deg))
-                    c = Cell(supercell.lattice, supercell.positions, atoms)
-                    yield (c, deg)
-
-            #     deg_total += deg
-            # print(deg_total)
-
-    def cons_specific_cell(self, sites, symprec=1e-5):
-        """
-        """
-        lat_cell = self._cell.lattice
-        lat_pcell = self._pcell.lattice
-        # import pdb; pdb.set_trace()
-        # TODO: use is_int_np_array
-        mat = numpy.matmul(lat_cell, numpy.linalg.inv(lat_pcell))
-        mat = mat.astype('intc')
-        hfpg = HFPG(self._pcell, mat)
-
-        # 产生所有可能操作的置换操作
-        # perm = hfpg.get_symmetry()
-        perms = hfpg.get_symmetry(symprec)
-
-        # # TODO: 加入一个机制，来清晰的设定位点上无序的状态
-        # arg_sites = [len(i) for i in sites]
-
-        for c, d in self._remove_redundant(sites, perms):
-            yield (c, d)
-
-    def _remove_redundant(self, sites, perms):
-        # TODO: 加入一个机制，来清晰的设定位点上无序的状态
-        arg_sites = [len(i) for i in sites]
-        # redundant configurations do not want see again
-        # 用于记录在操作作用后已经存在的构型排列，而无序每次都再次对每个结构作用所有操作
-        redundant = set()
-
-        # deg_total = 0
-        # loop over configurations
-        for atoms_mark in atoms_gen(arg_sites):
-            arr_atoms_mark = numpy.array(atoms_mark)
-            ahash = hash_atoms(atoms_mark)
-            if (ahash in redundant):
-                continue
-            else:
-                list_all_transmuted = []
-                for p in perms:
-                    atoms_transmuted = arr_atoms_mark[p]
-                    redundant.add(hash_atoms(atoms_transmuted))
-                    # degeneracy
-                    list_all_transmuted.append(atoms_transmuted)
-
-                arr_all_transmuted = numpy.array(list_all_transmuted)
-                deg = numpy.unique(arr_all_transmuted, axis=0).shape[0]
-
-                atoms = self._mark_to_atoms(arr_atoms_mark, sites)
-                # print("{:}".format(mat.flatten()) +
-                #       '  ' +str(atoms) + '  ' + str(deg))
-                # print(str(atoms) + '  ' + str(deg))
-
-                c = Cell(self._cell.lattice, self._cell.positions, atoms)
-                yield (c, deg)
-
-        #     deg_total += deg
-        # print(deg_total)
