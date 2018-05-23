@@ -93,6 +93,7 @@ def _is_hnf_dup(hnf_x, hnf_y, rot_list, prec=1e-5):
         m = numpy.matmul(
             numpy.matmul(hnf_x, numpy.linalg.inv(rot.T)),
             numpy.linalg.inv(hnf_y))
+        # TODO: stackoverflow add answer
         # is_int1 = numpy.all(numpy.isclose(m, m.astype(numpy.int), atol=1e-3))
         # is_int2 = numpy.allclose(numpy.mod(m, 1), numpy.zeros_like(m), atol=prec)
         # is_array_int = numpy.all(numpy.isclose(m, numpy.around(m), atol=prec))
