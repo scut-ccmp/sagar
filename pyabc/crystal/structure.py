@@ -122,7 +122,7 @@ class Cell(object):
         # n = mat.diagonal().prod()
         n = numpy.linalg.det(mat)
         # TODO: 有问题
-        atoms = numpy.repeat(self._atoms, n)
+        atoms = numpy.tile(self._atoms, int(n))
 
         return self.__class__(lattice, positions, atoms)
 
@@ -220,21 +220,3 @@ class Cell(object):
         spg_cell = (self.lattice, self.positions, self.atoms)
         lattice, positions, atoms = spglib.refine_cell(spg_cell, symprec)
         return self.__class__(lattice, positions, atoms)
-
-def _get_mat_frac(mat):
-    """
-    When giving mat -- a 3x3 matrix,
-    export a numpy.array represent the
-    grid points between 0~1.
-
-    Used in producing the new positions extended by a matrix
-    """
-    prec = 1e-5
-    m = numpy.amax(mat)
-    _int_coor = numpy.array([i for i in product(range(m * 3), repeat=3)])
-    _all_frac = numpy.matmul(_int_coor, numpy.linalg.inv(mat))
-
-    is_incell = numpy.all(
-        ((_all_frac > -prec) & (_all_frac < 1 - prec)), axis=1)
-
-    return _all_frac[numpy.where(is_incell)[0]]

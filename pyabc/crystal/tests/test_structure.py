@@ -68,8 +68,8 @@ class TestCell(unittest.TestCase):
         op_ext = numpy.array([-1, 1, 1,
                               1, -1, 1,
                               1, 1, -1]).reshape((3, 3))
-        import pdb; pdb.set_trace()
         ext_fcc = fcc_pcell.extend(op_ext)
+        print(ext_fcc)
 
         wanted_latt = numpy.array([10, 0, 0,
                                    0, 10, 0,
@@ -82,7 +82,7 @@ class TestCell(unittest.TestCase):
                                   (0, 0, 0.5),
                                   (0, 0.5, 0),
                                   (0.5, 0, 0)])
-        wanted_atoms = numpy.array([1,1,1,1,2,2,2,2])
+        wanted_atoms = numpy.array([1,2,1,2,1,2,1,2])
         numpy.testing.assert_almost_equal(ext_fcc.lattice, wanted_latt)
         numpy.testing.assert_almost_equal(ext_fcc.positions, wanted_pos)
         numpy.testing.assert_almost_equal(ext_fcc.atoms, wanted_atoms)
