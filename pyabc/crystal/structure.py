@@ -43,7 +43,10 @@ class Cell(object):
         self._lattice = numpy.array(lattice).reshape((3, 3))
 
         self._atom_numbers = len(atoms)
+        # import pdb; pdb.set_trace()
         self._positions = numpy.array(positions).reshape((-1, 3))
+        moded = numpy.ones_like(self._positions, dtype='intc')
+        self._positions = numpy.mod(self._positions, moded)
         if self._positions.shape[0] != self._atom_numbers:
             raise ValueError("When init Cell, number of atoms not equal to "
                              "number of positions.\n"
@@ -108,8 +111,8 @@ class Cell(object):
         """
         # TODO: now extend is proved right only for hnf matrixself.
         #       1. 我们是否需要把旋转合并进来？
-        #       2. 针对非对角矩阵，是一样适用？
-        # TODO: 不必是hnf矩阵
+        #       2. 针对非对角矩阵，是一样适用？ (DONE)
+        # TODO: 不必是hnf矩阵 (DONE)
         # TODO: mat必须是一个整数矩阵，做一个判断，给出异常
         lattice = numpy.matmul(mat, self._lattice)
 
@@ -119,10 +122,8 @@ class Cell(object):
             lambda x: x + grids, list(smallest_cell))]
         positions = numpy.concatenate(list_positions, axis=0)
 
-        # n = mat.diagonal().prod()
         n = numpy.linalg.det(mat)
-        # TODO: 有问题
-        atoms = numpy.tile(self._atoms, int(n))
+        atoms = numpy.repeat(self._atoms, int(n))
 
         return self.__class__(lattice, positions, atoms)
 
