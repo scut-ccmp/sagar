@@ -310,12 +310,21 @@ class HartForcadePermutationGroup(object):
             raise TypeError(
                 "want pyabc.crystal.structure.Cell, got {:}".format(type(cell)))
         self._pcell = pcell
-        self._snf, L, R = snf(mat)
         self._mat = mat
-        # self._hnf = numpy.matmul(L, hnf).astype('intc')
+        self._snf, L, R = snf(mat)
+        self._hnf = numpy.matmul(self._snf, R).astype('intc')
+        # import pdb; pdb.set_trace()
         self._quotient = numpy.diagonal(self._snf).tolist()
         self._volume = numpy.diagonal(self._snf).prod()
         self._nsites = len(pcell.atoms)  # 最小原胞中原子个数 如：hcp为2
+
+    # @property
+    # def hnf(self):
+    #     return self._hnf
+    #
+    # @property
+    # def snf(self):
+    #     return self._snf
 
     def get_quotient(self):
         """
@@ -342,7 +351,7 @@ class HartForcadePermutationGroup(object):
                      list(range(self._quotient[2]))]
         size = self._volume
         result = numpy.zeros(
-            (size, self._nsites * self._volume), dtype='int')
+            (size, self._nsites * self._volume), dtype='intc')
         iterable = product(*itertrans)
 
         # remove (0,0,0) 因为它对应的是单位操作，保持原来的构型
@@ -367,25 +376,32 @@ class HartForcadePermutationGroup(object):
         return kq
 
     def get_pure_rotations(self, symprec=1e-5):
-        supercell = self._pcell.extend(self._mat)
-        list_rots = supercell.get_rotations(symprec)[:]  # 第一个是单位矩阵
+        # Q??: use whose rotations?????
+        supercell = self._pcell.extend(self._hnf)
+        # import pdb; pdb.set_trace()
+        # 用超胞的旋转对称才是合理的
+        arr_rots = supercell.get_rotations(symprec)[:]  # 第一个是单位矩阵
+        # arr_rots = self._pcell.get_rotations(symprec)[:]  # 第一个是单位矩阵
+        arr_rots = numpy.unique(arr_rots, axis=0)
         result = numpy.zeros(
-            (len(list_rots), self._nsites * self._volume), dtype='int')
+            (len(arr_rots), self._nsites * self._volume), dtype='intc')
 
         #   每一个格点上都有一个原子，可以用整数直接表示，该整数坐标和分数坐标一一对应？？？
         iterpos = [list(range(self._quotient[0])),
                    list(range(self._quotient[1])),
                    list(range(self._quotient[2]))]
-        for i, rot in enumerate(list_rots):
-            for s, (p0, p1, p2) in enumerate(product(*iterpos)):
-                newpos = numpy.matmul(rot, [p0, p1, p2])
-                l = newpos[0] % self._quotient[0]
-                m = newpos[1] % self._quotient[1]
-                n = newpos[2] % self._quotient[2]
-                for s in range(self._nsites):
+        # import pdb; pdb.set_trace()
+        for s in range(self._nsites):
+            for i, rot in enumerate(arr_rots):
+                for (p0, p1, p2) in product(*iterpos):
+                    newpos = numpy.matmul(rot, [p0, p1, p2])
+                    l = newpos[0] % self._quotient[0]
+                    m = newpos[1] % self._quotient[1]
+                    n = newpos[2] % self._quotient[2]
                     result[i, self._flatten_indices(
                         p0, p1, p2, s)] = self._flatten_indices(l, m, n, s)
 
+        # import pdb; pdb.set_trace()
         result = numpy.unique(result, axis=0)
         return result
 
@@ -404,6 +420,9 @@ class HartForcadePermutationGroup(object):
                 result[idx] = perm
                 idx += 1
 
+        # print("perm_rots:", perm_rots)
+        # print("perm_trans:", perm_trans)
+        # print("perm_perm:", result)
         return result
 
     def get_supercell(self):

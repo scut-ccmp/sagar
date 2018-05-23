@@ -26,7 +26,6 @@ class TestDerive(unittest.TestCase):
         self.assertEqual(got, wanted)
 
     def test_cons_nondup_specific_volume(self):
-        # confs_nondup_specific_volume(fcc_pcell, [[1, 5]], 5)
         wanted = [2, 6, 12, 41]
         got = []
         cg = CG(self.fcc_pcell)
@@ -35,6 +34,20 @@ class TestDerive(unittest.TestCase):
             got.append(len([i for i in con]))
 
         self.assertEqual(got, wanted)
+        # fcc_latt = [0, 5, 5,
+        #             5, 0, 5,
+        #             5, 5, 0]
+        # fcc_pos = [(0, 0, 0)]
+        # fcc_atoms = [1]
+        # fcc_pcell = Cell(fcc_latt, fcc_pos, fcc_atoms)
+        # wanted = [41]
+        # got = []
+        # cg = CG(fcc_pcell)
+        # for v in [4]:
+        #     con = cg.cons_specific_volume([[1, 5]], v)
+        #     got.append(len([i for i in con]))
+        #
+        # self.assertEqual(got, wanted)
 
     # def test_degeneracy_of_confs_nondup_specific_volume(self):
     #     wanted = [1, 2, 4, 16, 32]
