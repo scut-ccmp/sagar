@@ -1,6 +1,6 @@
 import numpy
 
-from pyabc.crystal.utils import non_dup_hnfs, atoms_gen, hash_atoms
+from pyabc.crystal.utils import non_dup_hnfs, atoms_gen, hash_atoms, is_int_np_array
 from pyabc.crystal.utils import HartForcadePermutationGroup as HFPG
 
 from pyabc.crystal.structure import Cell
@@ -82,7 +82,6 @@ class ConfigurationGenerator(object):
                     yield c
 
     # 特定体积胞
-
     def cons_specific_volume(self, sites, volume=2, symprec=1e-5):
         """
         parameters:
@@ -121,10 +120,14 @@ class ConfigurationGenerator(object):
         """
         lat_cell = self._cell.lattice
         lat_pcell = self._pcell.lattice
-        # import pdb; pdb.set_trace()
-        # TODO: use is_int_np_array
         mat = numpy.matmul(lat_cell, numpy.linalg.inv(lat_pcell))
-        mat = mat.astype('intc')
+        if is_int_np_array(mat):
+            mat = mat.astype('intc')
+        else:
+            print("cell:\n", lat_cell)
+            print("primitive cell:\n", lat_pcell)
+            raise ValueError(
+                "cell lattice and its primitive cell lattice not convertable")
         hfpg = HFPG(self._pcell, mat)
 
         rots = hfpg.get_pure_rotations(symprec)
@@ -142,7 +145,7 @@ class ConfigurationGenerator(object):
         # 用于记录在操作作用后已经存在的构型排列，而无序每次都再次对每个结构作用所有操作
         redundant = set()
 
-        deg_total = 0
+        # deg_total = 0
         # loop over configurations
         for atoms_mark in atoms_gen(arg_sites):
             arr_atoms_mark = numpy.array(atoms_mark)
@@ -167,13 +170,13 @@ class ConfigurationGenerator(object):
                 deg = numpy.unique(arr_all_transmuted, axis=0).shape[0]
 
                 atoms = self._mark_to_atoms(arr_atoms_mark, sites)
-                print(str(atoms) + '  ' + str(deg))
+                # print(str(atoms) + '  ' + str(deg))
 
                 c = Cell(cell.lattice, cell.positions, atoms)
                 yield (c, deg)
 
-            deg_total += deg
-        print(deg_total)
+        #     deg_total += deg
+        # print(deg_total)
 
     def _get_perms_from_rots_and_trans(self, rots, trans):
         nrot = rots.shape[0]
