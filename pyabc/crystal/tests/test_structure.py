@@ -86,6 +86,19 @@ class TestCell(unittest.TestCase):
         numpy.testing.assert_almost_equal(ext_fcc.positions, wanted_pos)
         numpy.testing.assert_almost_equal(ext_fcc.atoms, wanted_atoms)
 
+    def test_extend_bug(self):
+        sc_latt = [4, 0, 0,
+                   0, 4, 0,
+                   0, 0, 4]
+        sc_pos = [(0, 0, 0)]
+        sc_atoms = [1]
+        sc_pcell = Cell(sc_latt, sc_pos, sc_atoms)
+        op_ext = numpy.array([1, 0, 0,
+                              0, 1, 0,
+                              0, 0, 5]).reshape((3, 3))
+        ext_sc = sc_pcell.extend(op_ext)    # raise ValueError
+        pass
+
     def test_rotate(self):
         pass
 

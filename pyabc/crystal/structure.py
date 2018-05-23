@@ -123,7 +123,7 @@ class Cell(object):
         positions = numpy.concatenate(list_positions, axis=0)
 
         n = numpy.linalg.det(mat)
-        atoms = numpy.repeat(self._atoms, int(n))
+        atoms = numpy.repeat(self._atoms, int(round(n)))
 
         return self.__class__(lattice, positions, atoms)
 
