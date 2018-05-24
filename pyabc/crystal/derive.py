@@ -116,13 +116,17 @@ class ConfigurationGenerator(object):
             for c, d in self._remove_redundant(supercell, sites, rots, trans, volume):
                 yield (c, d)
 
-    def cons_specific_cell(self, sites, symprec=1e-5):
+    def cons_specific_cell(self, sites, e_num=None, symprec=1e-5):
         """
         cons_specific_cell_and_c generate configurations of specific cell
         and specific concentration.
 
         parameters:
         sites: list of (lists or tuples), represent element disorder of each sites
+        e_num: tuple, number of atoms in disorderd sites.
+
+        e_num 特指无序位点的浓度，也就是原子比，而不是整体构型的元素原子比。有可能其他位点存在相同构型。
+        !!限制，无序位点的组成必须是相同的，而上面几个函数的无序位点是可以不同的。!!
         """
         lat_cell = self._cell.lattice
         lat_pcell = self._pcell.lattice
@@ -139,10 +143,10 @@ class ConfigurationGenerator(object):
         rots = hfpg.get_pure_rotations(symprec)
         trans = hfpg.get_pure_translations(symprec)
 
-        for c, d in self._remove_redundant(self._cell, sites, rots, trans):
+        for c, d in self._remove_redundant(self._cell, sites, rots, trans, e_num=e_num):
             yield (c, d)
 
-    def _remove_redundant(self, cell, sites, rots, trans, volume=1, remove_super=False):
+    def _remove_redundant(self, cell, sites, rots, trans, volume=1, e_num=None, remove_super=False):
         perms = self._get_perms_from_rots_and_trans(rots, trans)
         # TODO: 加入一个机制，来清晰的设定位点上无序的状态
         arg_sites = [len(i) for i in sites]
@@ -153,7 +157,7 @@ class ConfigurationGenerator(object):
 
         # deg_total = 0
         # loop over configurations
-        for atoms_mark in _atoms_gen(arg_sites):
+        for atoms_mark in _atoms_gen(arg_sites, e_num):
             arr_atoms_mark = numpy.array(atoms_mark)
             ahash = _hash_atoms(atoms_mark)
 
@@ -214,77 +218,6 @@ class ConfigurationGenerator(object):
                 atoms[i][j] = sites[i][v]
 
         return atoms.flatten().tolist()
-
-    def cons_specific_cell_and_c(self, sites, e_num, symprec=1e-5):
-        """
-        cons_specific_cell_and_c generate configurations of specific cell
-        and specific concentration.
-
-        parameters:
-        sites: list of (lists or tuples), represent element disorder of each sites
-        c_num: tuple, number of atoms in disorderd sites.
-
-        c_num 特指无序位点的浓度，也就是原子比，而不是整体构型的元素原子比。有可能其他位点存在相同构型。
-        !!限制，无序位点的组成必须是相同的，而上面几个函数的无序位点是可以不同的。!!
-        """
-        lat_cell = self._cell.lattice
-        lat_pcell = self._pcell.lattice
-        mat = numpy.matmul(lat_cell, numpy.linalg.inv(lat_pcell))
-        if is_int_np_array(mat):
-            mat = mat.astype('intc')
-        else:
-            print("cell:\n", lat_cell)
-            print("primitive cell:\n", lat_pcell)
-            raise ValueError(
-                "cell lattice and its primitive cell lattice not convertable")
-        hfpg = HFPG(self._pcell, mat)
-
-        rots = hfpg.get_pure_rotations(symprec)
-        trans = hfpg.get_pure_translations(symprec)
-
-        perms = self._get_perms_from_rots_and_trans(rots, trans)
-        # TODO: 加入一个机制，来清晰的设定位点上无序的状态
-        arg_sites = [len(i) for i in sites]
-        arg_sites = numpy.repeat(arg_sites, 1)
-        # redundant configurations do not want see again
-        # 用于记录在操作作用后已经存在的构型排列，而无序每次都再次对每个结构作用所有操作
-        redundant = set()
-
-        # deg_total = 0
-        # loop over configurations
-        for atoms_mark in _atoms_gen(arg_sites, e_num):
-            arr_atoms_mark = numpy.array(atoms_mark)
-            ahash = _hash_atoms(atoms_mark)
-            # print('    ', ahash)
-
-            remove_super = False
-            if remove_super:
-                flag = (ahash in redundant) or self._is_super(
-                    arr_atoms_mark, trans)
-            else:
-                flag = ahash in redundant
-            if flag:
-                continue
-            else:
-                list_all_transmuted = []
-                for p in perms:
-                    atoms_transmuted = arr_atoms_mark[p]
-                    redundant.add(_hash_atoms(atoms_transmuted))
-                    # degeneracy
-                    list_all_transmuted.append(atoms_transmuted)
-
-                arr_all_transmuted = numpy.array(list_all_transmuted)
-                deg = numpy.unique(arr_all_transmuted, axis=0).shape[0]
-
-                atoms = self._mark_to_atoms(arr_atoms_mark, sites)
-                # print(str(atoms) + '  ' + str(deg))
-
-                cell = self._cell
-                c = Cell(cell.lattice, cell.positions, atoms)
-                yield (c, deg)
-
-        #     deg_total += deg
-        # print(deg_total)
 
 
 def _atoms_gen(args, e_num=None):

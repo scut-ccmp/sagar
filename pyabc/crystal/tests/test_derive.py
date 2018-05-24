@@ -78,8 +78,8 @@ class TestDerive(unittest.TestCase):
         fcc_atoms = [0, 0, 0, 0]
         con_cell = Cell(fcc_latt, fcc_pos, fcc_atoms)
         cg = CG(con_cell)
-        con = cg.cons_specific_cell_and_c(
-            [(2, 3, 4), (2, 3, 4), (2, 3, 4), (2, 3, 4)], (2, 1, 1))
+        con = cg.cons_specific_cell(
+            [(2, 3, 4), (2, 3, 4), (2, 3, 4), (2, 3, 4)], e_num=(2, 1, 1))
 
         # number of all configurations
         wanted = 1
@@ -102,8 +102,8 @@ class TestDerive(unittest.TestCase):
         fcc_atoms = [0, 0, 0, 0, 1, 1, 1, 1]
         con_cell = Cell(fcc_latt, fcc_pos, fcc_atoms)
         cg = CG(con_cell)
-        con = cg.cons_specific_cell_and_c(
-            [(2, 3, 4), (2, 3, 4), (2, 3, 4), (2, 3, 4), (1, ), (1, ), (1, ), (1,)], (2, 1, 1))
+        con = cg.cons_specific_cell(
+            [(2, 3, 4), (2, 3, 4), (2, 3, 4), (2, 3, 4), (1, ), (1, ), (1, ), (1,)], e_num=(2, 1, 1))
 
         # number of all configurations
         wanted = 1
