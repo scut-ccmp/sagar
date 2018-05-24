@@ -466,7 +466,11 @@ def extended_gcd(aa, bb):
 
 def atoms_gen(args):
     """
+    parameter:
+    args: list, represent number of atoms of each site.
+    
     给定每个位点原子无序的数目，产生所有可能的原子排列，共k^n种。
+    TODO: 在这里加入浓度比？
     """
     p = []
     for i in args:

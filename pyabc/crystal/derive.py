@@ -208,3 +208,6 @@ class ConfigurationGenerator(object):
                 atoms[i][j] = sites[i][v]
 
         return atoms.flatten().tolist()
+
+    def cons_specific_cell_and_c(self):
+        pass
