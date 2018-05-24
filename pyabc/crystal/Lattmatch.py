@@ -9,12 +9,13 @@ from itertools import combinations
 
 
 
+
 def match(pcell_A, pcell_B, n_max):
     err_l = 0.01
     err_s = 0.01
     err_theta = 0.01
-    s_A =  abs(det(np.array(pcell_A._lattice)))
-    s_B =  abs(det(np.array(pcell_B._lattice)))
+    s_A =  abs(det(np.array(pcell_A._lattice[0:2, 0:2])))
+    s_B =  abs(det(np.array(pcell_B._lattice[0:2, 0:2])))
     nms = []
 
     for n in range(1, n_max+1):
@@ -57,7 +58,7 @@ def match(pcell_A, pcell_B, n_max):
     print(A_b)
     print(B_a)
 
-
+########扩胞和怎么错位
 
 
 
