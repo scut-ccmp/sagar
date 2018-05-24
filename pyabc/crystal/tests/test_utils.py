@@ -502,15 +502,15 @@ class TestSnfHnf(unittest.TestCase):
         self.assertEqual(a, wanted_a)
 
         # non-duplicated snfs: b slow test 100+s
-        b = []
-        for i in range(1, 17):
-            s_set = set()
-            for h in non_dup_hnfs(self.fcc_pcell, volume=i):
-                snf_D, _, _ = snf(h)
-                s_flat_tuple = tuple(numpy.diagonal(snf_D).tolist())
-                s_set.add(s_flat_tuple)
-            b.append(len(s_set))
-        self.assertEqual(b, wanted_b)
+        # b = []
+        # for i in range(1, 17):
+        #     s_set = set()
+        #     for h in non_dup_hnfs(self.fcc_pcell, volume=i):
+        #         snf_D, _, _ = snf(h)
+        #         s_flat_tuple = tuple(numpy.diagonal(snf_D).tolist())
+        #         s_set.add(s_flat_tuple)
+        #     b.append(len(s_set))
+        # self.assertEqual(b, wanted_b)
 
         # duplicated snfs: b quick test
         b = []

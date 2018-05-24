@@ -11,10 +11,8 @@ setup(
     license='MIT',
     packages=find_packages(),
     include_package_data=True,
-    package_data={"ababe.stru": ["*.json"]},
-    install_requires=["nose2", "numpy==1.13", "aenum", "hat-trie",
-                      "spglib==1.9.9.18", "ruamel.yaml",
-                      "scipy==0.18.1", "progressbar2", "xxhash",
+    package_data={},
+    install_requires=["nose2", "numpy==1.14", "spglib==1.9.9.18",
                       "click", "ase==3.16"],
     classifiers=[
         "Programming Language :: Python :: 3.6",
@@ -25,8 +23,6 @@ setup(
     scripts=[],
     entry_points={
         'console_scripts': [
-            'runaba=ababe.cmdline.runabalib:run',
-            'runati=ababe.cmdline.runatilib:run'
         ]
     }
 )
