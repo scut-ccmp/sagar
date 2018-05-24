@@ -252,6 +252,14 @@ def _hash_atoms(atoms):
 
 
 def _serial_int_to_arrangement(e_num):
+    """
+    Algorithm From:
+    Hart, G. L. W., Nelson, L. J., & Forcade, R. W. (2012).
+    Generating derivative structures at a fixed concentration, 59, 101–107.
+
+    Corrections:
+    Some error in paper: fig. 5 --- loop over site: should be t = t - 1
+    """
     slots_total = _slots_total = sum(e_num)
     comb = []
     max = 1
