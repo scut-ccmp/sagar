@@ -2,6 +2,7 @@ import unittest
 
 from pyabc.crystal.structure import Cell
 from pyabc.crystal.derive import ConfigurationGenerator as CG
+from pyabc.crystal.derive import _atoms_gen
 
 
 class TestDerive(unittest.TestCase):
@@ -63,6 +64,41 @@ class TestDerive(unittest.TestCase):
         got = len([i for i in con])
 
         self.assertEqual(got, wanted)
+
+    def test_cons_specific_cell_and_c(self):
+        fcc_latt = [5, 0, 0,
+                    0, 5, 0,
+                    0, 0, 5]
+        fcc_pos = [(0, 0, 0),
+                   (0, 0.5, 0.5),
+                   (0.5, 0, 0.5),
+                   (0.5, 0.5, 0)]
+        fcc_atoms = [0, 0, 0, 0]
+        con_cell = Cell(fcc_latt, fcc_pos, fcc_atoms)
+        cg = CG(con_cell)
+        con = cg.cons_specific_cell_and_c(
+            [(2, 3, 4), (2, 3, 4), (2, 3, 4), (2, 3, 4)], {2: 2, 3: 1, 4: 1})
+
+        # number of all configurations
+        wanted = 15
+        got = len([i for i in con])
+
+        self.assertEqual(got, wanted)
+
+class TestUtilsFunc(unittest.TestCase):
+
+    def test_atoms_gen(self):
+        input = [2, 2, 2]
+        wanted = [(0, 0, 0),
+                  (0, 0, 1),
+                  (0, 1, 0),
+                  (0, 1, 1),
+                  (1, 0, 0),
+                  (1, 0, 1),
+                  (1, 1, 0),
+                  (1, 1, 1)]
+        for i, got in enumerate(_atoms_gen(input)):
+            self.assertEqual(got, wanted[i])
 
 
 if __name__ == "__main__":

@@ -462,24 +462,3 @@ def extended_gcd(aa, bb):
         x, lastx = lastx - quotient * x, x
         y, lasty = lasty - quotient * y, y
     return lastremainder, lastx * (-1 if aa < 0 else 1), lasty * (-1 if bb < 0 else 1)
-
-
-def atoms_gen(args):
-    """
-    parameter:
-    args: list, represent number of atoms of each site.
-    
-    给定每个位点原子无序的数目，产生所有可能的原子排列，共k^n种。
-    TODO: 在这里加入浓度比？
-    """
-    p = []
-    for i in args:
-        p.append(range(i))
-    return product(*p)
-
-
-def hash_atoms(atoms):
-    """
-    给出一个atoms排列，返回一个string代表该排列。可用于hash表。
-    """
-    return ''.join(str(i) for i in atoms)

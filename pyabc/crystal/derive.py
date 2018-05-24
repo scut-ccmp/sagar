@@ -1,9 +1,11 @@
 import numpy
+from itertools import product
 
-from pyabc.crystal.utils import non_dup_hnfs, atoms_gen, hash_atoms, is_int_np_array
+from pyabc.crystal.utils import non_dup_hnfs, is_int_np_array
 from pyabc.crystal.utils import HartForcadePermutationGroup as HFPG
 
 from pyabc.crystal.structure import Cell
+
 
 
 def cells_nonredundant(pcell, volume=1, symprec=1e-5, comprec=1e-5):
@@ -117,6 +119,11 @@ class ConfigurationGenerator(object):
 
     def cons_specific_cell(self, sites, symprec=1e-5):
         """
+        cons_specific_cell_and_c generate configurations of specific cell
+        and specific concentration.
+
+        parameters:
+        sites: list of (lists or tuples), represent element disorder of each sites
         """
         lat_cell = self._cell.lattice
         lat_pcell = self._pcell.lattice
@@ -147,9 +154,9 @@ class ConfigurationGenerator(object):
 
         # deg_total = 0
         # loop over configurations
-        for atoms_mark in atoms_gen(arg_sites):
+        for atoms_mark in _atoms_gen(arg_sites):
             arr_atoms_mark = numpy.array(atoms_mark)
-            ahash = hash_atoms(atoms_mark)
+            ahash = _hash_atoms(atoms_mark)
 
             if remove_super:
                 flag = (ahash in redundant) or self._is_super(
@@ -162,7 +169,7 @@ class ConfigurationGenerator(object):
                 list_all_transmuted = []
                 for p in perms:
                     atoms_transmuted = arr_atoms_mark[p]
-                    redundant.add(hash_atoms(atoms_transmuted))
+                    redundant.add(_hash_atoms(atoms_transmuted))
                     # degeneracy
                     list_all_transmuted.append(atoms_transmuted)
 
@@ -209,5 +216,93 @@ class ConfigurationGenerator(object):
 
         return atoms.flatten().tolist()
 
-    def cons_specific_cell_and_c(self):
-        pass
+    def cons_specific_cell_and_c(self, sites, c, symprec=1e-5):
+        """
+        cons_specific_cell_and_c generate configurations of specific cell
+        and specific concentration.
+
+        parameters:
+        sites: list of (lists or tuples), represent element disorder of each sites
+        c: dict, key is atomic number value is number of the atom. represent the
+            concentration of elements in configurations
+        """
+        lat_cell = self._cell.lattice
+        lat_pcell = self._pcell.lattice
+        mat = numpy.matmul(lat_cell, numpy.linalg.inv(lat_pcell))
+        if is_int_np_array(mat):
+            mat = mat.astype('intc')
+        else:
+            print("cell:\n", lat_cell)
+            print("primitive cell:\n", lat_pcell)
+            raise ValueError(
+                "cell lattice and its primitive cell lattice not convertable")
+        hfpg = HFPG(self._pcell, mat)
+
+        rots = hfpg.get_pure_rotations(symprec)
+        trans = hfpg.get_pure_translations(symprec)
+
+        perms = self._get_perms_from_rots_and_trans(rots, trans)
+        # TODO: 加入一个机制，来清晰的设定位点上无序的状态
+        arg_sites = [len(i) for i in sites]
+        arg_sites = numpy.repeat(arg_sites, 1)
+        # redundant configurations do not want see again
+        # 用于记录在操作作用后已经存在的构型排列，而无序每次都再次对每个结构作用所有操作
+        redundant = set()
+
+        # deg_total = 0
+        # loop over configurations
+        for atoms_mark in _atoms_gen(arg_sites):
+            arr_atoms_mark = numpy.array(atoms_mark)
+            ahash = _hash_atoms(atoms_mark)
+            # print('    ', ahash)
+
+            remove_super = False
+            if remove_super:
+                flag = (ahash in redundant) or self._is_super(
+                    arr_atoms_mark, trans)
+            else:
+                flag = ahash in redundant
+            if flag:
+                continue
+            else:
+                list_all_transmuted = []
+                for p in perms:
+                    atoms_transmuted = arr_atoms_mark[p]
+                    redundant.add(_hash_atoms(atoms_transmuted))
+                    # degeneracy
+                    list_all_transmuted.append(atoms_transmuted)
+
+                arr_all_transmuted = numpy.array(list_all_transmuted)
+                deg = numpy.unique(arr_all_transmuted, axis=0).shape[0]
+
+                atoms = self._mark_to_atoms(arr_atoms_mark, sites)
+                print(str(atoms) + '  ' + str(deg))
+
+                cell = self._cell
+                c = Cell(cell.lattice, cell.positions, atoms)
+                yield (c, deg)
+
+        #     deg_total += deg
+        # print(deg_total)
+
+def _atoms_gen(args):
+    """
+    parameter:
+    args: list, represent number of atoms of each site.
+    c: None or dict, concentration of element in disorderd sites,
+            default=None, for all concentrasions
+
+    给定每个位点原子无序的数目，产生所有可能的原子排列，共k^n种。
+    TODO: 在这里加入浓度比？
+    """
+    p = []
+    for i in args:
+        p.append(range(i))
+    return product(*p)
+
+
+def _hash_atoms(atoms):
+    """
+    给出一个atoms排列，返回一个string代表该排列。可用于hash表。
+    """
+    return ''.join(str(i) for i in atoms)

@@ -4,7 +4,7 @@ import copy
 
 from pyabc.crystal.structure import Cell
 from pyabc.crystal.utils import non_dup_hnfs, _is_hnf_dup, _hnfs
-from pyabc.crystal.utils import IntMat3x3, extended_gcd, snf, atoms_gen
+from pyabc.crystal.utils import IntMat3x3, extended_gcd, snf
 from pyabc.crystal.utils import HartForcadePermutationGroup as HFPG
 
 
@@ -666,19 +666,6 @@ class TestCommonUtils(unittest.TestCase):
 
     def test_is_int_np_array(self):
         pass
-
-    def test_atoms_gen(self):
-        input = [2, 2, 2]
-        wanted = [(0, 0, 0),
-                  (0, 0, 1),
-                  (0, 1, 0),
-                  (0, 1, 1),
-                  (1, 0, 0),
-                  (1, 0, 1),
-                  (1, 1, 0),
-                  (1, 1, 1)]
-        for i, got in enumerate(atoms_gen(input)):
-            self.assertEqual(got, wanted[i])
 
 
 if __name__ == "__main__":
