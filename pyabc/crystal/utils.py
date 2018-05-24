@@ -4,7 +4,7 @@ import copy
 from math import sqrt
 from itertools import product
 
-from pyabc.crystal.structure import Cell, is_primitive_cell
+from pyabc.crystal.structure import Cell
 
 
 def _factor(n):
@@ -69,7 +69,7 @@ def non_dup_hnfs(pcell, volume=1, symprec=1e-5, comprec=1e-5, dimension=3):
         raise TypeError("Can't make hnf cells of {:} "
                         "please provide pyabc.crystal.structure.Cell object.".format(type(pcell)))
 
-    if not is_primitive_cell(pcell):
+    if not pcell.is_primitive(symprec):
         raise ValueError("cell object you provide is not a primitive cell "
                          "Therefore meaningless to get non duplicated hnf cells "
                          "You can use pcell.get_primitive() first.")
@@ -117,6 +117,7 @@ def _is_hnf_dup(hnf_x, hnf_y, rot_list, prec=1e-5):
         m = numpy.matmul(
             numpy.matmul(hnf_x, numpy.linalg.inv(rot.T)),
             numpy.linalg.inv(hnf_y))
+        # TODO: stackoverflow add answer
         # is_int1 = numpy.all(numpy.isclose(m, m.astype(numpy.int), atol=1e-3))
         # is_int2 = numpy.allclose(numpy.mod(m, 1), numpy.zeros_like(m), atol=prec)
         # is_array_int = numpy.all(numpy.isclose(m, numpy.around(m), atol=prec))
@@ -216,12 +217,23 @@ class IntMat3x3(object):
             self._zero_second_column()
             self._zero_second_row()
 
-            self._positive_mat_2_2()
+            # self._positive_mat_2_2()
+            self._positive_diag()
 
         if not self._is_incremental_diag():
             self._sort_diag()
 
+        if numpy.linalg.det(self._opL) < 0:
+            self._opL = self._hand_flip(self._opL)
+            self._opR = self._hand_flip(self._opR)
+
         return self._mat, self._opL, self._opR
+
+    def _hand_flip(self, mat):
+        neg = numpy.array([-1, 0, 0,
+                           0, -1, 0,
+                           0, 0, -1]).reshape((3, 3))
+        return numpy.matmul(mat, neg)
 
     def _set_zero(self, i, j, aa, bb, r, s, t):
         """
@@ -271,7 +283,7 @@ class IntMat3x3(object):
         self._opR = numpy.matmul(self._opR, op)
 
     def _zero_second_column(self):
-        if self._mat[2, 1] % self._mat[1, 1] == 0:
+        if self._mat[1, 1] == 0 or self._mat[2, 1] % self._mat[1, 1] == 0:
             self._second_exact_division()
         if self._mat[2, 1] < 0:
             self.flip_sign_row(2)
@@ -280,7 +292,10 @@ class IntMat3x3(object):
 
     def _second_exact_division(self):
         op = numpy.eye(3, dtype='int')
-        op[2, 1] = -self._mat[2, 1] // self._mat[1, 1]
+        if self._mat[1, 1] == 0:
+            op[2, 1] = 0
+        else:
+            op[2, 1] = -self._mat[2, 1] // self._mat[1, 1]
         self._mat = numpy.matmul(op, self._mat)
         self._opL = numpy.matmul(op, self._opL)
 
@@ -291,9 +306,10 @@ class IntMat3x3(object):
         self._mat = numpy.matmul(self._mat, op)
         self._opR = numpy.matmul(self._opR, op)
 
-    def _positive_mat_2_2(self):
-        if self._mat[2, 2] < 0:
-            self.flip_sign_row(2)
+    def _positive_diag(self):
+        for i in range(0, 3):
+            if self._mat[i, i] < 0:
+                self.flip_sign_row(i)
 
     def _sort_diag(self):
         mat_flat = numpy.diagonal(self._mat)
@@ -305,8 +321,6 @@ class IntMat3x3(object):
         self._mat = numpy.matmul(self._mat, op.T)
         self._opR = numpy.matmul(self._opR, op.T)
 
-# TODO: utils for Hart-Forcade algorithm
-
 
 class HartForcadePermutationGroup(object):
     """
@@ -315,16 +329,32 @@ class HartForcadePermutationGroup(object):
     所有的对称操作都是以置换矩阵的形式，作用在一个元素排列上。
     """
 
-    def __init__(self, pcell, hnf):
+    def __init__(self, pcell, mat):
         if not isinstance(pcell, Cell):
             raise TypeError(
                 "want pyabc.crystal.structure.Cell, got {:}".format(type(cell)))
-        self._cell = pcell
-        self._hnf = hnf
-        self._snf, _, _ = snf(hnf)
+        self._pcell = pcell
+        self._mat = mat
+        self._snf, L, R = snf(mat)
+        self._hnf = numpy.matmul(self._snf, R).astype('intc')
+        # import pdb; pdb.set_trace()
         self._quotient = numpy.diagonal(self._snf).tolist()
         self._volume = numpy.diagonal(self._snf).prod()
         self._nsites = len(pcell.atoms)  # 最小原胞中原子个数 如：hcp为2
+
+    # @property
+    # def hnf(self):
+    #     return self._hnf
+    #
+    # @property
+    # def snf(self):
+    #     return self._snf
+
+    def get_quotient(self):
+        """
+        return a tuple, for as dict key.
+        """
+        return tuple(self._quotient)
 
     def get_pure_translations(self, symprec=1e-5):
         """
@@ -345,7 +375,7 @@ class HartForcadePermutationGroup(object):
                      list(range(self._quotient[2]))]
         size = self._volume
         result = numpy.zeros(
-            (size, self._nsites * self._volume), dtype='int')
+            (size, self._nsites * self._volume), dtype='intc')
         iterable = product(*itertrans)
 
         # remove (0,0,0) 因为它对应的是单位操作，保持原来的构型
@@ -370,25 +400,32 @@ class HartForcadePermutationGroup(object):
         return kq
 
     def get_pure_rotations(self, symprec=1e-5):
-        supercell = self._cell.extend(self._hnf)
-        list_rots = supercell.get_rotations(symprec)[:]  # 第一个是单位矩阵
+        # Q??: use whose rotations?????
+        supercell = self._pcell.extend(self._hnf)
+        # import pdb; pdb.set_trace()
+        # 用超胞的旋转对称才是合理的
+        arr_rots = supercell.get_rotations(symprec)[:]  # 第一个是单位矩阵
+        # arr_rots = self._pcell.get_rotations(symprec)[:]  # 第一个是单位矩阵
+        arr_rots = numpy.unique(arr_rots, axis=0)
         result = numpy.zeros(
-            (len(list_rots), self._nsites * self._volume), dtype='int')
+            (len(arr_rots), self._nsites * self._volume), dtype='intc')
 
         #   每一个格点上都有一个原子，可以用整数直接表示，该整数坐标和分数坐标一一对应？？？
         iterpos = [list(range(self._quotient[0])),
                    list(range(self._quotient[1])),
                    list(range(self._quotient[2]))]
-        for i, rot in enumerate(list_rots):
-            for s, (p0, p1, p2) in enumerate(product(*iterpos)):
-                newpos = numpy.matmul(rot, [p0, p1, p2])
-                l = newpos[0] % self._quotient[0]
-                m = newpos[1] % self._quotient[1]
-                n = newpos[2] % self._quotient[2]
-                for s in range(self._nsites):
+        # import pdb; pdb.set_trace()
+        for s in range(self._nsites):
+            for i, rot in enumerate(arr_rots):
+                for (p0, p1, p2) in product(*iterpos):
+                    newpos = numpy.matmul(rot, [p0, p1, p2])
+                    l = newpos[0] % self._quotient[0]
+                    m = newpos[1] % self._quotient[1]
+                    n = newpos[2] % self._quotient[2]
                     result[i, self._flatten_indices(
                         p0, p1, p2, s)] = self._flatten_indices(l, m, n, s)
 
+        # import pdb; pdb.set_trace()
         result = numpy.unique(result, axis=0)
         return result
 
@@ -407,7 +444,13 @@ class HartForcadePermutationGroup(object):
                 result[idx] = perm
                 idx += 1
 
+        # print("perm_rots:", perm_rots)
+        # print("perm_trans:", perm_trans)
+        # print("perm_perm:", result)
         return result
+
+    def get_supercell(self):
+        return self._pcell.extend(self._mat)
 
     def get_pure_rotations_without_inversion(self, symprec=1e-5):
         pass
@@ -444,18 +487,10 @@ def extended_gcd(aa, bb):
         y, lasty = lasty - quotient * y, y
     return lastremainder, lastx * (-1 if aa < 0 else 1), lasty * (-1 if bb < 0 else 1)
 
-
-def atoms_gen(args):
-    """
-    给定每个位点原子无序的数目，产生所有可能的原子排列，共k^n种。
-    """
-    p = []
-    for i in args:
-        p.append(range(i))
-    return product(*p)
-
-def hash_atoms(atoms):
-    """
-    给出一个atoms排列，返回一个string代表该排列。可用于hash表。
-    """
-    return ''.join(str(i) for i in atoms)
+def binomialCoeff(n, k):
+    if k < 0:
+        return -1
+    result = 1
+    for i in range(1, k+1):
+        result = result * (n-i+1) / i
+    return result

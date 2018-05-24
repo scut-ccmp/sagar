@@ -1,6 +1,7 @@
 import unittest
+import numpy
 
-from pyabc.crystal.structure import Cell, is_primitive_cell
+from pyabc.crystal.structure import Cell
 
 
 class TestCell(unittest.TestCase):
@@ -30,6 +31,72 @@ class TestCell(unittest.TestCase):
         self.assertEqual(cell.atoms.tolist(), [1010])
 
     def test_extend(self):
+        fcc_latt = [0, 5, 5,
+                    5, 0, 5,
+                    5, 5, 0]
+        fcc_pos = [(0, 0, 0)]
+        fcc_atoms = [0]
+        fcc_pcell = Cell(fcc_latt, fcc_pos, fcc_atoms)
+        # op_ext = numpy.array([-1, 1, 1,
+        #                       1, -1, 1,
+        #                       1, 1, -1]).reshape((3, 3))
+        op_ext = numpy.array([1, 0, 1,
+                              0, 2, 1,
+                              0, 0, 2]).reshape((3, 3))
+        ext_fcc = fcc_pcell.extend(op_ext)
+
+        wanted_latt = numpy.array([5, 10, 5,
+                                   15, 5, 10,
+                                   10, 10, 0]).reshape((3, 3))
+        wanted_pos = numpy.array([(0, 0, 0),
+                                  (0, 0, 0.5),
+                                  (0, 0.5, 0.25),
+                                  (0, 0.5, 0.75)])
+        wanted_atoms = numpy.array([0, 0, 0, 0])
+        numpy.testing.assert_almost_equal(ext_fcc.lattice, wanted_latt)
+        numpy.testing.assert_almost_equal(ext_fcc.positions, wanted_pos)
+        numpy.testing.assert_almost_equal(ext_fcc.atoms, wanted_atoms)
+
+    def test_extend_not_hnf(self):
+        fcc_latt = [0, 5, 5,
+                    5, 0, 5,
+                    5, 5, 0]
+        fcc_pos = [(0, 0, 0),
+                   (0.5, 0.5, 0.5)]
+        fcc_atoms = [1, 2]
+        fcc_pcell = Cell(fcc_latt, fcc_pos, fcc_atoms)
+        op_ext = numpy.array([-1, 1, 1,
+                              1, -1, 1,
+                              1, 1, -1]).reshape((3, 3))
+        ext_fcc = fcc_pcell.extend(op_ext)
+
+        wanted_latt = numpy.array([10, 0, 0,
+                                   0, 10, 0,
+                                   0, 0, 10]).reshape((3, 3))
+        wanted_pos = numpy.array([(0, 0, 0),
+                                  (0.5, 0.5, 0),
+                                  (0.5, 0, 0.5),
+                                  (0, 0.5, 0.5),
+                                  (0.5, 0.5, 0.5),
+                                  (0, 0, 0.5),
+                                  (0, 0.5, 0),
+                                  (0.5, 0, 0)])
+        wanted_atoms = numpy.array([1, 1, 1, 1, 2, 2, 2, 2])
+        numpy.testing.assert_almost_equal(ext_fcc.lattice, wanted_latt)
+        numpy.testing.assert_almost_equal(ext_fcc.positions, wanted_pos)
+        numpy.testing.assert_almost_equal(ext_fcc.atoms, wanted_atoms)
+
+    def test_extend_bug(self):
+        sc_latt = [4, 0, 0,
+                   0, 4, 0,
+                   0, 0, 4]
+        sc_pos = [(0, 0, 0)]
+        sc_atoms = [1]
+        sc_pcell = Cell(sc_latt, sc_pos, sc_atoms)
+        op_ext = numpy.array([1, 0, 0,
+                              0, 1, 0,
+                              0, 0, 5]).reshape((3, 3))
+        ext_sc = sc_pcell.extend(op_ext)    # raise ValueError
         pass
 
     def test_rotate(self):
@@ -38,17 +105,27 @@ class TestCell(unittest.TestCase):
     def test_trans(self):
         pass
 
-
-class TestUtils(unittest.TestCase):
-
-    def test_is_primitive_cell(self):
+    def test_is_primitive(self):
         bcc_latt = [0.5, 0.5, -0.5,
                     -0.5, 0.5, 0.5,
                     0.5, -0.5, 0.5]
         bcc_pos = [(0, 0, 0)]
         bcc_atoms = [0]
         bcc_pcell = Cell(bcc_latt, bcc_pos, bcc_atoms)
-        self.assertTrue(is_primitive_cell(bcc_pcell))
+        self.assertTrue(bcc_pcell.is_primitive())
+
+    def test_get_primitive(self):
+        fcc_latt = [5, 0, 0,
+                    0, 5, 0,
+                    0, 0, 5]
+        fcc_pos = [(0, 0, 0),
+                   (0, 0.5, 0.5),
+                   (0.5, 0, 0.5),
+                   (0.5, 0.5, 0)]
+        fcc_atoms = [0, 0, 0, 0]
+        con_cell = Cell(fcc_latt, fcc_pos, fcc_atoms)
+        pcell = con_cell.get_primitive_cell()
+        self.assertEqual(pcell.atoms, [0])
 
 
 if __name__ == "__main__":

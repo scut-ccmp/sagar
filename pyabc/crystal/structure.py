@@ -43,7 +43,10 @@ class Cell(object):
         self._lattice = numpy.array(lattice).reshape((3, 3))
 
         self._atom_numbers = len(atoms)
+        # import pdb; pdb.set_trace()
         self._positions = numpy.array(positions).reshape((-1, 3))
+        moded = numpy.ones_like(self._positions, dtype='intc')
+        self._positions = numpy.mod(self._positions, moded)
         if self._positions.shape[0] != self._atom_numbers:
             raise ValueError("When init Cell, number of atoms not equal to "
                              "number of positions.\n"
@@ -108,19 +111,39 @@ class Cell(object):
         """
         # TODO: now extend is proved right only for hnf matrixself.
         #       1. 我们是否需要把旋转合并进来？
-        #       2. 针对非对角矩阵，是一样适用？
+        #       2. 针对非对角矩阵，是一样适用？ (DONE)
+        # TODO: 不必是hnf矩阵 (DONE)
+        # TODO: mat必须是一个整数矩阵，做一个判断，给出异常
         lattice = numpy.matmul(mat, self._lattice)
 
         smallest_cell = numpy.matmul(self._positions, numpy.linalg.inv(mat))
-        grids = _get_mat_frac(mat)
+        grids = self._get_mat_frac(mat)
         list_positions = [i for i in map(
             lambda x: x + grids, list(smallest_cell))]
         positions = numpy.concatenate(list_positions, axis=0)
 
-        n = mat.diagonal().prod()
-        atoms = numpy.repeat(self._atoms, n)
+        n = numpy.linalg.det(mat)
+        atoms = numpy.repeat(self._atoms, int(round(n)))
 
         return self.__class__(lattice, positions, atoms)
+
+    def _get_mat_frac(self, mat):
+        """
+        When giving mat -- a 3x3 matrix,
+        export a numpy.array represent the
+        grid points between 0~1.
+
+        Used in producing the new positions extended by a matrix
+        """
+        prec = 1e-5
+        m = numpy.amax(mat)
+        _int_coor = numpy.array([i for i in product(range(m * 3), repeat=3)])
+        _all_frac = numpy.matmul(_int_coor, numpy.linalg.inv(mat))
+
+        is_incell = numpy.all(
+            ((_all_frac > -prec) & (_all_frac < 1 - prec)), axis=1)
+
+        return _all_frac[numpy.where(is_incell)[0]]
 
     def get_symmetry(self, symprec=1e-5):
         """
@@ -173,38 +196,28 @@ class Cell(object):
         """
         return spglib.get_spacegroup((self._lattice, self._positions, self._atoms), symprec)
 
+    def is_primitive(self, symprec=1e-5):
+        """
+        is_primitive_cell decide if a cell is primitive
 
-def _get_mat_frac(mat):
-    """
-    When giving mat -- a 3x3 matrix,
-    export a numpy.array represent the
-    grid points between 0~1.
+        parameters:
 
-    Used in producing the new positions extended by a matrix
-    """
-    prec = 1e-5
-    m = numpy.amax(mat)
-    _int_coor = numpy.array([i for i in product(range(m * 3), repeat=3)])
-    _all_frac = numpy.matmul(_int_coor, numpy.linalg.inv(mat))
+        cell: Cell object
+        prec: float, the precision to judge, default=1e-5
 
-    is_incell = numpy.all(
-        ((_all_frac > -prec) & (_all_frac < 1 - prec)), axis=1)
+        return: bool
+        """
+        natoms = len(self.atoms)
+        spg_cell = (self.lattice, self.positions, self.atoms)
+        pnatoms = len(spglib.find_primitive(spg_cell, symprec)[2])
+        return natoms == pnatoms
 
-    return _all_frac[numpy.where(is_incell)[0]]
+    def get_primitive_cell(self, symprec=1e-5):
+        spg_cell = (self.lattice, self.positions, self.atoms)
+        lattice, positions, atoms = spglib.find_primitive(spg_cell, symprec)
+        return self.__class__(lattice, positions, atoms)
 
-
-def is_primitive_cell(cell, prec=1e-5):
-    """
-    is_primitive_cell decide if a cell is primitive
-
-    parameters:
-
-    cell: Cell object
-    prec: float, the precision to judge, default=1e-5
-
-    return: bool
-    """
-    natoms = len(cell.atoms)
-    spg_cell = (cell.lattice, cell.positions, cell.atoms)
-    pnatoms = len(spglib.find_primitive(spg_cell, prec)[2])
-    return natoms == pnatoms
+    def get_refine_cell(self, symprec=1e-5):
+        spg_cell = (self.lattice, self.positions, self.atoms)
+        lattice, positions, atoms = spglib.refine_cell(spg_cell, symprec)
+        return self.__class__(lattice, positions, atoms)

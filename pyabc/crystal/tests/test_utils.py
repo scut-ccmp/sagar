@@ -4,7 +4,7 @@ import copy
 
 from pyabc.crystal.structure import Cell
 from pyabc.crystal.utils import non_dup_hnfs, _is_hnf_dup, _hnfs
-from pyabc.crystal.utils import IntMat3x3, extended_gcd, snf, atoms_gen
+from pyabc.crystal.utils import IntMat3x3, extended_gcd, snf
 from pyabc.crystal.utils import HartForcadePermutationGroup as HFPG
 
 
@@ -121,6 +121,20 @@ class TestMat3x3(unittest.TestCase):
         numpy.testing.assert_almost_equal(SAT, wanted_mat)
         numpy.testing.assert_almost_equal(snf_D, wanted_mat)
 
+    def test_bugs_get_snf(self):
+        mat = IntMat3x3([-1, 1, 1,
+                         1, -1, 1,
+                         1, 1, -1])
+        ori_mat = copy.copy(mat)
+        snf_D, snf_S, snf_T = mat.get_snf()
+        SAT = numpy.matmul(snf_S, numpy.matmul(ori_mat.mat, snf_T))
+
+        wanted_mat = numpy.array([1, 0, 0,
+                                  0, 2, 0,
+                                  0, 0, 2]).reshape((3, 3))
+        numpy.testing.assert_almost_equal(SAT, wanted_mat)
+        numpy.testing.assert_almost_equal(snf_D, wanted_mat)
+
     def test_dead_loop_bug(self):
         mat = IntMat3x3([1, 0, 0,
                          1, 1, 0,
@@ -152,12 +166,47 @@ class TestMat3x3(unittest.TestCase):
 
     def test_snf_random(self):
         for i in range(100):
-            mat = numpy.random.randint(100, size=9).reshape((3, 3))
+            mat = self._get_random_mat()
             mat = IntMat3x3(mat)
             ori_mat = copy.copy(mat)
             snf_D, snf_S, snf_T = mat.get_snf()
             SAT = numpy.matmul(snf_S, numpy.matmul(ori_mat.mat, snf_T))
+            # print("mat", ori_mat.mat)
+            # print("snf_D", snf_D)
+            # print("snf_S", snf_S)
+            # print("snf_T", snf_T)
+            # print("det S", numpy.linalg.det(snf_S))
+            # print("det T", numpy.linalg.det(snf_T))
             numpy.testing.assert_almost_equal(SAT, snf_D)
+            numpy.testing.assert_almost_equal(numpy.linalg.det(snf_S), 1)
+            numpy.testing.assert_almost_equal(numpy.linalg.det(snf_T), 1)
+
+    def _get_random_mat(self):
+        k = 15
+        mat = numpy.random.randint(k, size=(3, 3)) - k // 2
+        if numpy.linalg.det(mat) < 0.5:
+            mat = self._get_random_mat()
+        return mat
+
+    def test_det_1_bug(self):
+        """
+        需要保证左乘和右乘矩阵的行列式为1
+        """
+        mat = IntMat3x3([7, -5, -3,
+                         3, 1, 6,
+                         -5, -5, 5])
+        ori_mat = copy.copy(mat)
+        # import pdb; pdb.set_trace()
+        snf_D, snf_S, snf_T = mat.get_snf()
+        SAT = numpy.matmul(snf_S, numpy.matmul(ori_mat.mat, snf_T))
+
+        wanted_mat = numpy.array([1, 0, 0,
+                                  0, 1, 0,
+                                  0, 0, 500]).reshape((3, 3))
+        numpy.testing.assert_almost_equal(SAT, wanted_mat)
+        numpy.testing.assert_almost_equal(snf_D, wanted_mat)
+        numpy.testing.assert_almost_equal(numpy.linalg.det(snf_S), 1)
+        numpy.testing.assert_almost_equal(numpy.linalg.det(snf_T), 1)
 
     def test_snf_diag(self):
         for i in range(100):
@@ -371,12 +420,12 @@ class TestMat3x3(unittest.TestCase):
         got = numpy.matmul(mat.opL, numpy.matmul(ori_mat.mat, mat.opR))
         numpy.testing.assert_almost_equal(got, wanted)
 
-    def test_positive_mat_2_2(self):
+    def test_positive_diag(self):
         mat = IntMat3x3([2, 0, 0,
                          0, 6, 0,
                          0, 0, -12])
         ori_mat = copy.copy(mat)
-        mat._positive_mat_2_2()
+        mat._positive_diag()
         wanted_mat = numpy.array([2, 0, 0,
                                   0, 6, 0,
                                   0, 0, 12]).reshape((3, 3))
@@ -452,16 +501,16 @@ class TestSnfHnf(unittest.TestCase):
             a.append(len_volume)
         self.assertEqual(a, wanted_a)
 
-        # non-duplicated snfs: b slow test 258s
-        b = []
-        for i in range(1, 17):
-            s_set = set()
-            for h in non_dup_hnfs(self.fcc_pcell, volume=i):
-                snf_D, _, _ = snf(h)
-                s_flat_tuple = tuple(numpy.diagonal(snf_D).tolist())
-                s_set.add(s_flat_tuple)
-            b.append(len(s_set))
-        self.assertEqual(b, wanted_b)
+        # non-duplicated snfs: b slow test 100+s
+        # b = []
+        # for i in range(1, 17):
+        #     s_set = set()
+        #     for h in non_dup_hnfs(self.fcc_pcell, volume=i):
+        #         snf_D, _, _ = snf(h)
+        #         s_flat_tuple = tuple(numpy.diagonal(snf_D).tolist())
+        #         s_set.add(s_flat_tuple)
+        #     b.append(len(s_set))
+        # self.assertEqual(b, wanted_b)
 
         # duplicated snfs: b quick test
         b = []
@@ -495,7 +544,7 @@ class TestHFPG(object):
         #             5, 0, 5,
         #             5, 5, 0]
         # fcc_pos = [(0, 0, 0),
-        #            (0.5,0.5,0.5)]
+        #            (0.5, 0.5, 0.5)]
         # fcc_atoms = [0, 2]
         # fcc_pcell = Cell(fcc_latt, fcc_pos, fcc_atoms)
         # hnfs = non_dup_hnfs(fcc_pcell, 4)
@@ -506,6 +555,21 @@ class TestHFPG(object):
         # print(hfpg.get_pure_translations())
         # print('\n')
         # pass
+        # fcc_latt = [5, 0, 0,
+        #             0, 5, 0,
+        #             0, 0, 5]
+        # fcc_pos = [(0, 0, 0)]
+        # fcc_atoms = [0]
+        # fcc_pcell = Cell(fcc_latt, fcc_pos, fcc_atoms)
+        # mat = numpy.array([-1, 1, 1,
+        #                    1, -1, 1,
+        #                    1, 1, -1]).reshape((3, 3))
+        # print("mat is:")
+        # print(mat)
+        # hfpg = HFPG(fcc_pcell, mat)
+        # print("pure rotation is:")
+        # print(hfpg.get_pure_translations())
+        # print('\n')
 
         # hnfs = non_dup_hnfs(self.fcc_pcell, 8)
         # for h in hnfs:
@@ -542,13 +606,31 @@ class TestHFPG(object):
         # fcc_pcell = Cell(fcc_latt, fcc_pos, fcc_atoms)
         # hnfs = non_dup_hnfs(fcc_pcell, 4)
         # h = hnfs[4]
-        # print("hnf is:")
+        # print("mat is:")
         # print(h)
         # hfpg = HFPG(fcc_pcell, h)
         # print("pure rotation is:")
         # print(hfpg.get_pure_rotations())
         # print('\n')
         pass
+        # fcc_latt = [0, 5, 5,
+        #             5, 0, 5,
+        #             5, 5, 0]
+        # fcc_pos = [(0, 0, 0)]
+        # fcc_atoms = [0]
+        # fcc_pcell = Cell(fcc_latt, fcc_pos, fcc_atoms)
+        # mat = numpy.array([-1, 1, 1,
+        #                    1, -1, 1,
+        #                    1, 1, -1]).reshape((3, 3))
+        # # mat = numpy.array([1, -1, -1,
+        # #                    0, 2, 0,
+        # #                    0, 0, 2]).reshape((3, 3))
+        # print("mat is:")
+        # print(mat)
+        # hfpg = HFPG(fcc_pcell, mat)
+        # print("pure rotation is:")
+        # print(hfpg.get_pure_rotations())
+        # print('\n')
 
     def test_get_symmetry(self):
         # fcc_latt = [0, 5, 5,
@@ -585,18 +667,6 @@ class TestCommonUtils(unittest.TestCase):
     def test_is_int_np_array(self):
         pass
 
-    def test_atoms_gen(self):
-        input = [2, 2, 2]
-        wanted = [(0, 0, 0),
-                  (0, 0, 1),
-                  (0, 1, 0),
-                  (0, 1, 1),
-                  (1, 0, 0),
-                  (1, 0, 1),
-                  (1, 1, 0),
-                  (1, 1, 1)]
-        for i, got in enumerate(atoms_gen(input)):
-            self.assertEqual(got, wanted[i])
 
 if __name__ == "__main__":
     import nose2
