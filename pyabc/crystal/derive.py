@@ -1,11 +1,10 @@
 import numpy
 from itertools import product
 
-from pyabc.crystal.utils import non_dup_hnfs, is_int_np_array
+from pyabc.crystal.utils import non_dup_hnfs, is_int_np_array, binomialCoeff
 from pyabc.crystal.utils import HartForcadePermutationGroup as HFPG
 
 from pyabc.crystal.structure import Cell
-
 
 
 def cells_nonredundant(pcell, volume=1, symprec=1e-5, comprec=1e-5):
@@ -216,15 +215,17 @@ class ConfigurationGenerator(object):
 
         return atoms.flatten().tolist()
 
-    def cons_specific_cell_and_c(self, sites, c, symprec=1e-5):
+    def cons_specific_cell_and_c(self, sites, e_num, symprec=1e-5):
         """
         cons_specific_cell_and_c generate configurations of specific cell
         and specific concentration.
 
         parameters:
         sites: list of (lists or tuples), represent element disorder of each sites
-        c: dict, key is atomic number value is number of the atom. represent the
-            concentration of elements in configurations
+        c_num: tuple, number of atoms in disorderd sites.
+
+        c_num 特指无序位点的浓度，也就是原子比，而不是整体构型的元素原子比。有可能其他位点存在相同构型。
+        !!限制，无序位点的组成必须是相同的，而上面几个函数的无序位点是可以不同的。!!
         """
         lat_cell = self._cell.lattice
         lat_pcell = self._pcell.lattice
@@ -251,7 +252,7 @@ class ConfigurationGenerator(object):
 
         # deg_total = 0
         # loop over configurations
-        for atoms_mark in _atoms_gen(arg_sites):
+        for atoms_mark in _atoms_gen(arg_sites, e_num):
             arr_atoms_mark = numpy.array(atoms_mark)
             ahash = _hash_atoms(atoms_mark)
             # print('    ', ahash)
@@ -276,7 +277,7 @@ class ConfigurationGenerator(object):
                 deg = numpy.unique(arr_all_transmuted, axis=0).shape[0]
 
                 atoms = self._mark_to_atoms(arr_atoms_mark, sites)
-                print(str(atoms) + '  ' + str(deg))
+                # print(str(atoms) + '  ' + str(deg))
 
                 cell = self._cell
                 c = Cell(cell.lattice, cell.positions, atoms)
@@ -285,20 +286,29 @@ class ConfigurationGenerator(object):
         #     deg_total += deg
         # print(deg_total)
 
-def _atoms_gen(args):
+
+def _atoms_gen(args, e_num=None):
     """
     parameter:
     args: list, represent number of atoms of each site.
-    c: None or dict, concentration of element in disorderd sites,
-            default=None, for all concentrasions
+    e_num: None or tuple, concentration of element in disorderd sites,
+            default=None, for all configurations
 
     给定每个位点原子无序的数目，产生所有可能的原子排列，共k^n种。
     TODO: 在这里加入浓度比？
     """
-    p = []
-    for i in args:
-        p.append(range(i))
-    return product(*p)
+    if e_num is None:
+        p = []
+        for i in args:
+            p.append(range(i))
+        return product(*p)
+    else:
+        arr_arrange = _serial_int_to_arrangement(e_num)
+        # import pdb; pdb.set_trace()
+        for col, n in enumerate(args):
+            if n == 1:
+                arr_arrange = numpy.insert(arr_arrange, col, 0, axis=1)
+        return arr_arrange
 
 
 def _hash_atoms(atoms):
@@ -306,3 +316,39 @@ def _hash_atoms(atoms):
     给出一个atoms排列，返回一个string代表该排列。可用于hash表。
     """
     return ''.join(str(i) for i in atoms)
+
+
+def _serial_int_to_arrangement(e_num):
+    slots_total = _slots_total = sum(e_num)
+    comb = []
+    max = 1
+    for v in e_num:
+        bino = binomialCoeff(_slots_total, v)
+        comb.append(bino)
+        max *= bino
+        _slots_total -= v
+
+    max = int(max)
+    arr_arrangement = numpy.full((max, slots_total), -1)
+
+    for i in range(max):
+        open_slots = slots_total
+        for e in range(len(e_num)):
+            y, x = divmod(i, comb[e])
+            a = e_num[e]
+            m = open_slots
+
+            for idx, value in enumerate(arr_arrangement[i]):
+                if value != -1:
+                    # 该slot已经放置原子
+                    continue
+                else:
+                    b = binomialCoeff(m - 1, a - 1)
+                    if b <= x:
+                        x -= b
+                    else:
+                        a -= 1
+                        arr_arrangement[i][idx] = e
+                    m -= 1
+
+    return arr_arrangement

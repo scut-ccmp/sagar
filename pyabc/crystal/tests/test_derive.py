@@ -1,8 +1,9 @@
 import unittest
+import numpy
 
 from pyabc.crystal.structure import Cell
 from pyabc.crystal.derive import ConfigurationGenerator as CG
-from pyabc.crystal.derive import _atoms_gen
+from pyabc.crystal.derive import _atoms_gen, _serial_int_to_arrangement
 
 
 class TestDerive(unittest.TestCase):
@@ -66,6 +67,7 @@ class TestDerive(unittest.TestCase):
         self.assertEqual(got, wanted)
 
     def test_cons_specific_cell_and_c(self):
+        # FCC conventional cell
         fcc_latt = [5, 0, 0,
                     0, 5, 0,
                     0, 0, 5]
@@ -77,13 +79,38 @@ class TestDerive(unittest.TestCase):
         con_cell = Cell(fcc_latt, fcc_pos, fcc_atoms)
         cg = CG(con_cell)
         con = cg.cons_specific_cell_and_c(
-            [(2, 3, 4), (2, 3, 4), (2, 3, 4), (2, 3, 4)], {2: 2, 3: 1, 4: 1})
+            [(2, 3, 4), (2, 3, 4), (2, 3, 4), (2, 3, 4)], (2, 1, 1))
 
         # number of all configurations
-        wanted = 15
+        wanted = 1
         got = len([i for i in con])
 
         self.assertEqual(got, wanted)
+
+        # Zinc-blende conventional cell
+        fcc_latt = [5, 0, 0,
+                    0, 5, 0,
+                    0, 0, 5]
+        fcc_pos = [(0, 0, 0),
+                   (0, 0.5, 0.5),
+                   (0.5, 0, 0.5),
+                   (0.5, 0.5, 0),
+                   (0.25, 0.25, 0.25),
+                   (0.75, 0.75, 0.25),
+                   (0.75, 0.25, 0.75),
+                   (0.25, 0.75, 0.75)]
+        fcc_atoms = [0, 0, 0, 0, 1, 1, 1, 1]
+        con_cell = Cell(fcc_latt, fcc_pos, fcc_atoms)
+        cg = CG(con_cell)
+        con = cg.cons_specific_cell_and_c(
+            [(2, 3, 4), (2, 3, 4), (2, 3, 4), (2, 3, 4), (1, ), (1, ), (1, ), (1,)], (2, 1, 1))
+
+        # number of all configurations
+        wanted = 1
+        got = len([i for i in con])
+
+        self.assertEqual(got, wanted)
+
 
 class TestUtilsFunc(unittest.TestCase):
 
@@ -99,6 +126,22 @@ class TestUtilsFunc(unittest.TestCase):
                   (1, 1, 1)]
         for i, got in enumerate(_atoms_gen(input)):
             self.assertEqual(got, wanted[i])
+
+    def test_serial_int_to_arrangement(self):
+        wanted = numpy.array([0, 0, 1, 2,
+                              0, 2, 0, 1,
+                              0, 1, 2, 0,
+                              2, 0, 0, 1,
+                              1, 0, 2, 0,
+                              2, 1, 0, 0,
+                              0, 0, 1, 2,
+                              0, 2, 0, 1,
+                              0, 1, 2, 0,
+                              2, 0, 0, 1,
+                              1, 0, 2, 0,
+                              2, 1, 0, 0]).reshape((12, 4))
+        got = _serial_int_to_arrangement((2, 1, 1))
+        numpy.testing.assert_almost_equal(got, wanted)
 
 
 if __name__ == "__main__":

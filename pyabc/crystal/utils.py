@@ -462,3 +462,11 @@ def extended_gcd(aa, bb):
         x, lastx = lastx - quotient * x, x
         y, lasty = lasty - quotient * y, y
     return lastremainder, lastx * (-1 if aa < 0 else 1), lasty * (-1 if bb < 0 else 1)
+
+def binomialCoeff(n, k):
+    if k < 0:
+        return -1
+    result = 1
+    for i in range(1, k+1):
+        result = result * (n-i+1) / i
+    return result
