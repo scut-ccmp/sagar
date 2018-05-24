@@ -20,7 +20,7 @@ class TestDerive(unittest.TestCase):
         got = []
         cg = CG(self.fcc_pcell)
         for v in [1, 2, 3, 4]:
-            con = cg.cons_max_volume([[1, 5], [2]], v)
+            con = cg.cons_max_volume([(1, 5), (2,)], v)
             got.append(len([i for i in con]))
 
         self.assertEqual(got, wanted)
@@ -30,7 +30,7 @@ class TestDerive(unittest.TestCase):
         got = []
         cg = CG(self.fcc_pcell)
         for v in [1, 2, 3, 4]:
-            con = cg.cons_specific_volume([[1, 5], [2]], v)
+            con = cg.cons_specific_volume([(1, 5), (2,)], v)
             got.append(len([i for i in con]))
 
         self.assertEqual(got, wanted)
@@ -56,7 +56,7 @@ class TestDerive(unittest.TestCase):
         fcc_atoms = [0, 0, 0, 0]
         con_cell = Cell(fcc_latt, fcc_pos, fcc_atoms)
         cg = CG(con_cell)
-        con = cg.cons_specific_cell([[2, 3], [2, 3], [2, 3], [2, 3]])
+        con = cg.cons_specific_cell([(2, 3), (2, 3), (2, 3), (2, 3)])
 
         # number of all configurations
         wanted = 5
