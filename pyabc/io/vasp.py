@@ -6,7 +6,7 @@ import collections
 from pyabc.crystal.structure import Cell, get_symbol
 
 
-def read(filename='POSCAR'):
+def read_vasp(filename='POSCAR'):
     """
     Import POSCAR/CONTCAR or filename with .vasp suffix
 
@@ -106,7 +106,7 @@ def _read_string(data):
     return Cell(lattice, positions, atoms)
 
 
-def write(cell, filename='POSCAR', suffix='.vasp', long_format=True):
+def write_vasp(cell, filename='POSCAR', suffix='.vasp', long_format=True):
     """
     write vasp POSCAR type into file, vasp5 format only.
         always write atoms sorted POSCAR.
@@ -123,7 +123,8 @@ def write(cell, filename='POSCAR', suffix='.vasp', long_format=True):
     the filename will be 'POSCAR.vasp'
     """
     # TODO: write Cartesian coor POSCAR
-    with open(filename, "w") as f:
+    filname_suffix = ''.join([filename, suffix])
+    with open(filname_suffix, "w") as f:
         f.write(_write_string(cell, long_format))
 
 
