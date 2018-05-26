@@ -10,7 +10,7 @@ from itertools import combinations
 
 
 
-def match(pcell_A, pcell_B, n_max):
+def match(pcell_A, pcell_B, n_max, distance):
     err_l = 0.01
     err_s = 0.01
     err_theta = 0.01
@@ -53,10 +53,30 @@ def match(pcell_A, pcell_B, n_max):
             if (abs(dis1_A - dis1_B) < err_l*dis1_A and
                 abs(dis2_A - dis2_B) < err_l*dis1_A and
                 abs(theta_A - theta_B) < err_theta):
-                A_b.append(l_A_d)
-                B_a.append(l_B_d)
+                A_b.append(np.round(l_A_d*np.matrix(pcell_A._lattice).I).astype(int))
+                B_a.append(np.round(l_B_d*np.matrix(pcell_B._lattice).I).astype(int))
     print(A_b)
     print(B_a)
+
+
+    for h_A in A_b:
+        print(h_A)
+        scell_A = Cell.extend(pcell_A, h_A)
+        print(scell_A._lattice, scell_A._positions)
+
+    for h_B in B_a:
+        scell_B = Cell.extend(pcell_B, h_B)
+
+    for i in range(0, len(A_b)):
+
+        scell_A = Cell.extend(pcell_A, A_b[i])
+        scell_B = Cell.extend(pcell_B, B_a[i])
+        latt_layer = scell_A._lattice
+        positions_B = scell_B._positions + np.repeat([[0, 0, np.amax(scell_A._positions[:,2])+distance/latt_layer[2,2]]], len(scell_B._atoms), axis=0)
+        positions_layer = np.vstack((scell_A._positions,positions_B))
+        atoms_layer = scell_A._atoms + scell_B._atoms
+        print(atoms_layer)
+
 
 ########扩胞和怎么错位
 
@@ -107,4 +127,5 @@ fcc_latt = [0, 5, 0,
 fcc_pos = [(0, 0, 0)]
 fcc_atoms = [0]
 pcell_B = Cell(fcc_latt, fcc_pos, fcc_atoms)
-match(pcell_A, pcell_B, 100)
+match(pcell_A, pcell_B, 100, distance=0.1)
+##distance:吸附层和衬底间距离(挨)
