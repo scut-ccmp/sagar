@@ -28,7 +28,9 @@ def cli():
 @click.option('--verbose', '-vvv', is_flag=True, metavar='',
               help="Will print verbose messages.")
 def cell(pcell_filename, comment, volume, symprec, comprec, verbose):
-    """<primitive_cell_file>  Primitive cell structure file, now only vasp POSCAR version5 supported."""
+    """
+    <primitive_cell_file>  Primitive cell structure file, now only vasp POSCAR version5 supported.
+    """
     pcell = read_vasp(pcell_filename)
     (min_v, max_v) = volume
     if min_v == -1:
@@ -54,8 +56,45 @@ def _export_supercell(pcell, comment, v, symprec, comprec, verbose):
 
 
 @cli.command('conf', short_help="Generating configurations in grid cells or supercells.")
-def conf():
-    click.echo("expanding configuration")
+@click.argument('cell_filename', metavar="<parent_cell_filename>")
+@click.option('--comment', '-c', type=str, default='confs')
+@click.option('--pmode', '-mp', type=click.Choice(['varv', 'svc', 'sc']),
+              help="[varv|svc|sc] represent ['variable volume cells'|'specific volume cells'|'specific cell'] respectively. Deciding what kinds of parent cell to be used to getting configurations")
+@click.option('--cmode', '-mc', type=click.Choice(['vc', 'cc']),
+              help="[vc|cc] for 'variable concentration' and 'certain concentration' respectively.")
+@click.option('--volume', '-v', nargs=2, type=int, metavar='<min> <max>',
+              help="Expand primitive cell to supercell and to generate configurations of volume <min> to <max>, set <min> as -1 for creating only <max> volume expanded supercells. ONLY USED WHEN --pmode=[varv|svc]")
+@click.option('--element', '-e', type=str, metavar='<symbol of element>',
+              help="Symbol of element of original sites")
+@click.option('--substitute', '-s', type=str, metavar='<symbol of element>',
+              help="Symbol of element to be disorderd substituting, 'Vac' for empty position aka vacancy")
+@click.option('--symprec', '-s', type=float, default=1e-5,
+              help="Symmetry precision to decide the symmetry of cells. Default=1e-5")
+@click.option('--comprec', '-p', type=float, default=1e-5,
+              help="Compare precision to judging if supercell is redundant. Defalut=1e-5")
+@click.option('--verbose', '-vvv', is_flag=True, metavar='',
+              help="Will print verbose messages.")
+def conf(cell_filename, comment, pmode, cmode, volume, symprec, comprec, verbose):
+    """
+    <parent_cell_file> is the parent cell to generating configurations by sites disorder.\n
+    The non-primitive cell can only used as argument when '--pmode=sc'.\n
+    Command line tool only provide configurations generator for elements disorder, for more flexible usage such as ternary alloy and specific site disorder, please see document http:// , or use python library directly.
+    """
+    cell = read_vasp(cell_filename)
+    cg = ConfigurationGenerator(cell, symprec)
+    if pmode == 'varv' and cmode == 'vc':
+        (min_v, max_v) = volume
+        # sites =
+        cg.cons_max_volume()
+    elif pmode == 'svc' and cmode == 'vc':
+        print(pmode, cmode)
+    elif pmode == 'sc' and cmode == 'vc':
+        print(pmode, cmode)
+    elif pmode == 'sc' and cmode == 'cc':
+        print(pmode, cmode)
+    else:
+        print("error")
+
 
 
 class Spinner:
