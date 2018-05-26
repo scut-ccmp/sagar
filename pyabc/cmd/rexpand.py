@@ -87,7 +87,7 @@ def conf(cell_filename, comment, pmode, cmode, volume, element, substitute, symp
         spinner = Spinner()
         spinner.start()
         (min_v, max_v) = volume
-        # sites =
+        sites =
         confs = cg.cons_max_volume(sites, max_v, min_volume=min_v, symprec)
         for idx, c in enumerate(confs):
             filename = '{:s}_id{:d}'.format(comment, idx)
