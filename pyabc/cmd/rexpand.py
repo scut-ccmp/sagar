@@ -66,26 +66,33 @@ def _export_supercell(pcell, comment, v, symprec, comprec, verbose):
               help="Expand primitive cell to supercell and to generate configurations of volume <min> to <max>, set <min> as -1 for creating only <max> volume expanded supercells. ONLY USED WHEN --pmode=[varv|svc]")
 @click.option('--element', '-e', type=str, metavar='<symbol of element>',
               help="Symbol of element of original sites")
-@click.option('--substitute', '-s', type=str, metavar='<symbol of element>',
-              help="Symbol of element to be disorderd substituting, 'Vac' for empty position aka vacancy")
+@click.option('--substitute', '-s', type=str, multiple=True, metavar='<symbol of element>',
+              help="Symbol of element to be disorderd substituting, 'Vac' for empty position aka vacancy, multiple optione supported for multielement alloy")
 @click.option('--symprec', '-s', type=float, default=1e-5,
               help="Symmetry precision to decide the symmetry of cells. Default=1e-5")
 @click.option('--comprec', '-p', type=float, default=1e-5,
               help="Compare precision to judging if supercell is redundant. Defalut=1e-5")
 @click.option('--verbose', '-vvv', is_flag=True, metavar='',
               help="Will print verbose messages.")
-def conf(cell_filename, comment, pmode, cmode, volume, symprec, comprec, verbose):
+def conf(cell_filename, comment, pmode, cmode, volume, element, substitute, symprec, comprec, verbose):
     """
     <parent_cell_file> is the parent cell to generating configurations by sites disorder.\n
     The non-primitive cell can only used as argument when '--pmode=sc'.\n
-    Command line tool only provide configurations generator for elements disorder, for more flexible usage such as ternary alloy and specific site disorder, please see document http:// , or use python library directly.
+    Command line tool only provide configurations generator for elements disorder, for more flexible usage such as specific site disorder, please see document http:// , or use python library directly.
     """
     cell = read_vasp(cell_filename)
     cg = ConfigurationGenerator(cell, symprec)
     if pmode == 'varv' and cmode == 'vc':
+        click.echo("Expanding and generating configurations: (may take much time)")
+        spinner = Spinner()
+        spinner.start()
         (min_v, max_v) = volume
         # sites =
-        cg.cons_max_volume()
+        confs = cg.cons_max_volume(sites, max_v, min_volume=min_v, symprec)
+        for idx, c in enumerate(confs):
+            filename = '{:s}_id{:d}'.format(comment, idx)
+            write_vasp(c, filename)
+        spinner.stop()
     elif pmode == 'svc' and cmode == 'vc':
         print(pmode, cmode)
     elif pmode == 'sc' and cmode == 'vc':
@@ -94,7 +101,6 @@ def conf(cell_filename, comment, pmode, cmode, volume, symprec, comprec, verbose
         print(pmode, cmode)
     else:
         print("error")
-
 
 
 class Spinner:
