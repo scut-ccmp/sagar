@@ -5,6 +5,7 @@ import sys
 
 from pyabc.crystal.derive import cells_nonredundant, ConfigurationGenerator
 from pyabc.io.vasp import read_vasp, write_vasp
+from pyabc.crystal.structure import symbol2number as s2n
 
 CONTEXT_SETTINGS = dict(help_option_names=['-h', '--help'])
 
@@ -58,23 +59,25 @@ def _export_supercell(pcell, comment, v, symprec, comprec, verbose):
 @cli.command('conf', short_help="Generating configurations in grid cells or supercells.")
 @click.argument('cell_filename', metavar="<parent_cell_filename>")
 @click.option('--comment', '-c', type=str, default='confs')
-@click.option('--pmode', '-mp', type=click.Choice(['varv', 'svc', 'sc']),
+@click.option('--pmode', '-mp', type=click.Choice(['varv', 'svc', 'sc']), default='sc',
               help="[varv|svc|sc] represent ['variable volume cells'|'specific volume cells'|'specific cell'] respectively. Deciding what kinds of parent cell to be used to getting configurations")
-@click.option('--cmode', '-mc', type=click.Choice(['vc', 'cc']),
+@click.option('--cmode', '-mc', type=click.Choice(['vc', 'cc']), default='cc',
               help="[vc|cc] for 'variable concentration' and 'certain concentration' respectively.")
 @click.option('--volume', '-v', nargs=2, type=int, metavar='<min> <max>',
               help="Expand primitive cell to supercell and to generate configurations of volume <min> to <max>, set <min> as -1 for creating only <max> volume expanded supercells. ONLY USED WHEN --pmode=[varv|svc]")
 @click.option('--element', '-e', type=str, metavar='<symbol of element>',
               help="Symbol of element of original sites")
-@click.option('--substitute', '-s', type=str, multiple=True, metavar='<symbol of element>',
+@click.option('--substitutes', '-s', type=str, multiple=True, metavar='<symbol of element>',
               help="Symbol of element to be disorderd substituting, 'Vac' for empty position aka vacancy, multiple optione supported for multielement alloy")
-@click.option('--symprec', '-s', type=float, default=1e-5,
+@click.option('--number', '-n', type=int, multiple=True,
+              help="number of substitutes element, only used when --cmode=cc")
+@click.option('--symprec', type=float, default=1e-5,
               help="Symmetry precision to decide the symmetry of cells. Default=1e-5")
-@click.option('--comprec', '-p', type=float, default=1e-5,
+@click.option('--comprec', type=float, default=1e-5,
               help="Compare precision to judging if supercell is redundant. Defalut=1e-5")
 @click.option('--verbose', '-vvv', is_flag=True, metavar='',
               help="Will print verbose messages.")
-def conf(cell_filename, comment, pmode, cmode, volume, element, substitute, symprec, comprec, verbose):
+def conf(cell_filename, comment, pmode, cmode, volume, element, substitutes, number,  symprec, comprec, verbose):
     """
     <parent_cell_file> is the parent cell to generating configurations by sites disorder.\n
     The non-primitive cell can only used as argument when '--pmode=sc'.\n
@@ -83,24 +86,64 @@ def conf(cell_filename, comment, pmode, cmode, volume, element, substitute, symp
     cell = read_vasp(cell_filename)
     cg = ConfigurationGenerator(cell, symprec)
     if pmode == 'varv' and cmode == 'vc':
-        click.echo("Expanding and generating configurations: (may take much time)")
+        click.secho("Expanding and generating configurations: ")
+        click.secho(
+            "(may take much time)", blink=True, bold=True, bg='magenta', fg='white')
         spinner = Spinner()
         spinner.start()
         (min_v, max_v) = volume
-        sites =
-        confs = cg.cons_max_volume(sites, max_v, min_volume=min_v, symprec)
+        sites = _get_sites(list(cell.atoms), element, substitutes)
+        confs = cg.cons_max_volume(
+            sites, max_v, min_volume=min_v, symprec=symprec)
         for idx, c in enumerate(confs):
+            c = c.get_primitive_cell()
             filename = '{:s}_id{:d}'.format(comment, idx)
             write_vasp(c, filename)
         spinner.stop()
+        click.secho("DONE", bold=True, bg='green', fg='white')
     elif pmode == 'svc' and cmode == 'vc':
         print(pmode, cmode)
     elif pmode == 'sc' and cmode == 'vc':
         print(pmode, cmode)
     elif pmode == 'sc' and cmode == 'cc':
-        print(pmode, cmode)
+        click.secho("Generating configurations: ")
+        click.secho(
+            "(may take much time)", blink=True, bold=True, bg='magenta', fg='white')
+        # spinner = Spinner()
+        # spinner.start()
+        l_atoms = cell.atoms.tolist()
+        sites = _get_sites(l_atoms, element, substitutes)
+        # number to enum
+        ele_n = s2n(element)
+        e_total = l_atoms.count(ele_n)
+        # import pdb; pdb.set_trace()
+        e_n = e_total - sum(number)    # 第一个元素的数量
+        e_num = [e_n] + list(number)    # 各个元素的数量
+        confs = cg.cons_specific_cell(sites, e_num, symprec=symprec)
+        f_deg = open('deg.txt', 'a')
+        for idx, (c,d) in enumerate(confs):
+            filename = '{:s}_id{:d}'.format(comment, idx)
+            write_vasp(c, filename)
+            # import pdb; pdb.set_trace()
+            deg_line = filename + '{:10d}'.format(d) + '\n'
+            f_deg.write(deg_line)
+
+        # spinner.stop()
+        click.secho("DONE", bold=True, bg='green', fg='white')
     else:
         print("error")
+
+
+def _get_sites(l_atoms, ele, l_sub):
+    ele_n = s2n(ele)
+    l_sub_n = [s2n(sub_n) for sub_n in l_sub]
+    sites = []
+    for a in l_atoms:
+        if a == ele_n:
+            sites.append(tuple([a] + l_sub_n))
+        else:
+            sites.append(tuple([a]))
+    return sites
 
 
 class Spinner:

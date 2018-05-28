@@ -25,6 +25,8 @@ def get_symbol(atom):
             return str(key)
     return "NaN_x"
 
+def symbol2number(symbol):
+    return periodic_table_dict[symbol]
 
 class Cell(object):
     """
