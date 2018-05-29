@@ -67,6 +67,7 @@ class Cell(object):
                 else:
                     raise ValueError("Unkown atom symbols {:}".format(s))
             else:
+
                 a.append(round(s))
 
         self._atoms = numpy.array(a, dtype='intc')
@@ -122,9 +123,10 @@ class Cell(object):
         grids = self._get_mat_frac(mat)
         list_positions = [i for i in map(
             lambda x: x + grids, list(smallest_cell))]
-        positions = numpy.concatenate(list_positions, axis=0)
+        positions_1 = numpy.concatenate(list_positions, axis=0)
+        positions = positions_1-numpy.floor(positions_1)
 
-        n = numpy.linalg.det(mat)
+        n = abs(numpy.linalg.det(mat))
         atoms = numpy.repeat(self._atoms, int(round(n)))
 
         return self.__class__(lattice, positions, atoms)
@@ -138,8 +140,26 @@ class Cell(object):
         Used in producing the new positions extended by a matrix
         """
         prec = 1e-5
-        m = numpy.amax(mat)
-        _int_coor = numpy.array([i for i in product(range(m * 3), repeat=3)])
+        #m = numpy.amax(mat)
+        #_int_coor = numpy.array([i for i in product(range(m * 3), repeat=3)])
+        ##适用于hnf
+
+
+        #---------------------选取一个大框包含目标框
+        conv =  numpy.row_stack((mat, numpy.matrix([0, 0, 0])))
+        conv =  numpy.row_stack((conv, numpy.matrix(mat[0]+mat[1])))
+        conv =  numpy.row_stack((conv, mat[0]+mat[2]))
+        conv =  numpy.row_stack((conv, mat[1]+mat[2]))
+        conv =  numpy.row_stack((conv, mat[0]+mat[1]+mat[2]))
+
+        ma = [0, 0, 0]
+        mi = [0, 0, 0]
+        for i in range(0,3):
+            ma[i] = numpy.amax(conv[:,i])
+            mi[i] = numpy.amin(conv[:,i])
+        _int_coor =  numpy.array([j for j in product(range(mi[0]-1, ma[0]+2), range(mi[1]-1, ma[1]+2), range(mi[2]-1, ma[2]+2))])
+        ##from qiusb-------------
+
         _all_frac = numpy.matmul(_int_coor, numpy.linalg.inv(mat))
 
         is_incell = numpy.all(

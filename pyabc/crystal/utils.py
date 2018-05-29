@@ -34,7 +34,21 @@ def _hnfs(det):
                                    [0, 0, f]])
 
 
-def non_dup_hnfs(pcell, volume=1, symprec=1e-5, comprec=1e-5):
+def _hnfs_2D(det):
+    #二维的hnf矩阵生成,z方向为1
+    h = []
+    for a in _factor(det):
+        for d in _factor(det // a):
+            f = det // a // d
+            if f == 1:
+
+                for b in range(d):
+                    yield numpy.array([[a, b, 0],
+                                       [0, d, 0],
+                                       [0, 0, f]])
+
+
+def non_dup_hnfs(pcell, volume=1, symprec=1e-5, comprec=1e-5, dimension=3):
     """
     hnf_cells return all non duplicated hnf extend cells.
 
@@ -65,11 +79,21 @@ def non_dup_hnfs(pcell, volume=1, symprec=1e-5, comprec=1e-5):
     # Using rot without inversion class double speed
     # rot_list = pcell.get_rotations(symprec)
     rot_list = pcell.get_rotations_without_inversion(symprec)
-    for hnf in _hnfs(volume):
-        if _not_contain(nodup_hnfs, hnf, rot_list, comprec):
-            nodup_hnfs.append(hnf)
+    if dimension == 3:
+        for hnf in _hnfs(volume):
+            if _not_contain(nodup_hnfs, hnf, rot_list, comprec):
+                nodup_hnfs.append(hnf)
 
-    return nodup_hnfs
+        return nodup_hnfs
+    elif dimension == 2:
+        for hnf in _hnfs_2D(volume):
+            if _not_contain(nodup_hnfs, hnf, rot_list, comprec):
+                nodup_hnfs.append(hnf)
+
+        return nodup_hnfs
+    else:
+        raise ValueError("Dimension you provide is not ture."
+                         "You can only use dimension = 3(default) or 2.")
 
 
 def _not_contain(hnf_list, hnf, rot_list, prec):
