@@ -25,6 +25,8 @@ def get_symbol(atom):
             return str(key)
     return "NaN_x"
 
+def symbol2number(symbol):
+    return periodic_table_dict[symbol]
 
 class Cell(object):
     """
@@ -65,9 +67,10 @@ class Cell(object):
                 else:
                     raise ValueError("Unkown atom symbols {:}".format(s))
             else:
-                a.append(int(s))
 
-        self._atoms = numpy.array(a)
+                a.append(round(s))
+
+        self._atoms = numpy.array(a, dtype='intc')
         # TODO: initial with Cartesian coor
 
     @property

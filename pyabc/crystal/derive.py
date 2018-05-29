@@ -24,9 +24,9 @@ def cells_nonredundant(pcell, volume=1, symprec=1e-5, comprec=1e-5):
 
     A list of Cell objects.
     """
-    # return [pcell.extend(hnf) for hnf in non_dup_hnfs(pcell, volume, symprec, comprec)]
-    for hnf in non_dup_hnfs(pcell, volume, symprec, comprec):
-        yield pcell.extend(hnf)
+    return [pcell.extend(hnf) for hnf in non_dup_hnfs(pcell, volume, symprec, comprec)]
+    # for hnf in non_dup_hnfs(pcell, volume, symprec, comprec):
+    #     yield pcell.extend(hnf)
 
 
 # 在较大体积的构型中，可能有结构已经在小的体积中出现过。
