@@ -64,8 +64,8 @@ class Cell(object):
                     a.append(1000 + i)
                 else:
                     raise ValueError("Unkown atom symbols {:}".format(s))
-            elif isinstance(s, int):
-                a.append(s)
+            else:
+                a.append(int(s))
 
         self._atoms = numpy.array(a)
         # TODO: initial with Cartesian coor
@@ -142,7 +142,7 @@ class Cell(object):
         ##适用于hnf
 
 
-        #---------------------
+        #---------------------选取一个大框包含目标框
         conv =  numpy.row_stack((mat, numpy.matrix([0, 0, 0])))
         conv =  numpy.row_stack((conv, numpy.matrix(mat[0]+mat[1])))
         conv =  numpy.row_stack((conv, mat[0]+mat[2]))

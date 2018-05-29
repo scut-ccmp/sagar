@@ -2,6 +2,7 @@ import math
 import numpy as np
 
 from pyabc.crystal.structure import Cell
+from pyabc.io.vasp import  *
 from pyabc.crystal.utils import non_dup_hnfs, _is_hnf_dup, _hnfs
 from numpy.linalg import  *
 from itertools import combinations
@@ -59,24 +60,20 @@ def match(pcell_A, pcell_B, n_max, distance):
     print(B_a)
 
 
-    for h_A in A_b:
-        print(h_A)
-        scell_A = Cell.extend(pcell_A, h_A)
-        print(scell_A._lattice, scell_A._positions)
-
-    for h_B in B_a:
-        scell_B = Cell.extend(pcell_B, h_B)
 
     for i in range(0, len(A_b)):
 
         scell_A = Cell.extend(pcell_A, A_b[i])
         scell_B = Cell.extend(pcell_B, B_a[i])
+
         latt_layer = scell_A._lattice
         positions_B = scell_B._positions + np.repeat([[0, 0, np.amax(scell_A._positions[:,2])+distance/latt_layer[2,2]]], len(scell_B._atoms), axis=0)
         positions_layer = np.vstack((scell_A._positions,positions_B))
-        atoms_layer = scell_A._atoms + scell_B._atoms
-        print(atoms_layer)
-
+        atoms_layer = list(scell_A._atoms) + list(scell_B._atoms)
+        # import pdb; pdb.set_trace()
+        cell_layer =  Cell(latt_layer, positions_layer, atoms_layer)
+        print(cell_layer)
+        write(cell_layer, filename='POSCAR'+str(i), suffix='.vasp', long_format=True)
 
 ########扩胞和怎么错位
 
@@ -119,7 +116,7 @@ bcc_latt = [1, 1, 0,
             -1, 1, 0,
             0, 0, 1]
 bcc_pos = [(0, 0, 0)]
-bcc_atoms = [0]
+bcc_atoms = [1]
 pcell_A = Cell(bcc_latt, bcc_pos, bcc_atoms)
 fcc_latt = [0, 5, 0,
             5, 0, 0,
