@@ -25,8 +25,10 @@ def get_symbol(atom):
             return str(key)
     return "NaN_x"
 
+
 def symbol2number(symbol):
     return periodic_table_dict[symbol]
+
 
 class Cell(object):
     """
@@ -216,7 +218,10 @@ class Cell(object):
 
     def get_primitive_cell(self, symprec=1e-5):
         spg_cell = (self.lattice, self.positions, self.atoms)
-        lattice, positions, atoms = spglib.find_primitive(spg_cell, symprec)
+        # 用下面这个原胞会改变坐标轴，no_idealize=True保持了坐标的方向。
+        # lattice, positions, atoms = spglib.find_primitive(spg_cell, symprec)
+        lattice, positions, atoms = spglib.standardize_cell(
+            spg_cell, to_primitive=True, no_idealize=True, symprec=symprec)
         return self.__class__(lattice, positions, atoms)
 
     def get_refine_cell(self, symprec=1e-5):
