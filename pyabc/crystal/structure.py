@@ -66,10 +66,10 @@ class Cell(object):
                     a.append(1000 + i)
                 else:
                     raise ValueError("Unkown atom symbols {:}".format(s))
-            elif isinstance(s, int):
-                a.append(s)
+            else:
+                a.append(round(s))
 
-        self._atoms = numpy.array(a)
+        self._atoms = numpy.array(a, dtype='intc')
         # TODO: initial with Cartesian coor
 
     @property
