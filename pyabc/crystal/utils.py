@@ -322,51 +322,6 @@ class IntMat3x3(object):
         self._opR = numpy.matmul(self._opR, op.T)
 
 
-class HartForcadePermutationGroup(object):
-    """
-    Algorithm from Hart and Forcade 2008 prb
-
-    所有的对称操作都是以置换矩阵的形式，作用在一个元素排列上。
-    """
-
-    def __init__(self, pcell, mat):
-        if not isinstance(pcell, Cell):
-            raise TypeError(
-                "want pyabc.crystal.structure.Cell, got {:}".format(type(cell)))
-        self._pcell = pcell
-        self._mat = mat
-        self._snf, L, R = snf(mat)
-        self._volume = numpy.diagonal(self._snf).prod()
-        self._nsites = len(pcell.atoms)  # 最小原胞中原子个数 如：hcp为2
-
-    def get_symmetry_perms(self, symprec=1e-5):
-        # Q??: use whose rotations?????
-        supercell = self._pcell.extend(self._mat)
-        # 用超胞的旋转对称才是合理的
-        # arr_rots = supercell.get_rotations(symprec)[:]  # 第一个是单位矩阵
-        arr_rots = supercell.get_rotations(symprec)[:]  # 第一个是单位矩阵
-        arr_trans = supercell.get_pure_translations(symprec)[:]  # 第一个是单位矩阵
-        result = numpy.zeros(
-            (len(arr_rots), self._nsites * self._volume), dtype='intc')
-
-        origin_positions = supercell.positions
-        origin_positions = refine_positions(origin_positions)
-        for i, (rot, trans) in enumerate(zip(arr_rots, arr_trans)):
-            new_positions = numpy.matmul(origin_positions, rot.T) + trans
-            moded = numpy.ones_like(new_positions, dtype='intc')
-            new_positions = numpy.mod(new_positions, moded)
-            new_positions = refine_positions(new_positions)
-            # 寻找置换矩阵
-            for j, row in enumerate(origin_positions):
-                row = refine_positions(row)
-                idx = numpy.where(
-                    (numpy.isclose(row, new_positions, atol=symprec)).all(axis=1))[0]
-                result[i, j] = idx
-
-        result = numpy.unique(result, axis=0)
-        return result
-
-
 def is_int_np_array(npa, atol=1e-5):
     return numpy.all(numpy.isclose(npa, numpy.around(npa), atol=atol))
 
