@@ -131,7 +131,6 @@ class ConfigurationGenerator(object):
         lat_cell = self._cell.lattice
         lat_pcell = self._pcell.lattice
         mat = numpy.matmul(lat_cell, numpy.linalg.inv(lat_pcell))
-        import pdb; pdb.set_trace()
         if is_int_np_array(mat):
             mat = mat.astype('intc')
         else:
