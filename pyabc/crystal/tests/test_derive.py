@@ -18,7 +18,7 @@ class TestDerive(unittest.TestCase):
 
     def test_cons_max_volume(self):
         # 最大体积下可能产生的所有结构的总和，不包含超胞。
-        wanted = [2, 4, 10, 29]
+        wanted = [1, 3, 9, 28]
         got = []
         cg = CG(self.fcc_pcell)
         for v in [1, 2, 3, 4]:

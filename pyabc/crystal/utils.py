@@ -336,131 +336,10 @@ class HartForcadePermutationGroup(object):
         self._pcell = pcell
         self._mat = mat
         self._snf, L, R = snf(mat)
-        # self._hnf = numpy.matmul(self._snf, R).astype('intc')
-        # import pdb; pdb.set_trace()
-        self._quotient = numpy.diagonal(self._snf).tolist()
         self._volume = numpy.diagonal(self._snf).prod()
         self._nsites = len(pcell.atoms)  # 最小原胞中原子个数 如：hcp为2
 
-    # @property
-    # def hnf(self):
-    #     return self._hnf
-    #
-    # @property
-    # def snf(self):
-    #     return self._snf
-
-    def get_quotient(self):
-        """
-        return a tuple, for as dict key.
-        """
-        return tuple(self._quotient)
-
-    def get_pure_translations(self, symprec=1e-5):
-        """
-        get_pure_translations get all pure translations of one
-        kind of Smith Normal Form of a cell.
-
-        每一个平移操作作用在一个特定超胞上可以得到一个新的超胞，产生的所有超胞用于和其他
-        一个特定超胞作为比较，若有重复，则两种构型是等价的。
-        """
-        # # 所有的平移操作以商群的形式被划分为三组，每组是一个周期轮回。
-        # # 迭代拼接所有组，得到所有的操作。
-        # # 最后得到操作的数量就是一种位点时位点的数量。因为(1, 1, n)的商群产生n个平移操作对应的
-        # # 置换列表。
-        #
-        # # TODO: 使用更加直观的代码，数据结构 itertools.deque and method: rotate
-        # itertrans = [list(range(self._quotient[0])),
-        #              list(range(self._quotient[1])),
-        #              list(range(self._quotient[2]))]
-        # size = self._volume
-        # result = numpy.zeros(
-        #     (size, self._nsites * self._volume), dtype='intc')
-        # iterable = product(*itertrans)
-        #
-        # # remove (0,0,0) 因为它对应的是单位操作，保持原来的构型
-        # # a = next(iterable)  # avoid null translation
-        # # assert a == (0, 0, 0)  # check that first element (0,0,0) is remove
-        #
-        # for t, (i, j, k) in enumerate(iterable):
-        #     for l, m, n in product(*itertrans):
-        #         u = (i + l) % self._quotient[0]
-        #         v = (j + m) % self._quotient[1]
-        #         w = (k + n) % self._quotient[2]
-        #         for s in range(self._nsites):
-        #             result[t, self._flatten_indices(
-        #                 l, m, n, s)] = self._flatten_indices(u, v, w, s)
-        # print(result)
-        # return result
-        # Q??: use whose rotations?????
-        supercell = self._pcell.extend(self._mat)
-        # 用超胞的旋转对称才是合理的
-        arr_rots = supercell.get_pure_translations(symprec)[:]  # 第一个是单位矩阵
-        # arr_rots = supercell.get_rotations_without_inversion(symprec)[
-            # :]  # 第一个是单位矩阵
-        arr_rots = numpy.unique(arr_rots, axis=0)
-        result = numpy.zeros(
-            (len(arr_rots), self._nsites * self._volume), dtype='intc')
-
-        origin_positions = supercell.positions
-        origin_positions = refine_positions(origin_positions)
-        # import pdb; pdb.set_trace()
-        for i, rot in enumerate(arr_rots):
-            new_positions = origin_positions + rot
-            # import pdb; pdb.set_trace()
-            moded = numpy.ones_like(new_positions, dtype='intc')
-            new_positions = numpy.mod(new_positions, moded)
-            new_positions = refine_positions(new_positions)
-            # 寻找置换矩阵
-            for j, row in enumerate(origin_positions):
-                row = refine_positions(row)
-                idx = numpy.where(
-                    (numpy.isclose(row, new_positions, atol=symprec)).all(axis=1))[0]
-                result[i, j] = idx
-
-        result = numpy.unique(result, axis=0)
-        # print(result)
-        return result
-
-    def _flatten_indices(self, i, j, k, site=0):
-        iq = i + site * self._quotient[0]
-        jq = j + iq * self._quotient[1]
-        kq = k + jq * self._quotient[2]
-        return kq
-
-    def get_pure_rotations(self, symprec=1e-5):
-        # Q??: use whose rotations?????
-        supercell = self._pcell.extend(self._mat)
-        # 用超胞的旋转对称才是合理的
-        # arr_rots = supercell.get_rotations(symprec)[:]  # 第一个是单位矩阵
-        arr_rots = supercell.get_rotations_without_inversion(symprec)[
-            :]  # 第一个是单位矩阵
-        arr_rots = numpy.unique(arr_rots, axis=0)
-        result = numpy.zeros(
-            (len(arr_rots), self._nsites * self._volume), dtype='intc')
-
-        origin_positions = supercell.positions
-        origin_positions = refine_positions(origin_positions)
-        # import pdb; pdb.set_trace()
-        for i, rot in enumerate(arr_rots):
-            new_positions = numpy.matmul(origin_positions, rot.T)
-            print(new_positions)
-            moded = numpy.ones_like(new_positions, dtype='intc')
-            new_positions = numpy.mod(new_positions, moded)
-            new_positions = refine_positions(new_positions)
-            # 寻找置换矩阵
-            # import pdb; pdb.set_trace()
-            for j, row in enumerate(origin_positions):
-                row = refine_positions(row)
-                idx = numpy.where(
-                    (numpy.isclose(row, new_positions, atol=symprec)).all(axis=1))[0]
-                result[i, j] = idx
-
-        result = numpy.unique(result, axis=0)
-        # print(result)
-        return result
-
-    def get_symmetry(self, symprec=1e-5):
+    def get_symmetry_perms(self, symprec=1e-5):
         # Q??: use whose rotations?????
         supercell = self._pcell.extend(self._mat)
         # 用超胞的旋转对称才是合理的
@@ -472,15 +351,12 @@ class HartForcadePermutationGroup(object):
 
         origin_positions = supercell.positions
         origin_positions = refine_positions(origin_positions)
-        # import pdb; pdb.set_trace()
-        for i, rot in enumerate(arr_rots):
-            new_positions = numpy.matmul(origin_positions, rot.T)
-            print(new_positions)
+        for i, (rot, trans) in enumerate(zip(arr_rots, arr_trans)):
+            new_positions = numpy.matmul(origin_positions, rot.T) + trans
             moded = numpy.ones_like(new_positions, dtype='intc')
             new_positions = numpy.mod(new_positions, moded)
             new_positions = refine_positions(new_positions)
             # 寻找置换矩阵
-            import pdb; pdb.set_trace()
             for j, row in enumerate(origin_positions):
                 row = refine_positions(row)
                 idx = numpy.where(
@@ -488,21 +364,7 @@ class HartForcadePermutationGroup(object):
                 result[i, j] = idx
 
         result = numpy.unique(result, axis=0)
-        # print(result)
         return result
-
-    def get_supercell(self):
-        return self._pcell.extend(self._mat)
-
-    def get_pure_rotations_without_inversion(self, symprec=1e-5):
-        pass
-
-    def get_exchanged_new_labels(self):
-        """
-        For a specific supercell, when acting this function, all
-        derived configurations got.
-        """
-        pass
 
 
 def is_int_np_array(npa, atol=1e-5):

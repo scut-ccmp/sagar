@@ -2,7 +2,7 @@ import numpy
 from itertools import product
 
 from pyabc.crystal.utils import non_dup_hnfs, is_int_np_array, binomialCoeff
-from pyabc.crystal.utils import HartForcadePermutationGroup as HFPG
+from pyabc.crystal.utils import snf, refine_positions
 
 from pyabc.crystal.structure import Cell
 
@@ -28,6 +28,47 @@ def cells_nonredundant(pcell, volume=1, symprec=1e-5, comprec=1e-5):
     # for hnf in non_dup_hnfs(pcell, volume, symprec, comprec):
     #     yield pcell.extend(hnf)
 
+class PermutationGroup(object):
+    """
+    所有的对称操作都是以置换矩阵的形式，作用在一个元素排列上。
+    """
+
+    def __init__(self, pcell, mat):
+        if not isinstance(pcell, Cell):
+            raise TypeError(
+                "want pyabc.crystal.structure.Cell, got {:}".format(type(cell)))
+        self._pcell = pcell
+        self._mat = mat
+        self._snf, L, R = snf(mat)
+        self._volume = numpy.diagonal(self._snf).prod()
+        self._nsites = len(pcell.atoms)  # 最小原胞中原子个数 如：hcp为2
+
+    def get_symmetry_perms(self, symprec=1e-5):
+        # Q??: use whose rotations?????
+        supercell = self._pcell.extend(self._mat)
+        # 用超胞的旋转对称才是合理的
+        # arr_rots = supercell.get_rotations(symprec)[:]  # 第一个是单位矩阵
+        arr_rots = supercell.get_rotations(symprec)[:]  # 第一个是单位矩阵
+        arr_trans = supercell.get_pure_translations(symprec)[:]  # 第一个是单位矩阵
+        result = numpy.zeros(
+            (len(arr_rots), self._nsites * self._volume), dtype='intc')
+
+        origin_positions = supercell.positions
+        origin_positions = refine_positions(origin_positions)
+        for i, (rot, trans) in enumerate(zip(arr_rots, arr_trans)):
+            new_positions = numpy.matmul(origin_positions, rot.T) + trans
+            moded = numpy.ones_like(new_positions, dtype='intc')
+            new_positions = numpy.mod(new_positions, moded)
+            new_positions = refine_positions(new_positions)
+            # 寻找置换矩阵
+            for j, row in enumerate(origin_positions):
+                row = refine_positions(row)
+                idx = numpy.where(
+                    (numpy.isclose(row, new_positions, atol=symprec)).all(axis=1))[0]
+                result[i, j] = idx
+
+        result = numpy.unique(result, axis=0)
+        return result
 
 # 在较大体积的构型中，可能有结构已经在小的体积中出现过。
 # 那么是否要移除这些已经出现过的结构呢？
@@ -68,18 +109,19 @@ class ConfigurationGenerator(object):
             hnfs = non_dup_hnfs(self._pcell, volume, symprec)
             dict_trans = {}  # 记录已经产生过的snf，相同snf的平移操作相同。
             for h in hnfs:
-                hfpg = HFPG(self._pcell, h)
+                hfpg = PermutationGroup(self._pcell, h)
                 # 此处的平移操作不必每次重新计算，因为相同snf平移操作相同
                 # 可以用字典来标记查询。若没有这样的操作，那么就没有snf带来的效率提升。
-                quotient = hfpg.get_quotient()
-                if not quotient in dict_trans:
-                    dict_trans[quotient] = hfpg.get_pure_translations(symprec)
-                trans = dict_trans[quotient]
-                rots = hfpg.get_pure_rotations(symprec)
+                # quotient = hfpg.get_quotient()
+                # if not quotient in dict_trans:
+                #     dict_trans[quotient] = hfpg.get_pure_translations(symprec)
+                # trans = dict_trans[quotient]
+                # rots = hfpg.get_pure_rotations(symprec)
+                perms = hfpg.get_symmetry_perms(symprec)
 
-                supercell = hfpg.get_supercell()
+                supercell = self._pcell.extend(h)
 
-                for c, _ in self._remove_redundant(supercell, sites, rots, trans, volume, remove_super=True):
+                for c, _ in self._remove_redundant(supercell, sites, perms, volume, remove_super=True):
                     yield c
 
     # 特定体积胞
@@ -101,19 +143,20 @@ class ConfigurationGenerator(object):
         hnfs = non_dup_hnfs(self._pcell, volume, symprec)
         dict_trans = {}
         for h in hnfs:
-            hfpg = HFPG(self._pcell, h)
+            hfpg = PermutationGroup(self._pcell, h)
             # 此处的平移操作不必每次重新计算，因为相同snf平移操作相同
             # 可以用字典来标记查询。若没有这样的操作，那么就没有snf带来的效率提升。
             # For hnf with same snf, translations are same.
-            quotient = hfpg.get_quotient()
-            if not quotient in dict_trans:
-                dict_trans[quotient] = hfpg.get_pure_translations(symprec)
-            trans = dict_trans[quotient]
-            rots = hfpg.get_pure_rotations(symprec)
+            # quotient = hfpg.get_quotient()
+            # if not quotient in dict_trans:
+            #     dict_trans[quotient] = hfpg.get_pure_translations(symprec)
+            # trans = dict_trans[quotient]
+            # rots = hfpg.get_pure_rotations(symprec)
+            perms = hfpg.get_symmetry_perms(symprec)
 
             supercell = self._pcell.extend(h)
 
-            for c, d in self._remove_redundant(supercell, sites, rots, trans, volume):
+            for c, d in self._remove_redundant(supercell, sites, perms, volume):
                 yield (c, d)
 
     def cons_specific_cell(self, sites, e_num=None, symprec=1e-5):
@@ -138,16 +181,15 @@ class ConfigurationGenerator(object):
             print("primitive cell:\n", lat_pcell)
             raise ValueError(
                 "cell lattice and its primitive cell lattice not convertable")
-        hfpg = HFPG(self._pcell, mat)
+        hfpg = PermutationGroup(self._pcell, mat)
 
-        rots = hfpg.get_pure_rotations(symprec)
-        trans = hfpg.get_pure_translations(symprec)
+        perms = hfpg.get_symmetry_perms(symprec)
 
-        for c, d in self._remove_redundant(self._cell, sites, rots, trans, e_num=e_num):
+        for c, d in self._remove_redundant(self._cell, sites, perms, e_num=e_num):
             yield (c, d)
 
-    def _remove_redundant(self, cell, sites, rots, trans, volume=1, e_num=None, remove_super=False):
-        perms = self._get_perms_from_rots_and_trans(rots, trans)
+    def _remove_redundant(self, cell, sites, perms, volume=1, e_num=None, remove_super=False):
+        # perms = self._get_perms_from_rots_and_trans(rots, trans)
         # TODO: 加入一个机制，来清晰的设定位点上无序的状态
         arg_sites = [len(i) for i in sites]
         arg_sites = numpy.repeat(arg_sites, volume)
@@ -163,9 +205,10 @@ class ConfigurationGenerator(object):
 
             if remove_super:
                 flag = (ahash in redundant) or self._is_super(
-                    arr_atoms_mark, trans)
+                    cell, arr_atoms_mark)
             else:
                 flag = ahash in redundant
+
             if flag:
                 continue
             else:
@@ -201,12 +244,9 @@ class ConfigurationGenerator(object):
                 idx += 1
         return perms
 
-    def _is_super(self, arr_atoms_mark, translations):
-        for t in translations[1:]:
-            transmuted = arr_atoms_mark[t]
-            if numpy.array_equal(transmuted, arr_atoms_mark):
-                return True
-        return False
+    def _is_super(self, cell, arr_atoms_mark):
+        newcell = Cell(cell.lattice, cell.positions, arr_atoms_mark)
+        return not newcell.is_primitive()
 
     def _mark_to_atoms(self, arr_mark, sites):
         num_of_site_groups = len(sites)
