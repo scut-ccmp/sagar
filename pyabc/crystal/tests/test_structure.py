@@ -85,6 +85,7 @@ class TestCell(unittest.TestCase):
         numpy.testing.assert_almost_equal(ext_fcc.lattice, wanted_latt)
         numpy.testing.assert_almost_equal(ext_fcc.positions, wanted_pos)
         numpy.testing.assert_almost_equal(ext_fcc.atoms, wanted_atoms)
+        # TODO: more complex test case needed
 
     def test_extend_bug(self):
         sc_latt = [4, 0, 0,
