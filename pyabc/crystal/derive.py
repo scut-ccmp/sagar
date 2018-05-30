@@ -132,7 +132,7 @@ class ConfigurationGenerator(object):
         lat_pcell = self._pcell.lattice
         mat = numpy.matmul(lat_cell, numpy.linalg.inv(lat_pcell))
         if is_int_np_array(mat):
-            mat = mat.astype('intc')
+            mat = numpy.around(mat).astype('intc')
         else:
             print("cell:\n", lat_cell)
             print("primitive cell:\n", lat_pcell)
