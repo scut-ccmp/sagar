@@ -47,9 +47,9 @@ class PermutationGroup(object):
         # Q??: use whose rotations?????
         supercell = self._pcell.extend(self._mat)
         # 用超胞的旋转对称才是合理的
-        # arr_rots = supercell.get_rotations(symprec)[:]  # 第一个是单位矩阵
-        arr_rots = supercell.get_rotations(symprec)[:]  # 第一个是单位矩阵
-        arr_trans = supercell.get_pure_translations(symprec)[:]  # 第一个是单位矩阵
+        syms = supercell.get_symmetry(symprec)
+        arr_rots, arr_trans = syms['rotations'], syms['translations']
+
         result = numpy.zeros(
             (len(arr_rots), self._nsites * self._volume), dtype='intc')
 
