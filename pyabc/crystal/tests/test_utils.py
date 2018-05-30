@@ -5,7 +5,6 @@ import copy
 from pyabc.crystal.structure import Cell
 from pyabc.crystal.utils import non_dup_hnfs, _is_hnf_dup, _hnfs
 from pyabc.crystal.utils import IntMat3x3, extended_gcd, snf
-from pyabc.crystal.utils import HartForcadePermutationGroup as HFPG
 
 
 class TestHnf(unittest.TestCase):
