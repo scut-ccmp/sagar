@@ -523,132 +523,6 @@ class TestSnfHnf(unittest.TestCase):
         self.assertEqual(b, wanted_b_quick)
 
 
-class TestHFPG(object):
-    """
-    有关该类的测试均为输出型测试，因都是中间件，所有不容易对输出有一个良好的正确的评估。
-    在使用时取消各个函数的注释来查看函数的输出，以理解函数的行为和作用。
-    """
-
-    def setUp(self):
-        # FCC
-        fcc_latt = [0, 5, 5,
-                    5, 0, 5,
-                    5, 5, 0]
-        fcc_pos = [(0, 0, 0)]
-        fcc_atoms = [0]
-        self.fcc_pcell = Cell(fcc_latt, fcc_pos, fcc_atoms)
-
-    def test_get_pure_translations(self):
-        # fcc_latt = [0, 5, 5,
-        #             5, 0, 5,
-        #             5, 5, 0]
-        # fcc_pos = [(0, 0, 0),
-        #            (0.5, 0.5, 0.5)]
-        # fcc_atoms = [0, 2]
-        # fcc_pcell = Cell(fcc_latt, fcc_pos, fcc_atoms)
-        # hnfs = non_dup_hnfs(fcc_pcell, 4)
-        # h = hnfs[4]
-        # print("hnf is:")
-        # hfpg = HFPG(fcc_pcell, h)
-        # print("pure translations is:")
-        # print(hfpg.get_pure_translations())
-        # print('\n')
-        # pass
-        # fcc_latt = [5, 0, 0,
-        #             0, 5, 0,
-        #             0, 0, 5]
-        # fcc_pos = [(0, 0, 0)]
-        # fcc_atoms = [0]
-        # fcc_pcell = Cell(fcc_latt, fcc_pos, fcc_atoms)
-        # mat = numpy.array([-1, 1, 1,
-        #                    1, -1, 1,
-        #                    1, 1, -1]).reshape((3, 3))
-        # print("mat is:")
-        # print(mat)
-        # hfpg = HFPG(fcc_pcell, mat)
-        # print("pure rotation is:")
-        # print(hfpg.get_pure_translations())
-        # print('\n')
-
-        # hnfs = non_dup_hnfs(self.fcc_pcell, 8)
-        # for h in hnfs:
-        #     print("hnf is:")
-        #     print(h)
-        #     print("snf is:")
-        #     snf_D, _, _ = snf(h)
-        #     print(snf_D)
-        #     hfpg = HFPG(self.fcc_pcell, h)
-        #     print("pure translation is:")
-        #     print(hfpg.get_pure_translations())
-        #     print('\n')
-        pass
-
-    def test_exchanged_new_labels(self):
-        # hnfs = non_dup_hnfs(self.fcc_pcell, 4)
-        # for h in hnfs:
-        #     print("hnf is:")
-        #     print(h)
-        #     print("super cell atoms is:")
-        #     print(self.fcc_pcell.extend(h).atoms)
-        #     hfpg = HFPG(self.fcc_pcell, h)
-        #     print("label exchange is:")
-        #     print(hfpg.get_exchanged_new_labels())
-        pass
-
-    def test_get_pure_rotations(self):
-        # fcc_latt = [0, 5, 5,
-        #             5, 0, 5,
-        #             5, 5, 0]
-        # fcc_pos = [(0, 0, 0),
-        #            (0.5,0.5,0.5)]
-        # fcc_atoms = [0, 2]
-        # fcc_pcell = Cell(fcc_latt, fcc_pos, fcc_atoms)
-        # hnfs = non_dup_hnfs(fcc_pcell, 4)
-        # h = hnfs[4]
-        # print("mat is:")
-        # print(h)
-        # hfpg = HFPG(fcc_pcell, h)
-        # print("pure rotation is:")
-        # print(hfpg.get_pure_rotations())
-        # print('\n')
-        pass
-        # fcc_latt = [0, 5, 5,
-        #             5, 0, 5,
-        #             5, 5, 0]
-        # fcc_pos = [(0, 0, 0)]
-        # fcc_atoms = [0]
-        # fcc_pcell = Cell(fcc_latt, fcc_pos, fcc_atoms)
-        # mat = numpy.array([-1, 1, 1,
-        #                    1, -1, 1,
-        #                    1, 1, -1]).reshape((3, 3))
-        # # mat = numpy.array([1, -1, -1,
-        # #                    0, 2, 0,
-        # #                    0, 0, 2]).reshape((3, 3))
-        # print("mat is:")
-        # print(mat)
-        # hfpg = HFPG(fcc_pcell, mat)
-        # print("pure rotation is:")
-        # print(hfpg.get_pure_rotations())
-        # print('\n')
-
-    def test_get_symmetry(self):
-        # fcc_latt = [0, 5, 5,
-        #             5, 0, 5,
-        #             5, 5, 0]
-        # fcc_pos = [(0, 0, 0),
-        #            (0.5,0.5,0.5)]
-        # fcc_atoms = [0, 2]
-        # fcc_pcell = Cell(fcc_latt, fcc_pos, fcc_atoms)
-        # hnfs = non_dup_hnfs(fcc_pcell, 4)
-        # h = hnfs[4]
-        # print("hnf is:")
-        # hfpg = HFPG(fcc_pcell, h)
-        # print("perm is:")
-        # print(hfpg.get_symmetry())
-        # print('\n')
-        pass
-
-
 class TestCommonUtils(unittest.TestCase):
 
     def test_extended_gcd(self):
@@ -664,6 +538,12 @@ class TestCommonUtils(unittest.TestCase):
             self.assertEqual(r, wanted)
 
     def test_is_int_np_array(self):
+        pass
+
+    def test_binomial_coeff(self):
+        pass
+
+    def test_refine_positions(self):
         pass
 
 
