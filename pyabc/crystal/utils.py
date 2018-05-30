@@ -444,7 +444,7 @@ class HartForcadePermutationGroup(object):
         # import pdb; pdb.set_trace()
         for i, rot in enumerate(arr_rots):
             new_positions = numpy.matmul(origin_positions, rot.T)
-            print(new_positions)
+            # print(new_positions)
             moded = numpy.ones_like(new_positions, dtype='intc')
             new_positions = numpy.mod(new_positions, moded)
             new_positions = refine_positions(new_positions)

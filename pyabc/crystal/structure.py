@@ -126,7 +126,7 @@ class Cell(object):
         list_positions = [i for i in map(
             lambda x: x + grids, list(smallest_cell))]
         positions_1 = numpy.concatenate(list_positions, axis=0)
-        positions = positions_1-numpy.floor(positions_1)
+        positions = positions_1 - numpy.floor(positions_1)
 
         n = abs(numpy.linalg.det(mat))
         atoms = numpy.repeat(self._atoms, int(round(n)))
@@ -144,23 +144,23 @@ class Cell(object):
         prec = 1e-5
         #m = numpy.amax(mat)
         #_int_coor = numpy.array([i for i in product(range(m * 3), repeat=3)])
-        ##适用于hnf
+        # 适用于hnf
 
-
-        #---------------------选取一个大框包含目标框
-        conv =  numpy.row_stack((mat, numpy.matrix([0, 0, 0])))
-        conv =  numpy.row_stack((conv, numpy.matrix(mat[0]+mat[1])))
-        conv =  numpy.row_stack((conv, mat[0]+mat[2]))
-        conv =  numpy.row_stack((conv, mat[1]+mat[2]))
-        conv =  numpy.row_stack((conv, mat[0]+mat[1]+mat[2]))
+        # ---------------------选取一个大框包含目标框
+        conv = numpy.row_stack((mat, numpy.matrix([0, 0, 0])))
+        conv = numpy.row_stack((conv, numpy.matrix(mat[0] + mat[1])))
+        conv = numpy.row_stack((conv, mat[0] + mat[2]))
+        conv = numpy.row_stack((conv, mat[1] + mat[2]))
+        conv = numpy.row_stack((conv, mat[0] + mat[1] + mat[2]))
 
         ma = [0, 0, 0]
         mi = [0, 0, 0]
-        for i in range(0,3):
-            ma[i] = numpy.amax(conv[:,i])
-            mi[i] = numpy.amin(conv[:,i])
-        _int_coor =  numpy.array([j for j in product(range(mi[0]-1, ma[0]+2), range(mi[1]-1, ma[1]+2), range(mi[2]-1, ma[2]+2))])
-        ##from qiusb-------------
+        for i in range(0, 3):
+            ma[i] = numpy.amax(conv[:, i])
+            mi[i] = numpy.amin(conv[:, i])
+        _int_coor = numpy.array([j for j in product(range(
+            mi[0] - 1, ma[0] + 2), range(mi[1] - 1, ma[1] + 2), range(mi[2] - 1, ma[2] + 2))])
+        # from qiusb-------------
 
         _all_frac = numpy.matmul(_int_coor, numpy.linalg.inv(mat))
 
@@ -191,6 +191,18 @@ class Cell(object):
             if self._not_contain(rot_list_noinv, rot):
                 rot_list_noinv.append(rot)
         return rot_list_noinv
+
+    def get_rotations_without_transitions(self, symprec=1e-5):
+        """
+        All rotations but remove inversion and its derive operation
+        """
+        rot_list = self.get_rotations(symprec)
+        trans_list = self.get_pure_translations(symprec)
+        rot_list_notrans = []
+        for rot, trans in zip(rot_list, trans_list):
+            if numpy.allclose(trans, [0, 0, 0]):
+                rot_list_notrans.append(rot)
+        return rot_list_notrans
 
     def get_pure_translations(self, symprec=1e-5):
         """
