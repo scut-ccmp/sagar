@@ -329,6 +329,7 @@ def is_int_np_array(npa, atol=1e-5):
 def refine_positions(npa, atol=1e-5):
     """
     给定一个精度，让靠近1的元素变成零。则使得坐标在0～1之间可以直接比较。
+    注意，当胞很大的时候atol需要增大可能才能反映边界处的原子。
     """
     flatten_npa = npa.flatten()
     for i, val in enumerate(flatten_npa):
