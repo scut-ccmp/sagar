@@ -110,9 +110,34 @@ def conf(cell_filename, comment, pmode, cmode, volume, element, substitutes, num
         (min_v, max_v) = volume
         sites = _get_sites(list(cell.atoms), element, substitutes)
         confs = cg.cons_specific_volume(
-            sites, volume=max_v, symprec=symprec)
+            sites, volume=max_v, e_num=None, symprec=symprec)
         f_deg = open('deg.txt', 'a')
-        for idx, (c,d) in enumerate(confs):
+        for idx, (c, d) in enumerate(confs):
+            filename = '{:s}_id{:d}'.format(comment, idx)
+            write_vasp(c, filename)
+            deg_line = filename + '{:10d}'.format(d) + '\n'
+            f_deg.write(deg_line)
+
+        spinner.stop()
+        click.secho("DONE", bold=True, bg='green', fg='white')
+    elif pmode == 'svc' and cmode == 'cc':
+        click.secho("Expanding and generating configurations: ")
+        click.secho(
+            "(may take much time)", blink=True, bold=True, bg='magenta', fg='white')
+        spinner = Spinner()
+        spinner.start()
+        (min_v, max_v) = volume
+        l_atoms = cell.atoms.tolist()
+        sites = _get_sites(l_atoms, element, substitutes)
+        # number to enum
+        ele_n = s2n(element)
+        e_total = l_atoms.count(ele_n) * max_v
+        e_n = e_total - sum(number)    # 第一个元素的数量
+        e_num = [e_n] + list(number)    # 各个元素的数量
+        confs = cg.cons_specific_volume(
+            sites, volume=max_v, e_num=e_num, symprec=symprec)
+        f_deg = open('deg.txt', 'a')
+        for idx, (c, d) in enumerate(confs):
             filename = '{:s}_id{:d}'.format(comment, idx)
             write_vasp(c, filename)
             deg_line = filename + '{:10d}'.format(d) + '\n'
@@ -130,7 +155,7 @@ def conf(cell_filename, comment, pmode, cmode, volume, element, substitutes, num
         sites = _get_sites(l_atoms, element, substitutes)
         confs = cg.cons_specific_cell(sites, None, symprec=symprec)
         f_deg = open('deg.txt', 'a')
-        for idx, (c,d) in enumerate(confs):
+        for idx, (c, d) in enumerate(confs):
             filename = '{:s}_id{:d}'.format(comment, idx)
             write_vasp(c, filename)
             # import pdb; pdb.set_trace()
@@ -154,7 +179,7 @@ def conf(cell_filename, comment, pmode, cmode, volume, element, substitutes, num
         e_num = [e_n] + list(number)    # 各个元素的数量
         confs = cg.cons_specific_cell(sites, e_num, symprec=symprec)
         f_deg = open('deg.txt', 'a')
-        for idx, (c,d) in enumerate(confs):
+        for idx, (c, d) in enumerate(confs):
             filename = '{:s}_id{:d}'.format(comment, idx)
             write_vasp(c, filename)
             deg_line = filename + '{:10d}'.format(d) + '\n'
@@ -163,7 +188,8 @@ def conf(cell_filename, comment, pmode, cmode, volume, element, substitutes, num
         spinner.stop()
         click.secho("DONE", bold=True, bg='green', fg='white')
     else:
-        click.secho("ERROR: --pmode={:s} --cmode={:s} not supported.".format(pmode, cmode), bold=True, bg='red', fg='white')
+        click.secho("ERROR: --pmode={:s} --cmode={:s} not supported.".format(
+            pmode, cmode), bold=True, bg='red', fg='white')
 
 
 def _get_sites(l_atoms, ele, l_sub):
