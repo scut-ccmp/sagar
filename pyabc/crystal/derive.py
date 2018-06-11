@@ -125,7 +125,7 @@ class ConfigurationGenerator(object):
                     yield c
 
     # 特定体积胞
-    def cons_specific_volume(self, sites, volume=2, symprec=1e-5):
+    def cons_specific_volume(self, sites, volume=2, e_num=None, symprec=1e-5):
         """
         parameters:
 
@@ -156,7 +156,7 @@ class ConfigurationGenerator(object):
 
             supercell = self._pcell.extend(h)
 
-            for c, d in self._remove_redundant(supercell, sites, perms, volume):
+            for c, d in self._remove_redundant(supercell, sites, perms, volume, e_num):
                 yield (c, d)
 
     def cons_specific_cell(self, sites, e_num=None, symprec=1e-5):
@@ -276,8 +276,12 @@ def _atoms_gen(args, e_num=None):
             p.append(range(i))
         return product(*p)
     else:
-        arr_arrange = _serial_int_to_arrangement(e_num)
         # import pdb; pdb.set_trace()
+        disorder_site = [s for s in args if s > 1]
+        num_disorder_site = len(disorder_site)
+        if num_disorder_site != sum(e_num):
+            raise ValueError("concentration given error, wanted sum {:d}, got {:d}".format(num_disorder_site, sum(e_num)))
+        arr_arrange = _serial_int_to_arrangement(e_num)
         for col, n in enumerate(args):
             if n == 1:
                 arr_arrange = numpy.insert(arr_arrange, col, 0, axis=1)
