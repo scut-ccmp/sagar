@@ -168,8 +168,8 @@ def conf(cell_filename, comment, pmode, cmode, volume, element, substitutes, num
         click.secho("Generating configurations: ")
         click.secho(
             "(may take much time)", blink=True, bold=True, bg='magenta', fg='white')
-        spinner = Spinner()
-        spinner.start()
+        # spinner = Spinner()
+        # spinner.start()
         l_atoms = cell.atoms.tolist()
         sites = _get_sites(l_atoms, element, substitutes)
         # number to enum
@@ -179,13 +179,14 @@ def conf(cell_filename, comment, pmode, cmode, volume, element, substitutes, num
         e_num = [e_n] + list(number)    # 各个元素的数量
         confs = cg.cons_specific_cell(sites, e_num, symprec=symprec)
         f_deg = open('deg.txt', 'a')
+        # TODO f.close()
         for idx, (c, d) in enumerate(confs):
             filename = '{:s}_id{:d}'.format(comment, idx)
             write_vasp(c, filename)
             deg_line = filename + '{:10d}'.format(d) + '\n'
             f_deg.write(deg_line)
 
-        spinner.stop()
+        # spinner.stop()
         click.secho("DONE", bold=True, bg='green', fg='white')
     else:
         click.secho("ERROR: --pmode={:s} --cmode={:s} not supported.".format(
