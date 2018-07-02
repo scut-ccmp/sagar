@@ -46,6 +46,7 @@ class PermutationGroup(object):
     def get_symmetry_perms(self, symprec=1e-5):
         # Q??: use whose rotations?????
         supercell = self._pcell.extend(self._mat)
+        # import pdb; pdb.set_trace()
         # 用超胞的旋转对称才是合理的
         syms = supercell.get_symmetry(symprec)
         arr_rots, arr_trans = syms['rotations'], syms['translations']
@@ -185,7 +186,8 @@ class ConfigurationGenerator(object):
 
         perms = hfpg.get_symmetry_perms(symprec)
 
-        for c, d in self._remove_redundant(self._cell, sites, perms, e_num=e_num):
+        supercell = self._pcell.extend(mat)
+        for c, d in self._remove_redundant(supercell, sites, perms, e_num=e_num):
             yield (c, d)
 
     def _remove_redundant(self, cell, sites, perms, volume=1, e_num=None, remove_super=False):
