@@ -93,7 +93,7 @@ class ConfigurationGenerator(object):
         else:
             self._pcell = cell
 
-    def cons_max_volume(self, sites, max_volume, min_volume=1, symprec=1e-5):
+    def cons_max_volume(self, sites, max_volume, min_volume=1, dimension=3, symprec=1e-5):
         """
         parameters:
 
@@ -107,7 +107,7 @@ class ConfigurationGenerator(object):
         """
         # 该函数产生所有构型用于确定基态相图
         for volume in range(min_volume, max_volume + 1):
-            hnfs = non_dup_hnfs(self._pcell, volume, symprec)
+            hnfs = non_dup_hnfs(self._pcell, volume, dimension, symprec)
             dict_trans = {}  # 记录已经产生过的snf，相同snf的平移操作相同。
             for h in hnfs:
                 hfpg = PermutationGroup(self._pcell, h)

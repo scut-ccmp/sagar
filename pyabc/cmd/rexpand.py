@@ -63,6 +63,8 @@ def _export_supercell(pcell, comment, v, symprec, comprec, verbose):
               help="[varv|svc|sc] represent ['variable volume cells'|'specific volume cells'|'specific cell'] respectively. Deciding what kinds of parent cell to be used to getting configurations")
 @click.option('--cmode', '-mc', type=click.Choice(['vc', 'cc']), default='cc',
               help="[vc|cc] for 'variable concentration' and 'certain concentration' respectively.")
+@click.option('--dimension', '-d', type=int, default=3,
+              help="Dimension of the system, 2 for slab. Defalut=3 for crystal")
 @click.option('--volume', '-v', nargs=2, type=int, metavar='<min> <max>',
               help="Expand primitive cell to supercell and to generate configurations of volume <min> to <max>, set <min> as -1 for creating only <max> volume expanded supercells. ONLY USED WHEN --pmode=[varv|svc]")
 @click.option('--element', '-e', type=str, metavar='<symbol of element>',
@@ -77,7 +79,7 @@ def _export_supercell(pcell, comment, v, symprec, comprec, verbose):
               help="Compare precision to judging if supercell is redundant. Defalut=1e-5")
 @click.option('--verbose', '-vvv', is_flag=True, metavar='',
               help="Will print verbose messages.")
-def conf(cell_filename, comment, pmode, cmode, volume, element, substitutes, number,  symprec, comprec, verbose):
+def conf(cell_filename, comment, pmode, cmode, dimension, volume, element, substitutes, number,  symprec, comprec, verbose):
     """
     <parent_cell_file> is the parent cell to generating configurations by sites disorder.\n
     The non-primitive cell can only used as argument when '--pmode=sc'.\n
@@ -92,9 +94,11 @@ def conf(cell_filename, comment, pmode, cmode, volume, element, substitutes, num
         spinner = Spinner()
         spinner.start()
         (min_v, max_v) = volume
+        if min_v == -1:
+            min_v = 1
         sites = _get_sites(list(cell.atoms), element, substitutes)
         confs = cg.cons_max_volume(
-            sites, max_v, min_volume=min_v, symprec=symprec)
+            sites, max_v, min_volume=min_v, dimension=dimension, symprec=symprec)
         for idx, c in enumerate(confs):
             c = c.get_primitive_cell()
             filename = '{:s}_id{:d}'.format(comment, idx)

@@ -38,17 +38,14 @@ def _hnfs_2D(det):
     # 二维的hnf矩阵生成,z方向为1
     h = []
     for a in _factor(det):
-        for d in _factor(det // a):
-            f = det // a // d
-            if f == 1:
-
-                for b in range(d):
-                    yield numpy.array([[a, b, 0],
-                                       [0, d, 0],
-                                       [0, 0, f]])
+        d = det // a
+        for b in range(d):
+            yield numpy.array([[a, b, 0],
+                               [0, d, 0],
+                               [0, 0, 1]])
 
 
-def non_dup_hnfs(pcell, volume=1, symprec=1e-5, comprec=1e-5, dimension=3):
+def non_dup_hnfs(pcell, volume=1, dimension=3, symprec=1e-5, comprec=1e-5):
     """
     hnf_cells return all non duplicated hnf extend cells.
 
@@ -92,7 +89,7 @@ def non_dup_hnfs(pcell, volume=1, symprec=1e-5, comprec=1e-5, dimension=3):
 
         return nodup_hnfs
     else:
-        raise ValueError("Dimension you provide is not ture."
+        raise ValueError("Dimension you provide is not as expected."
                          "You can only use dimension = 3(default) or 2.")
 
 
