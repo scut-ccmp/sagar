@@ -28,6 +28,7 @@ def cells_nonredundant(pcell, volume=1, symprec=1e-5, comprec=1e-5):
     # for hnf in non_dup_hnfs(pcell, volume, symprec, comprec):
     #     yield pcell.extend(hnf)
 
+
 class PermutationGroup(object):
     """
     所有的对称操作都是以置换矩阵的形式，作用在一个元素排列上。
@@ -81,6 +82,8 @@ class PermutationGroup(object):
 #
 # 该函数中没有comprec参数，是因为构型(configurations)之间的对比
 # 通过原子排列的对比实现，没有坐标的比较。
+
+
 class ConfigurationGenerator(object):
     """
     pcell: Cell object, The primitive cell to be extended
@@ -282,7 +285,8 @@ def _atoms_gen(args, e_num=None):
         disorder_site = [s for s in args if s > 1]
         num_disorder_site = len(disorder_site)
         if num_disorder_site != sum(e_num):
-            raise ValueError("concentration given error, wanted sum {:d}, got {:d}".format(num_disorder_site, sum(e_num)))
+            raise ValueError("concentration given error, wanted sum {:d}, got {:d}".format(
+                num_disorder_site, sum(e_num)))
         arr_arrange = _serial_int_to_arrangement(e_num)
         for col, n in enumerate(args):
             if n == 1:
@@ -323,6 +327,7 @@ def _serial_int_to_arrangement(e_num):
         for e in range(len(e_num)):
             y, x = divmod(i, comb[e])
             a = e_num[e]
+            n_color = a
             m = open_slots
 
             for idx, value in enumerate(arr_arrangement[i]):
@@ -337,5 +342,7 @@ def _serial_int_to_arrangement(e_num):
                         a -= 1
                         arr_arrangement[i][idx] = e
                     m -= 1
+
+            open_slots -= n_color
 
     return arr_arrangement

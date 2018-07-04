@@ -124,7 +124,7 @@ class TestDerive(unittest.TestCase):
 
 class TestUtilsFunc(unittest.TestCase):
 
-    def test_atoms_gen(self):
+    def test_atoms_gen_NONE(self):
         input = [2, 2, 2]
         wanted = [(0, 0, 0),
                   (0, 0, 1),
@@ -136,6 +136,13 @@ class TestUtilsFunc(unittest.TestCase):
                   (1, 1, 1)]
         for i, got in enumerate(_atoms_gen(input)):
             self.assertEqual(got, wanted[i])
+
+    def test_atoms_gen(self):
+        # args = [3, 3, 3, 3, 3, 3]
+        # e_num = (2, 2, 2)
+        # import pdb; pdb.set_trace()
+        # atoms = _atoms_gen(args, e_num)
+        pass
 
     def test_serial_int_to_arrangement(self):
         wanted = numpy.array([0, 0, 1, 2,
@@ -151,6 +158,39 @@ class TestUtilsFunc(unittest.TestCase):
                               1, 0, 2, 0,
                               2, 1, 0, 0]).reshape((12, 4))
         got = _serial_int_to_arrangement((2, 1, 1))
+        numpy.testing.assert_almost_equal(got, wanted)
+
+        wanted = numpy.array([[0, 0, 1, 1, 2],
+                              [0, 1, 0, 2, 1],
+                              [0, 2, 1, 0, 1],
+                              [0, 1, 1, 2, 0],
+                              [1, 0, 0, 2, 1],
+                              [2, 0, 1, 0, 1],
+                              [1, 0, 1, 2, 0],
+                              [1, 2, 0, 0, 1],
+                              [2, 1, 0, 1, 0],
+                              [1, 1, 2, 0, 0],
+                              [0, 0, 1, 2, 1],
+                              [0, 2, 0, 1, 1],
+                              [0, 1, 1, 0, 2],
+                              [0, 1, 2, 1, 0],
+                              [2, 0, 0, 1, 1],
+                              [1, 0, 1, 0, 2],
+                              [1, 0, 2, 1, 0],
+                              [2, 1, 0, 0, 1],
+                              [1, 1, 0, 2, 0],
+                              [1, 2, 1, 0, 0],
+                              [0, 0, 2, 1, 1],
+                              [0, 1, 0, 1, 2],
+                              [0, 1, 2, 0, 1],
+                              [0, 2, 1, 1, 0],
+                              [1, 0, 0, 1, 2],
+                              [1, 0, 2, 0, 1],
+                              [2, 0, 1, 1, 0],
+                              [1, 1, 0, 0, 2],
+                              [1, 2, 0, 1, 0],
+                              [2, 1, 1, 0, 0]])
+        got = _serial_int_to_arrangement((2, 2, 1))
         numpy.testing.assert_almost_equal(got, wanted)
 
 
