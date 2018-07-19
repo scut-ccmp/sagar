@@ -128,7 +128,7 @@ def write_vasp(cell, filename='POSCAR', suffix='.vasp', long_format=True):
         f.write(_write_string(cell, long_format))
 
 
-def _write_string(cell, long_format):
+def _write_string(cell, long_format, print_vacc=False):
     """
     _write_string make io easy to be tested.
 
@@ -138,6 +138,8 @@ def _write_string(cell, long_format):
     # 对原子种类合并排序，用以产生体系名称和原子顺序数目和正确的坐标排序
     # sorted is a list of tuple(atom, na)
     atoms_dict = collections.Counter(cell.atoms)
+    if not print_vacc:
+        del atoms_dict[0]
     sorted_symbols = sorted(atoms_dict.items(), key=operator.itemgetter(0))
 
     list_symbols = ["{:}{:}".format(get_symbol(atom), na)
@@ -182,6 +184,8 @@ def _write_string(cell, long_format):
         pos_form = '9.6f'
 
     for i, vec in enumerate(coord):
+        if atoms[i] == 0:
+            continue
         positions_string += ' '
         for v in vec:
             positions_string += '{:{form}}'.format(v, form=pos_form)
