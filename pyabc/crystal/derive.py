@@ -129,7 +129,7 @@ class ConfigurationGenerator(object):
                     yield c
 
     # 特定体积胞
-    def cons_specific_volume(self, sites, volume=2, e_num=None, symprec=1e-5):
+    def cons_specific_volume(self, sites, volume=2, e_num=None, dimension=3, symprec=1e-5):
         """
         parameters:
 
@@ -144,7 +144,7 @@ class ConfigurationGenerator(object):
         tuple[1]: int object, degeneracy of the configuration in all configurations of this volume.
         """
         # 该函数产生特定体积下所有构型（包括超胞）和简并度，用于统计平均
-        hnfs = non_dup_hnfs(self._pcell, volume, symprec)
+        hnfs = non_dup_hnfs(self._pcell, volume, dimension, symprec)
         dict_trans = {}
         for h in hnfs:
             hfpg = PermutationGroup(self._pcell, h)
