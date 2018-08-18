@@ -80,6 +80,13 @@ class Cell(object):
         self._atoms = numpy.array(a, dtype='intc')
         # TODO: initial with Cartesian coor
 
+    # For defining a immutable object
+    def __hash__(self):
+        pass
+
+    def __eq__(self):
+        pass
+
     @property
     def lattice(self):
         return self._lattice
@@ -266,3 +273,68 @@ class Cell(object):
         spg_cell = (self.lattice, self.positions, self.atoms)
         lattice, positions, atoms = spglib.refine_cell(spg_cell, symprec)
         return self.__class__(lattice, positions, atoms)
+
+# 该类用于可以变换的结构
+# TODO: 与上面的不可变的类同时继承于固定的基类
+# TODO: 上面的类明确为不可变的类
+
+
+class MutableCell(object):
+    """
+    MutableCell object represent a crystal structure.
+    """
+
+    def __init__(self, lattice, sites=None):
+        """
+        提供晶格和位点信息
+        可以不提供位点信息，则初始化为空的晶胞
+        在这个类中，site是一个字典键值对，一个表示相对坐标的3元素tuple为键，位点元素名称为值
+        """
+        self._lattice = numpy.array(lattice).reshape((3, 3))
+        # TODO: sites initial
+        if sites is None:
+            self._sites = dict()
+
+    def to_cell(self):
+        pass
+
+    def add_site(self, site):
+        pass
+
+    def remove_site(self, id_site):
+        pass
+
+    def set_site(self, id_site, site):
+        """
+        分为两种情况，该位点已经存在，和该位点没有找到。
+        """
+        pass
+
+    def check(self, limit=0.1):
+        """
+        该方法用于自查对象中的位点是否过近
+        若过近则抛出一个warning
+        """
+        pass
+
+    def __repr__(self):
+        # def _repr(number):
+        #     return "{:9.6f}".format(number)
+        #
+        # lattice = ??
+        # positions = ??
+        # atoms = ??
+        # out_latt = ["Lattice:",
+        #             "   a: " + ' '.join(map(_repr, lattice[0])),
+        #             "   b: " + ' '.join(map(_repr, lattice[1])),
+        #             "   c: " + ' '.join(map(_repr, lattice[2]))]
+        # sites = zip(positions, atoms)
+        # out_pos = []
+        # out_pos.append("Sites:")
+        # for s in sites:
+        #     o = ' '.join(map(_repr, s[0])) + ' ' + get_symbol(s[1])
+        #     out_pos.append(o)
+        #
+        # outs = out_latt + out_pos
+        # return "\n".join(outs)
+        pass

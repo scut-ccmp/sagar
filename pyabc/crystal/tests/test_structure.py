@@ -1,7 +1,7 @@
 import unittest
 import numpy
 
-from pyabc.crystal.structure import Cell
+from pyabc.crystal.structure import Cell, MutableCell
 
 
 class TestCell(unittest.TestCase):
@@ -127,6 +127,38 @@ class TestCell(unittest.TestCase):
         con_cell = Cell(fcc_latt, fcc_pos, fcc_atoms)
         pcell = con_cell.get_primitive_cell()
         self.assertEqual(pcell.atoms, [0])
+
+
+class TestMutableCell(unittest.TestCase):
+
+    def setUp(self):
+        # 使用金刚石Si作为测试模型
+        self.lattice = numpy.array([0.0, 0.5, 0.5,
+                                    0.5, 0.0, 0.5,
+                                    0.5, 0.5, 0.0]).reshape((3, 3))
+
+    def test_init(self):
+        # 创建空胞
+        lattice = numpy.copy(self.lattice)
+        mcell = MutableCell(lattice)
+        self.assertFalse(bool(mcell._sites))
+
+        # 增加原子
+
+    def test_to_cell(self):
+        pass
+
+    def test_add_site(self):
+        pass
+
+    def test_remove_site(self):
+        pass
+
+    def test_set_site(self):
+        pass
+
+    def test_check(self):
+        pass
 
 
 if __name__ == "__main__":
