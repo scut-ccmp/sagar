@@ -5,6 +5,7 @@ from math import sqrt
 from itertools import product
 
 from pyabc.crystal.structure import Cell
+from pyabc.utils.math import is_int_np_array, extended_gcd
 
 
 def _factor(n):
@@ -122,7 +123,6 @@ def _is_hnf_dup(hnf_x, hnf_y, rot_list, prec=1e-5):
             return True
 
     return False
-
 
 def snf(mat):
     """
@@ -317,50 +317,3 @@ class IntMat3x3(object):
 
         self._mat = numpy.matmul(self._mat, op.T)
         self._opR = numpy.matmul(self._opR, op.T)
-
-
-def is_int_np_array(npa, atol=1e-5):
-    return numpy.all(numpy.isclose(npa, numpy.around(npa), atol=atol))
-
-
-def refine_positions(npa, atol=1e-5):
-    """
-    给定一个精度，让靠近1的元素变成零。则使得坐标在0～1之间可以直接比较。
-    """
-    flatten_npa = npa.flatten()
-    for i, val in enumerate(flatten_npa):
-        if val < atol or val > 1 - atol:
-            flatten_npa[i] = 0
-        else:
-            flatten_npa[i] = val
-    return flatten_npa.reshape(npa.shape)
-
-
-def extended_gcd(aa, bb):
-    """
-    Algorithm: https://en.wikipedia.org/wiki/Extended_Euclidean_algorithm#Iterative_method_2
-
-    parameters:
-    aa, bb: int
-
-    return: r, s, t
-
-    r = s * aa + t * bb
-    """
-    lastremainder, remainder = abs(aa), abs(bb)
-    x, lastx, y, lasty = 0, 1, 1, 0
-    while remainder:
-        lastremainder, (quotient, remainder) = remainder, divmod(
-            lastremainder, remainder)
-        x, lastx = lastx - quotient * x, x
-        y, lasty = lasty - quotient * y, y
-    return lastremainder, lastx * (-1 if aa < 0 else 1), lasty * (-1 if bb < 0 else 1)
-
-
-def binomialCoeff(n, k):
-    if k < 0:
-        return -1
-    result = 1
-    for i in range(1, k + 1):
-        result = result * (n - i + 1) / i
-    return result

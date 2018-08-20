@@ -1,8 +1,8 @@
 import numpy
 from itertools import product
 
-from pyabc.crystal.utils import non_dup_hnfs, is_int_np_array, binomialCoeff
-from pyabc.crystal.utils import snf, refine_positions
+from pyabc.crystal.utils import non_dup_hnfs, snf
+from pyabc.utils.math import is_int_np_array, binomialCoeff, refine_positions
 
 from pyabc.crystal.structure import Cell
 

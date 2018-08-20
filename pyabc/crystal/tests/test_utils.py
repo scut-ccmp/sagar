@@ -4,7 +4,8 @@ import copy
 
 from pyabc.crystal.structure import Cell
 from pyabc.crystal.utils import non_dup_hnfs, _is_hnf_dup, _hnfs
-from pyabc.crystal.utils import IntMat3x3, extended_gcd, snf
+from pyabc.crystal.utils import IntMat3x3, snf
+from pyabc.utils.math import extended_gcd
 
 
 class TestHnf(unittest.TestCase):
@@ -521,30 +522,6 @@ class TestSnfHnf(unittest.TestCase):
                 s_set.add(s_flat_tuple)
             b.append(len(s_set))
         self.assertEqual(b, wanted_b_quick)
-
-
-class TestCommonUtils(unittest.TestCase):
-
-    def test_extended_gcd(self):
-        self._test_extended_gcd_n_times(100)
-
-    def _test_extended_gcd_n_times(self, n):
-        for i in range(n):
-            aa, bb = numpy.random.randint(10, size=2) + 1
-            r, s, t = extended_gcd(aa, bb)
-            # print("%d = %d * (%d) + %d * (%d)" %
-            #       (r, aa, s, bb, t))
-            wanted = aa * s + bb * t
-            self.assertEqual(r, wanted)
-
-    def test_is_int_np_array(self):
-        pass
-
-    def test_binomial_coeff(self):
-        pass
-
-    def test_refine_positions(self):
-        pass
 
 
 if __name__ == "__main__":
