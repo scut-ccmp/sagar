@@ -3,6 +3,8 @@ import numpy
 from itertools import product
 import spglib
 
+from pyabc.utils.math import closest_pair
+
 """
 periodic_table_dict
 Thanks for Yanan Wu. Email:
@@ -288,34 +290,54 @@ class MutableCell(object):
         """
         提供晶格和位点信息
         可以不提供位点信息，则初始化为空的晶胞
-        在这个类中，site是一个字典键值对，一个表示相对坐标的3元素tuple为键，位点元素名称为值
+        在这个类中，site是一个list, list的第一个位置site[0]是坐标，第二个位置site[1]是原素类别
         """
         self._lattice = numpy.array(lattice).reshape((3, 3))
-        # TODO: sites initial
         if sites is None:
-            self._sites = dict()
+            self._sites = []
+        else:
+            self._sites = sites
 
     def to_cell(self):
-        pass
+        positions = []
+        atoms = []
+        for site in self._sites:
+            positions.append(site[0])
+            atoms.append(symbol2number(site[1]))
+        cell = Cell(self._lattice,
+                    numpy.array(positions).reshape((-1, 3)),
+                    numpy.array(atoms))
+        return cell
 
     def add_site(self, site):
-        pass
+        """
+        """
+        self._sites.append(site)
 
-    def remove_site(self, id_site):
-        pass
+    def remove_site(self, idx):
+        """
+        """
+        del self._sites[idx]
 
-    def set_site(self, id_site, site):
+    def set_site(self, idx, site):
         """
         分为两种情况，该位点已经存在，和该位点没有找到。
         """
-        pass
+        self._sites[idx] = site
 
-    def check(self, limit=0.1):
+    def check(self, limit=0.1, warn=False):
         """
         该方法用于自查对象中的位点是否过近
         若过近则抛出一个warning
         """
-        pass
+        points = [p[0] for p in self._sites]
+        if closest_pair(points) < limit:
+            if warn is True:
+                import warnings
+                warnings.warn("some atoms are too close(< {:f}), check cell".format(limit), RuntimeWarning)
+            return False
+        else:
+            return True
 
     def __repr__(self):
         # def _repr(number):
