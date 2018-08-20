@@ -1,3 +1,5 @@
+import numpy
+
 from math import sqrt
 from itertools import combinations
 
