@@ -340,23 +340,19 @@ class MutableCell(object):
             return True
 
     def __repr__(self):
-        # def _repr(number):
-        #     return "{:9.6f}".format(number)
-        #
-        # lattice = ??
-        # positions = ??
-        # atoms = ??
-        # out_latt = ["Lattice:",
-        #             "   a: " + ' '.join(map(_repr, lattice[0])),
-        #             "   b: " + ' '.join(map(_repr, lattice[1])),
-        #             "   c: " + ' '.join(map(_repr, lattice[2]))]
-        # sites = zip(positions, atoms)
-        # out_pos = []
-        # out_pos.append("Sites:")
-        # for s in sites:
-        #     o = ' '.join(map(_repr, s[0])) + ' ' + get_symbol(s[1])
-        #     out_pos.append(o)
-        #
-        # outs = out_latt + out_pos
-        # return "\n".join(outs)
-        pass
+        def _repr(number):
+            return "{:9.6f}".format(number)
+
+        lattice = self._lattice
+        out_latt = ["Lattice:",
+                    "   a: " + ' '.join(map(_repr, lattice[0])),
+                    "   b: " + ' '.join(map(_repr, lattice[1])),
+                    "   c: " + ' '.join(map(_repr, lattice[2]))]
+        out_pos = []
+        out_pos.append("Sites:")
+        for s in self._sites:
+            o = ' '.join(map(_repr, s[0])) + ' ' + s[1]
+            out_pos.append(o)
+
+        outs = out_latt + out_pos
+        return "\n".join(outs)

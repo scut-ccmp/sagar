@@ -167,7 +167,7 @@ class TestMutableCell(unittest.TestCase):
         mcell.add_site([(-0.125, -0.125, -0.125), "Zn"])
         mcell.add_site([(0.125, 0.125, 0.125), "S"])
 
-        self.assertEqual(mcell._sites[0], [(-0.125, -0.125, -0.125),"Zn"])
+        self.assertEqual(mcell._sites[0], [(-0.125, -0.125, -0.125), "Zn"])
         self.assertEqual(mcell._sites[1], [(0.125, 0.125, 0.125), "S"])
 
     def test_remove_site(self):
@@ -187,7 +187,7 @@ class TestMutableCell(unittest.TestCase):
         mcell.set_site(1, [(0.126, 0.125, 0.125), "S"])
 
         self.assertEqual(len(mcell._sites), 2)
-        self.assertEqual(mcell._sites[0], [(-0.125, -0.125, -0.125),"Zn"])
+        self.assertEqual(mcell._sites[0], [(-0.125, -0.125, -0.125), "Zn"])
         self.assertEqual(mcell._sites[1], [(0.126, 0.125, 0.125), "S"])
 
     def test_check(self):
