@@ -12,7 +12,7 @@ setup(
     packages=find_packages(),
     include_package_data=True,
     package_data={},
-    install_requires=["nose2", "numpy==1.14", "spglib==1.9.9.18",
+    install_requires=["nose2", "numpy", "spglib==1.9.9.18",
                       "click>=6", "colorama", "ase==3.16"],
     classifiers=[
         "Programming Language :: Python :: 3.6",
