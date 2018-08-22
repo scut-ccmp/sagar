@@ -137,6 +137,32 @@ class TestCell(unittest.TestCase):
         pcell = con_cell.get_primitive_cell()
         self.assertEqual(pcell.atoms, [0])
 
+    def test_check(self):
+        lattice = numpy.array([0.0, 2.75, 2.75,
+                               2.75, 0.0, 2.75,
+                               2.75, 2.75, 0.0])
+        si_pos = [-0.125, -0.125, -0.125,
+                  0.125, 0.125, 0.125]
+        si_atoms = [14, 14]
+        cell = Cell(lattice, si_pos, si_atoms)
+        self.assertTrue(cell.check(limit=0.1))
+
+        si_pos = [-0.125, -0.125, -0.125,
+                  0.125, 0.125, 0.125,
+                  0.13, 0.125, 0.125]
+        si_atoms = [14, 14, 8]
+        cell = Cell(lattice, si_pos, si_atoms)
+        self.assertFalse(cell.check(limit=0.1))
+
+        lattice = numpy.array([1.0, 0.0, 0.0,
+                               0.0, 1.0, 0.0,
+                               0.0, 0.0, 1.0])
+        si_pos = [-0.01, 0.0, 0.0,
+                  0.01, 0.0, 0.0]
+        si_atoms = [14, 14]
+        # 两点之间的距离为0.02<0.05， 但在没有考虑边界条件时距离是0.98
+        cell = Cell(lattice, si_pos, si_atoms)
+        self.assertFalse(cell.check(limit=0.05))
 
 class TestMutableCell(unittest.TestCase):
 
@@ -198,16 +224,6 @@ class TestMutableCell(unittest.TestCase):
         self.assertEqual(len(mcell._sites), 2)
         self.assertEqual(mcell._sites[0], [(-0.125, -0.125, -0.125), "Zn"])
         self.assertEqual(mcell._sites[1], [(0.126, 0.125, 0.125), "S"])
-
-    def test_check(self):
-        lattice = numpy.copy(self.lattice)
-        si_sites = [[(-0.125, -0.125, -0.125), "Si"],
-                    [(0.125, 0.125, 0.125), "Si"]]
-        mcell = MutableCell(lattice, sites=si_sites)
-        self.assertTrue(mcell.check(limit=0.1))
-
-        mcell.add_site([(0.126, 0.125, 0.125), "O"])
-        self.assertFalse(mcell.check(limit=0.1))
 
 
 if __name__ == "__main__":

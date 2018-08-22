@@ -46,3 +46,9 @@ class TestMutableMethods(unittest.TestCase):
             new_car_pos = frac_to_car(lattice, new_frac_pos)
 
             numpy.testing.assert_almost_equal(distance(og_car_pos, new_car_pos), 0.01)
+
+    def test_remove_sites_in_a_circle(self):
+        # 需要测试两类情况，范围内只包含胞内原子的，和范围超出一个胞。
+        # 只包含胞内原子
+
+        # 范围超出一个胞，圆心在晶胞六面体顶点的特殊情况

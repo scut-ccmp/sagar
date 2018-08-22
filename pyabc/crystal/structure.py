@@ -282,6 +282,23 @@ class Cell(object):
         lattice, positions, atoms = spglib.refine_cell(spg_cell, symprec)
         return self.__class__(lattice, positions, atoms)
 
+    def check(self, limit=0.1, warn=False):
+        """
+        该方法用于自查对象中的位点是否过近
+        若过近则抛出一个warning
+        WRONG!!! 现在没有考虑周期性边界条件
+        """
+        mat = numpy.diag([3, 3, 3])
+        periodic_cell = self.extend(mat)
+        points = frac_to_car(periodic_cell.lattice, periodic_cell.positions)
+        if closest_pair(points) < limit:
+            if warn is True:
+                import warnings
+                warnings.warn("some atoms are too close(< {:f}), check cell".format(limit), RuntimeWarning)
+            return False
+        else:
+            return True
+
 # 该类用于可以变换的结构
 # TODO: 与上面的不可变的类同时继承于固定的基类
 # TODO: 上面的类明确为不可变的类
@@ -331,20 +348,6 @@ class MutableCell(object):
         """
         self._sites[idx] = site
 
-    def check(self, limit=0.1, warn=False):
-        """
-        该方法用于自查对象中的位点是否过近
-        若过近则抛出一个warning
-        WRONG!!!should be cartesian coor
-        """
-        points = [p[0] for p in self._sites]
-        if closest_pair(points) < limit:
-            if warn is True:
-                import warnings
-                warnings.warn("some atoms are too close(< {:f}), check cell".format(limit), RuntimeWarning)
-            return False
-        else:
-            return True
 
     def __repr__(self):
         def _repr(number):
