@@ -52,3 +52,4 @@ class TestMutableMethods(unittest.TestCase):
         # 只包含胞内原子
 
         # 范围超出一个胞，圆心在晶胞六面体顶点的特殊情况
+        pass
