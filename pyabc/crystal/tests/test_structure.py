@@ -4,6 +4,15 @@ import numpy
 from pyabc.crystal.structure import Cell, MutableCell
 
 
+class TestUtils(unittest.TestCase):
+
+    def test_car_to_frac(self):
+        pass
+
+    def test_frac_to_car(self):
+        pass
+
+
 class TestCell(unittest.TestCase):
 
     def setUp(self):

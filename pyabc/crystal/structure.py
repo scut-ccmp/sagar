@@ -36,6 +36,12 @@ def get_symbol(atom):
 def symbol2number(symbol):
     return periodic_table_dict[symbol]
 
+def car_to_frac(lattice, car_vec):
+    inv_lattice = numpy.linalg.inv(lattice)
+    return numpy.matmul(car_vec, inv_lattice)
+
+def frac_to_car(lattice, frac_vec):
+    return numpy.matmul(frac_vec, lattice)
 
 class Cell(object):
     """
@@ -329,6 +335,7 @@ class MutableCell(object):
         """
         该方法用于自查对象中的位点是否过近
         若过近则抛出一个warning
+        WRONG!!!should be cartesian coor
         """
         points = [p[0] for p in self._sites]
         if closest_pair(points) < limit:
