@@ -286,7 +286,6 @@ class Cell(object):
         """
         该方法用于自查对象中的位点是否过近
         若过近则抛出一个warning
-        WRONG!!! 现在没有考虑周期性边界条件
         """
         mat = numpy.diag([3, 3, 3])
         periodic_cell = self.extend(mat)
