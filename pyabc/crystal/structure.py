@@ -36,12 +36,15 @@ def get_symbol(atom):
 def symbol2number(symbol):
     return periodic_table_dict[symbol]
 
+
 def car_to_frac(lattice, car_vec):
     inv_lattice = numpy.linalg.inv(lattice)
     return numpy.matmul(car_vec, inv_lattice)
 
+
 def frac_to_car(lattice, frac_vec):
     return numpy.matmul(frac_vec, lattice)
+
 
 class Cell(object):
     """
@@ -293,7 +296,8 @@ class Cell(object):
         if closest_pair(points) < limit:
             if warn is True:
                 import warnings
-                warnings.warn("some atoms are too close(< {:f}), check cell".format(limit), RuntimeWarning)
+                warnings.warn("some atoms are too close(< {:f}), check cell".format(
+                    limit), RuntimeWarning)
             return False
         else:
             return True
@@ -336,17 +340,18 @@ class MutableCell(object):
         """
         self._sites.append(site)
 
-    def remove_site(self, idx):
-        """
-        """
-        del self._sites[idx]
-
     def set_site(self, idx, site):
         """
-        分为两种情况，该位点已经存在，和该位点没有找到。
         """
         self._sites[idx] = site
 
+    def remove_site(self, idx):
+        """
+        用set_site为空
+        """
+        pos = self._sites[idx][0]
+        vacc_site = [pos, 'Vacc']
+        self.set_site(idx, vacc_site)
 
     def __repr__(self):
         def _repr(number):

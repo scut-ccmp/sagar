@@ -164,6 +164,7 @@ class TestCell(unittest.TestCase):
         cell = Cell(lattice, si_pos, si_atoms)
         self.assertFalse(cell.check(limit=0.05))
 
+
 class TestMutableCell(unittest.TestCase):
 
     def setUp(self):
@@ -205,14 +206,6 @@ class TestMutableCell(unittest.TestCase):
         self.assertEqual(mcell._sites[0], [(-0.125, -0.125, -0.125), "Zn"])
         self.assertEqual(mcell._sites[1], [(0.125, 0.125, 0.125), "S"])
 
-    def test_remove_site(self):
-        lattice = numpy.copy(self.lattice)
-        si_sites = [[(-0.125, -0.125, -0.125), "Si"],
-                    [(0.125, 0.125, 0.125), "Si"]]
-        mcell = MutableCell(lattice, sites=si_sites)
-        mcell.remove_site(1)
-        self.assertEqual(len(mcell._sites), 1)
-
     def test_set_site(self):
         lattice = numpy.copy(self.lattice)
         si_sites = [[(-0.125, -0.125, -0.125), "Si"],
@@ -224,6 +217,16 @@ class TestMutableCell(unittest.TestCase):
         self.assertEqual(len(mcell._sites), 2)
         self.assertEqual(mcell._sites[0], [(-0.125, -0.125, -0.125), "Zn"])
         self.assertEqual(mcell._sites[1], [(0.126, 0.125, 0.125), "S"])
+
+    def test_remove_site(self):
+        lattice = numpy.copy(self.lattice)
+        si_sites = [[(-0.125, -0.125, -0.125), "Si"],
+                    [(0.125, 0.125, 0.125), "Si"]]
+        mcell = MutableCell(lattice, sites=si_sites)
+        mcell.remove_site(1)
+        self.assertEqual(len(mcell._sites), 2)
+        self.assertEqual(mcell._sites[0], [(-0.125, -0.125, -0.125), "Si"])
+        self.assertEqual(mcell._sites[1], [(0.125, 0.125, 0.125), "Vacc"])
 
 
 if __name__ == "__main__":

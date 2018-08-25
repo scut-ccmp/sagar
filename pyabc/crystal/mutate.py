@@ -42,6 +42,7 @@ def remove_sites_in_a_circle(mcell, cc, radius, list_ele=None):
     radius: 半径 单位为A
     ele: 要删除的元素的list，若为None，则删除所有元素找到的位点
     """
+    # TODO: 不用copy
     import copy
     for s in copy.deepcopy(mcell._sites):
         car_cc = frac_to_car(mcell._lattice, cc)
