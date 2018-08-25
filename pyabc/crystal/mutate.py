@@ -42,13 +42,11 @@ def remove_sites_in_a_circle(mcell, cc, radius, list_ele=None):
     radius: 半径 单位为A
     ele: 要删除的元素的list，若为None，则删除所有元素找到的位点
     """
-    # TODO: 不用copy
-    import copy
-    for s in copy.deepcopy(mcell._sites):
+    for idx, s in enumerate(mcell._sites):
         car_cc = frac_to_car(mcell._lattice, cc)
         car_site = frac_to_car(mcell._lattice, s[0])
         if _is_close_in_radius(car_cc, car_site, radius) and _is_in_ele(s[1], list_ele):
-            mcell._sites.remove(s)
+            mcell.remove_site(idx)
 
 def _is_close_in_radius(p1, p2, radius):
     # 截断圆对应的半径大于距离，说明两点在圆内，需要删除：返回True
