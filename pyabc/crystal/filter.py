@@ -20,10 +20,11 @@ class MinDistanceFilter(Filter):
     当返回False时藐视该结构中指定元素的距离在晶体中过近，相连，不接受
     """
     def __init__(self, element, distance):
-        pass
+        self.element = element
+        self.distance = distance
 
     def is_accepted(self, cell):
-        pass
+        return cell.check(elements = [self.element], limit=self.distance)
 
 
 class SpaceGroupFilter(Filter):
