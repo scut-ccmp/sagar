@@ -33,7 +33,13 @@ class SpaceGroupFilter(Filter):
     当返回False时表示该结构空间群不满足
     """
     def __init__(self, list_spg, symprec=1e-3):
-        pass
+        self.list_spg = [str(x) for x in list_spg]
+        self.symprec = symprec
 
     def is_accepted(self, cell):
-        pass
+        symmetry = cell.get_spacegroup(self.symprec)
+        spg_name, spg_num = symmetry.split(' ')
+        spg_num = spg_num[1:-1]
+        if spg_name in self.list_spg or spg_num in self.list_spg:
+            return True
+        return False
