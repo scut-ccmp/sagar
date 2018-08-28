@@ -37,7 +37,7 @@ class PermutationGroup(object):
     def __init__(self, pcell, mat):
         if not isinstance(pcell, Cell):
             raise TypeError(
-                "want pyabc.crystal.structure.Cell, got {:}".format(type(cell)))
+                "want pyabc.crystal.structure.Cell, got {:}".format(type(pcell)))
         self._pcell = pcell
         self._mat = mat
         self._snf, L, R = snf(mat)
