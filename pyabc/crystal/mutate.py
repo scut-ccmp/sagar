@@ -9,7 +9,7 @@ from pyabc.utils.math import distance
 
 
 def cell_to_mcell(cell):
-    lattice = cell.lattice
+    lattice = numpy.copy(cell.lattice)
     sites = []
     for pos, ele in zip(cell.positions.tolist(), cell.atoms.tolist()):
         symbol = get_symbol(ele)

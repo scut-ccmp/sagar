@@ -285,13 +285,26 @@ class Cell(object):
         lattice, positions, atoms = spglib.refine_cell(spg_cell, symprec)
         return self.__class__(lattice, positions, atoms)
 
-    def check(self, limit=0.1, warn=False):
+    def check(self, elements=None, limit=0.1, warn=False):
         """
         该方法用于自查对象中的位点是否过近
         若过近则抛出一个warning
         """
+        if elements is None:
+            origin_cell = self
+        else:
+            # 选取要check的元素，构建新的胞
+            ele_num = [symbol2number(s) for s in elements]
+            positions = []
+            atoms = []
+            for idx, e in enumerate(self.atoms):
+                if e in ele_num:
+                    positions.append(self.positions[idx])
+                    atoms.append(self.atoms[idx])
+            origin_cell = self.__class__(self.lattice, positions, atoms)
+
         mat = numpy.diag([3, 3, 3])
-        periodic_cell = self.extend(mat)
+        periodic_cell = origin_cell.extend(mat)
         points = frac_to_car(periodic_cell.lattice, periodic_cell.positions)
         if closest_pair(points) < limit:
             if warn is True:

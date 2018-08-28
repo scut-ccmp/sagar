@@ -29,6 +29,8 @@ class TestMutableMethods(unittest.TestCase):
                                                                     0.125, 0.125, 0.125]).reshape((2, 3)))
         numpy.testing.assert_almost_equal(c.atoms, numpy.array([14, 14]))
 
+        # TODO: 需要确认产生的mcell的改变是不会影响原有的cell的
+
     def test_perturb(self):
         lattice = numpy.copy(self.lattice)
         si_sites = [[(-0.125, -0.125, -0.125), "Si"],

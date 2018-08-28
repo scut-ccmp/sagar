@@ -153,6 +153,8 @@ class TestCell(unittest.TestCase):
         si_atoms = [14, 14, 8]
         cell = Cell(lattice, si_pos, si_atoms)
         self.assertFalse(cell.check(limit=0.1))
+        # 测试元素
+        self.assertTrue(cell.check(limit=0.1, elements=['O']))
 
         lattice = numpy.array([1.0, 0.0, 0.0,
                                0.0, 1.0, 0.0,
