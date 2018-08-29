@@ -1,0 +1,6 @@
+nose2
+numpy
+spglib==1.9.9.18
+click>=6
+colorama
+ase==3.16

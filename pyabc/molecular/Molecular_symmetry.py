@@ -78,16 +78,9 @@ def get_permutations(pos, atoms, pres=1e-3):
     This algorithm are mainly derived by Chaobin Qiu
     '''
     d = get_distance_matrix(pos)
-    tri_symm = get_three_permutation(d, atoms, pres=1e-3)
+    tri_symm = get_three_permutation(d, atoms, pres=pres)
     n = np.shape(d)[0]
     for ii in range(n-3):
         origin_d = d[0:ii+3, 0:ii+3]
-        tri_symm = get_new_symm(d, origin_d, tri_symm, atoms, pres=1e-3)
+        tri_symm = get_new_symm(d, origin_d, tri_symm, atoms, pres=pres)
     return np.array(tri_symm)
-
-
-if __name__ == "__main__":
-    pos = np.loadtxt('z12.txt')
-    atoms = [6]*19
-    atoms.append(7)
-    all_symm = get_permutations(pos, atoms)

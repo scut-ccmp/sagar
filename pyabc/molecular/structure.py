@@ -7,7 +7,7 @@ Created on Sat Aug 25 16:41:45 2018
 """
 
 import numpy
-import Molecular_symmetry
+from pyabc.molecular import Molecular_symmetry
 
 
 """
@@ -15,8 +15,7 @@ periodic_table_dict
 Thanks for Yanan Wu. Email:
 """
 periodic_table_dict = {'Vacc': 0,
-                       'H': 1, 'He': 2,
-                       'Li': 3, 'Be': 4, 'B': 5, 'C': 6, 'N': 7, 'O': 8, 'F': 9, 'Ne': 10,
+                       'H': 1, 'He': 2,'Li': 3, 'Be': 4, 'B': 5, 'C': 6, 'N': 7, 'O': 8, 'F': 9, 'Ne': 10,
                        'Na': 11, 'Mg': 12, 'Al': 13, 'Si': 14, 'P': 15, 'S': 16, 'Cl': 17, 'Ar': 18,
                        'K': 19, 'Ca': 20, 'Sc': 21, 'Ti': 22, 'V': 23, 'Cr': 24, 'Mn': 25, 'Fe': 26, 'Co': 27, 'Ni': 28, 'Cu': 29, 'Zn': 30, 'Ga': 31, 'Ge': 32, 'As': 33, 'Se': 34, 'Br': 35, 'Kr': 36,
                        'Rb': 37, 'Sr': 38, 'Y': 39, 'Zr': 40, 'Nb': 41, 'Mo': 42, 'Tc': 43, 'Ru': 44, 'Rh': 45, 'Pd': 46, 'Ag': 47, 'Cd': 48, 'In': 49, 'Sn': 50, 'Sb': 51, 'Te': 52, 'I': 53, 'Xe': 54,
@@ -42,8 +41,8 @@ def symbol2number(symbol):
     return periodic_table_dict[symbol]
 
 
-class Cell(object):
-    """
+class Molecular(object):
+    """*
     Cell object represent a crystal structure.
 
     parameters:
@@ -82,9 +81,6 @@ class Cell(object):
 
         self._atoms = numpy.array(a, dtype='intc')
 
-
-
-
     @property
     def positions(self):
         return self._positions
@@ -111,8 +107,6 @@ class Cell(object):
         return Molecular_symmetry.get_permutations(self._positions, \
                                                    self._atoms.tolist(), pres)
 
-
-
     def check(self, limit=0.1):
         """
         该方法用于自查对象中的位点是否过近
@@ -127,8 +121,8 @@ class Cell(object):
                     warn_list.append(str(ii)+'-'+str(jj))
         if warn_list:
             import warnings
-            warnings.warn( "["+(', '.join(['%s']*len(warn_list))+"]")%tuple(\
-                             warn_list)+
+            warnings.warn("["+(', '.join(['%s']*len(warn_list))+"]")%tuple(
+                           warn_list) +
                           (" atom couples are too close { < %.2f } \n")%(limit,))
             return True
 

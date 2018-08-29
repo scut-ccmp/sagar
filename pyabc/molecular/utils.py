@@ -1,15 +1,44 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
-"""
-Created on Sun Aug 26 15:47:24 2018
-
-@author: hecc
-"""
-
-
 import numpy as np
 
 
+def sortrows(x):
+    (m, n) = np.shape(x)
+    ndx = np.arange(m)
+    for ii in range(n-1, -1, -1):
+        q = np.argsort(x[ndx, ii])
+        ndx = ndx[q]
+    x = x[ndx]
+    return x
+
+
+def _check_structure(symlist, atom, seq):
+    
+    if len(seq) == 1:# only substitute one atom
+        if seq[0] != np.size(atom):
+            raise ValueError('seq[0] should be equal to %d'%(np.size(atom),))
+        temp = np.sort(symlist[:, atom], axis=1)
+        ind = np.where(temp[:,0] == min(temp[:,0]))
+        temp = sortrows(temp[ind])
+        return temp[0]
+    else:# two or more kinds of atoms
+        if sum(seq) != np.size(atom):
+            raise ValueError('sum of seq should be equal to %d'%(np.size(atom),))
+            
+        temp_seq = [(0, seq[0])]
+        for ii in range(1, len(seq)-1):
+            temp_seq.append((sum(seq[:ii])-1, sum(seq[:ii+1])))
+        temp_seq.append((sum(seq[:len(seq)])-1, sum(seq)))
+        all_poslist = symlist[:, atom]
+        for ii in temp_seq:
+            temp = range(ii[0], ii[1])
+            all_poslist[:,temp] = np.sort(all_poslist[:,temp], axis=1)
+        ind = np.where(all_poslist[:,0] == min(all_poslist[:,0]))
+        all_poslist = sortrows(all_poslist[ind])
+        return all_poslist[0]
+    
+    
 def gene_list(m, n):
     elelist = np.arange(0, m)
     elelist = np.reshape(elelist, (m, 1))
@@ -20,42 +49,10 @@ def gene_list(m, n):
         elelist = np.hstack((midlist2, midlist1))
     return elelist
 
-
-def sortrows(a):
-    arr = []
-    (row, col) = np.shape(a)
-    for ii in range(row):
-        arr.append(tuple(a[ii]))
-    key = [(str(i), int) for i in range(col)]
-    arr = np.array(arr, dtype=key)
-    # 这个是实现从一列最高优先, 其次是第二列， 第三列，直到最后一列
-    arr = np.sort(arr, order=[str(i) for i in range(np.shape(a)[1])])
-    return arr
-
-
-def check_structure(symlist, atom, seq):
-    temp_seq = [(0, seq[0])]
-    for ii in range(1, len(seq)):
-        temp_seq.append((seq[ii-1]+1, seq[ii]))
-    all_poslist = symlist[:, atom]
-    for ii in range(len(seq)):
-        temp = range(temp_seq[ii][0], temp_seq[ii][1]+1)
-        all_poslist[temp, :] = np.sort(all_poslist[temp], axis=1)
-    all_poslist = sortrows(all_poslist)
-    return all_poslist[0]
-
-
-if __name__ == "__main__":
-    import structure
-    from itertools import combinations
-    pos = np.loadtxt('z12.txt')
-    atoms = ['C']*20
-    C = structure.Cell(pos, atoms)
-    symlist = C.get_symmetry_permutation()
-    all_perm = combinations(range(20), 2)
-    all_type = []
-    for atom in all_perm:
-        seq = [2]
-        all_type.append(check_structure(symlist, atom, seq))
-    all_type = np.unique(all_type, axis=0)
-    print(np.shape(all_type)[0])
+    
+    
+    
+    
+    
+    
+    
