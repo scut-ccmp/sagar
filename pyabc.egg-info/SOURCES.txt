@@ -1,0 +1,8 @@
+MANIFEST.in
+README.md
+pyabc.egg-info/PKG-INFO
+pyabc.egg-info/SOURCES.txt
+pyabc.egg-info/dependency_links.txt
+pyabc.egg-info/entry_points.txt
+pyabc.egg-info/requires.txt
+pyabc.egg-info/top_level.txt

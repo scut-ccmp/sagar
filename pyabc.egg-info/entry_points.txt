@@ -1,0 +1,3 @@
+[console_scripts]
+rexpand = pyabc.cmd.rexpand:cli
+
