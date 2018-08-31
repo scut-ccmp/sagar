@@ -8,7 +8,7 @@ import numpy
 
 from pyabc.molecular import Molecular_symmetry
 from pyabc.utils.math import closest_pair
-from pyabc.element.base import *
+from pyabc.element.base import periodic_table_dict, get_symbol, symbol2number
 
 
 class Molecular(object):
