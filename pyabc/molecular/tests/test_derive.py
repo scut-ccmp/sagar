@@ -79,13 +79,13 @@ class TestDerive(unittest.TestCase):
     def test_remove_redundant_binary_alloy(self):
         e_num = (58,2)
         sites = [(5, 6)] * 60
-        all_type = self.cg._remove_redudant(e_num, sites, self.perms)
+        all_type = self.cg._remove_redudant(sites, e_num, self.perms)
         self.assertEqual(numpy.shape(all_type)[0], 23)
 
     def test_remove_redundant_trinary_alloy(self):
         e_num = (58, 2, 1)
         sites = [(5, 6, 7)] * 60
-        all_type = self.cg._remove_redudant(e_num, sites, self.perms)
+        all_type = self.cg._remove_redudant(sites, e_num, self.perms)
         self.assertEqual(numpy.shape(all_type)[0], 871)
 
 

@@ -10,15 +10,15 @@ class ConfigurationGenerator(object):
     这个类用于产生各种替换原子的需求
     '''
 
-    def __init__(self, mol, pres=1e-3):
+    def __init__(self, mol, symprec=1e-3):
         if not isinstance(mol, Molecular):
             raise TypeError(
                 "want pyabc.molecular.structure.Molecular, got {:}".
                 format(type(mol)))
         self._pmolecular = mol
-        self._pres = pres
+        self._pres = symprec
 
-    def _remove_redudant(self, e_num, sites, perms):
+    def _remove_redudant(self, sites, e_num, perms):
         '''
         e_num: concentration of impurity
         sites: possibility atom type of each site
@@ -39,16 +39,3 @@ class ConfigurationGenerator(object):
                                                    [i for i in e_num[1:]]))
         all_type = np.unique(np.array(all_type), axis=0)
         return all_type
-
-
-if __name__ == "__main__":
-    positions = np.loadtxt('test/pos.txt')
-    atoms = ['C'] * 60
-    molecular = Molecular(positions, atoms)
-    perms = molecular.get_symmetry_permutation(0.05)
-    S = SturctureGenerator(molecular)
-    e_num = [58, 2]
-    sites_1 = list([(5, 6) for i in range(20)])
-    sites_2 = list([(6, ) for i in range(40)])
-    sites_1.extend(sites_2)
-    all_type = S._remove_redudant(e_num, sites_1, perms)
