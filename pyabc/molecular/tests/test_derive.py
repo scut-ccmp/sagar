@@ -4,51 +4,89 @@
 import unittest
 import numpy
 from pyabc.molecular import structure
-from pyabc.molecular.derive import SturctureGenerator
+from pyabc.molecular.derive import ConfigurationGenerator
 
+# c60的用于测试
+positions_c60 = numpy.array([8.0139797e+00, 1.2307888e+01, 1.1831318e+01,
+             6.5740211e+00, 1.0726525e+01, 1.0595208e+01,
+             7.1922590e+00, 1.1175578e+01, 1.1831371e+01,
+             7.6557315e+00, 1.2600981e+01, 9.4047951e+00,
+             8.2504787e+00, 1.3033716e+01, 1.0595008e+01,
+             6.8011791e+00, 1.1425831e+01, 9.4047725e+00,
+             9.6320871e+00, 1.3483070e+01, 1.0595084e+01,
+             8.4196456e+00, 1.2601104e+01, 8.1686968e+00,
+             9.2495934e+00, 1.2307001e+01, 1.2595101e+01,
+             7.5742544e+00, 1.0000000e+01, 1.2594760e+01,
+             7.0371670e+00, 1.0699472e+01, 8.1684841e+00,
+             6.5740211e+00, 9.2734749e+00, 1.0595208e+01,
+             1.0249361e+01, 1.3033496e+01, 1.1831375e+01,
+             8.0378142e+00, 1.1425589e+01, 7.4050514e+00,
+             7.1922590e+00, 8.8244218e+00, 1.1831371e+01,
+             8.7641880e+00, 1.0000000e+01, 1.3330553e+01,
+             7.0371670e+00, 9.3005277e+00, 8.1684841e+00,
+             9.6176527e+00, 1.1175560e+01, 1.3331021e+01,
+             9.7506389e+00, 1.3033496e+01, 8.1686245e+00,
+             1.0367913e+01, 1.3483070e+01, 9.4049164e+00,
+             6.8011791e+00, 8.5741692e+00, 9.4047725e+00,
+             9.0002389e+00, 1.0726515e+01, 6.6686478e+00,
+             1.1580354e+01, 1.2601104e+01, 1.1831303e+01,
+             8.0139797e+00, 7.6921121e+00, 1.1831318e+01,
+             1.0999761e+01, 1.0726515e+01, 1.3331352e+01,
+             1.1749521e+01, 1.3033716e+01, 9.4049924e+00,
+             1.0750407e+01, 1.2307001e+01, 7.4048990e+00,
+             9.6176527e+00, 8.8244403e+00, 1.3331021e+01,
+             8.0378142e+00, 8.5744108e+00, 7.4050514e+00,
+             7.6557315e+00, 7.3990193e+00, 9.4047951e+00,
+             1.0382347e+01, 1.1175560e+01, 6.6689793e+00,
+             1.1962186e+01, 1.1425589e+01, 1.2594949e+01,
+             9.0002389e+00, 9.2734848e+00, 6.6686478e+00,
+             1.2344269e+01, 1.2600981e+01, 1.0595205e+01,
+             9.2495934e+00, 7.6929995e+00, 1.2595101e+01,
+             8.2504787e+00, 6.9662840e+00, 1.0595008e+01,
+             1.0999761e+01, 9.2734848e+00, 1.3331352e+01,
+             1.1986020e+01, 1.2307888e+01, 8.1686818e+00,
+             8.4196456e+00, 7.3988961e+00, 8.1686968e+00,
+             1.0382347e+01, 8.8244403e+00, 6.6689793e+00,
+             1.3198821e+01, 1.1425831e+01, 1.0595228e+01,
+             1.1235812e+01, 1.0000000e+01, 6.6694473e+00,
+             9.6320871e+00, 6.5169305e+00, 1.0595084e+01,
+             1.2962833e+01, 1.0699472e+01, 1.1831516e+01,
+             1.0249361e+01, 6.9665037e+00, 1.1831375e+01,
+             1.1962186e+01, 8.5744108e+00, 1.2594949e+01,
+             1.2807741e+01, 1.1175578e+01, 8.1686288e+00,
+             9.7506389e+00, 6.9665037e+00, 8.1686245e+00,
+             1.0750407e+01, 7.6929995e+00, 7.4048990e+00,
+             1.3425979e+01, 1.0726525e+01, 9.4047924e+00,
+             1.2962833e+01, 9.3005277e+00, 1.1831516e+01,
+             1.1580354e+01, 7.3988961e+00, 1.1831303e+01,
+             1.2425746e+01, 1.0000000e+01, 7.4052402e+00,
+             1.0367913e+01, 6.5169305e+00, 9.4049164e+00,
+             1.2807741e+01, 8.8244218e+00, 8.1686288e+00,
+             1.3198821e+01, 8.5741692e+00, 1.0595228e+01,
+             1.1749521e+01, 6.9662840e+00, 9.4049924e+00,
+             1.2344269e+01, 7.3990193e+00, 1.0595205e+01,
+             1.1986020e+01, 7.6921121e+00, 8.1686818e+00,
+             1.3425979e+01, 9.2734749e+00, 9.4047924e+00])
+atoms_c60 = ['C'] * 60
 
 class TestDerive(unittest.TestCase):
 
     def setUp(self):
-        positions = numpy.loadtxt('pos.txt')
-        atoms = ['C'] * 60
-        self.molecular = structure.Molecular(positions, atoms)
-        self.SturctureGenerator = SturctureGenerator(self.molecular, pres=1e-4)
+        molecular = structure.Molecular(positions_c60, atoms_c60)
+        self.perms = molecular.get_symmetry_permutation(0.05)
+        self.cg = ConfigurationGenerator(molecular)
 
-    def test_remove_redundant_1(self):
-        positions = numpy.loadtxt('pos.txt')
-        atoms = ['C'] * 60
-        molecular = structure.Molecular(positions, atoms)
-        perms = molecular.get_symmetry_permutation(0.05)
-        S = SturctureGenerator(molecular)
-        e_num = [58,2]
-        sites = [(5, 6) for i in range(60)]
-        all_type = S._remove_redudant(e_num, sites, perms)
+    def test_remove_redundant_binary_alloy(self):
+        e_num = (58,2)
+        sites = [(5, 6)] * 60
+        all_type = self.cg._remove_redudant(e_num, sites, self.perms)
         self.assertEqual(numpy.shape(all_type)[0], 23)
 
-    def test_remove_redundant_2(self):
-        positions = numpy.loadtxt('pos.txt')
-        atoms = ['C'] * 60
-        molecular = structure.Molecular(positions, atoms)
-        perms = molecular.get_symmetry_permutation(0.05)
-        S = SturctureGenerator(molecular)
-        e_num = [58, 2, 1]
-        sites = [(5, 6, 7) for i in range(60)]
-        all_type = S._remove_redudant(e_num, sites, perms)
+    def test_remove_redundant_trinary_alloy(self):
+        e_num = (58, 2, 1)
+        sites = [(5, 6, 7)] * 60
+        all_type = self.cg._remove_redudant(e_num, sites, self.perms)
         self.assertEqual(numpy.shape(all_type)[0], 871)
-
-    def test_remove_redundant_3(self):
-        positions = numpy.loadtxt('pos.txt')
-        atoms = ['C'] * 60
-        molecular = structure.Molecular(positions, atoms)
-        perms = molecular.get_symmetry_permutation(0.05)
-        S = SturctureGenerator(molecular)
-        e_num = [58, 2]
-        sites_1 = list([(5, 6) for i in range(20)])
-        sites_2 = list([(6, ) for i in range(40)])
-        sites_1.extend(sites_2)
-        all_type = S._remove_redudant(e_num, sites_1, perms)
-        self.assertEqual(numpy.shape(all_type)[0], 17)
 
 
 if __name__ == "__main__":

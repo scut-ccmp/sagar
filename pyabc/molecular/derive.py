@@ -1,7 +1,3 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-
-
 from pyabc.molecular.structure import Molecular
 from pyabc.molecular import utils
 from itertools import combinations
@@ -9,17 +5,17 @@ from itertools import combinations
 import numpy as np
 
 
-class SturctureGenerator(object):
+class ConfigurationGenerator(object):
     '''
     这个类用于产生各种替换原子的需求
     '''
 
-    def __init__(self, pmolecular, pres=1e-3):
-        if not isinstance(pmolecular, Molecular):
+    def __init__(self, mol, pres=1e-3):
+        if not isinstance(mol, Molecular):
             raise TypeError(
                 "want pyabc.molecular.structure.Molecular, got {:}".
-                format(type(pmolecular)))
-        self._pmolecular = pmolecular
+                format(type(mol)))
+        self._pmolecular = mol
         self._pres = pres
 
     def _remove_redudant(self, e_num, sites, perms):
@@ -32,7 +28,7 @@ class SturctureGenerator(object):
             return
         arg_site = np.array([len(ii) for ii in sites])
         ind = np.where(arg_site == 1)
-        if not ind[0].size: # all sites can be substituted
+        if not ind[0].size:  # all sites can be substituted
             all_comb = combinations(range(len(sites)), sum(e_num[1:]))
         else:
             need_ind = np.setdiff1d(np.arange(len(sites)), ind)
