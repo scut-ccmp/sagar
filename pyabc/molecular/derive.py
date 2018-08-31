@@ -18,7 +18,7 @@ class ConfigurationGenerator(object):
         self._pmolecular = mol
         self._pres = symprec
 
-    def _remove_redudant(self, sites, e_num, perms):
+    def get_configurations(self, sites, e_num, perms):
         '''
         e_num: concentration of impurity
         sites: possibility atom type of each site
