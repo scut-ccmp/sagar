@@ -15,13 +15,22 @@ class ConfigurationGenerator(object):
             raise TypeError(
                 "want pyabc.molecular.structure.Molecular, got {:}".
                 format(type(mol)))
-        self._pmolecular = mol
-        self._pres = symprec
+        self.perms = mol.get_symmetry_permutation(symprec)
 
-    def get_configurations(self, sites, e_num, perms):
+    def get_configurations(self, sites, e_num):
         '''
-        e_num: concentration of impurity
-        sites: possibility atom type of each site
+        get_configurations output specific molecular
+        for specific concentration.
+
+        parameters:
+        sites: list of (lists or tuples), represent element disorder of each sites
+        e_num: tuple, number of atoms in disorderd sites.
+
+        yield:
+
+        a tuple
+        tuple[0]: Cell object, a list of non-redundant configurations of certain volume supercell.
+        tuple[1]: int object, degeneracy of the configuration in all configurations of this volume.
         '''
         if len(e_num) == 1:
             print('There is nothing to substitute')
@@ -35,7 +44,7 @@ class ConfigurationGenerator(object):
             all_comb = combinations(need_ind, sum(e_num[1:]))
         all_type = []
         for comb in all_comb:
-            all_type.append(utils._check_structure(perms, comb,
+            all_type.append(utils._check_structure(self.perms, comb,
                                                    [i for i in e_num[1:]]))
         all_type = np.unique(np.array(all_type), axis=0)
         return all_type

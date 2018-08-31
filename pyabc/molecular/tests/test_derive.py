@@ -73,19 +73,18 @@ class TestDerive(unittest.TestCase):
 
     def setUp(self):
         molecular = structure.Molecular(positions_c60, atoms_c60)
-        self.perms = molecular.get_symmetry_permutation(0.05)
-        self.cg = ConfigurationGenerator(molecular)
+        self.cg = ConfigurationGenerator(molecular, symprec=0.05)
 
-    def test_remove_redundant_binary_alloy(self):
+    def test_get_configurations_binary_alloy(self):
         e_num = (58,2)
         sites = [(5, 6)] * 60
-        all_type = self.cg.get_configurations(sites, e_num, self.perms)
+        all_type = self.cg.get_configurations(sites, e_num)
         self.assertEqual(numpy.shape(all_type)[0], 23)
 
-    def test_remove_redundant_trinary_alloy(self):
+    def test_get_configurations_trinary_alloy(self):
         e_num = (58, 2, 1)
         sites = [(5, 6, 7)] * 60
-        all_type = self.cg.get_configurations(sites, e_num, self.perms)
+        all_type = self.cg.get_configurations(sites, e_num)
         self.assertEqual(numpy.shape(all_type)[0], 871)
 
 
