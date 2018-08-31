@@ -1,13 +1,13 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
 """
 Created on Sat Aug 25 16:41:45 2018
-
 @author: hecc
-"""
 
+Modified by: Jason Yu
+"""
 import numpy
+
 from pyabc.molecular import Molecular_symmetry
+from pyabc.utils.math import closest_pair
 
 
 """
@@ -42,12 +42,11 @@ def symbol2number(symbol):
 
 
 class Molecular(object):
-    """*
-    Cell object represent a crystal structure.
+    """
+    Molecular object represent a 1D Molecular structure.
 
     parameters:
 
-    lattice: 3x3 1D-list, lattice of cell
     positions: n tuples(x,y,z) in fraction. 可多态初始化
     atoms: list of atoms, can be atomic number (int), can be
     atomic symbol (string),
@@ -102,29 +101,35 @@ class Molecular(object):
         outs = out_pos
         return "\n".join(outs)
 
-    def get_symmetry_permutation(self, pres=1e-3):
+    def get_symmetry_permutation(self, symprec=1e-3):
 
-        return Molecular_symmetry.get_permutations(self._positions, \
-                                                   self._atoms.tolist(), pres)
+        return Molecular_symmetry.get_permutations(self._positions,
+                                                   self._atoms.tolist(), symprec)
 
-    def check(self, limit=0.1):
+    def check(self, elements=None, limit=0.1, warn=False):
         """
         该方法用于自查对象中的位点是否过近
         若过近则抛出一个warning
         """
-        n = len(self.atoms)
-        warn_list = []
-        for ii in range(n):
-            for jj in range(ii+1, n):
-                temp = numpy.linalg.norm(self._positions[ii]-self._positions[jj])
-                if temp < limit:
-                    warn_list.append(str(ii)+'-'+str(jj))
-        if warn_list:
-            import warnings
-            warnings.warn("["+(', '.join(['%s']*len(warn_list))+"]")%tuple(
-                           warn_list) +
-                          (" atom couples are too close { < %.2f } \n")%(limit,))
-            return True
-
+        if elements is None:
+            mol = self
         else:
+            # 选取要check的元素，构建新的胞
+            ele_num = [symbol2number(s) for s in elements]
+            positions = []
+            atoms = []
+            for idx, e in enumerate(self.atoms):
+                if e in ele_num:
+                    positions.append(self.positions[idx])
+                    atoms.append(self.atoms[idx])
+            mol = self.__class__(positions, atoms)
+
+        points = mol.positions
+        if closest_pair(points) < limit:
+            if warn is True:
+                import warnings
+                warnings.warn("some atoms are too close(< {:f}), check cell".format(
+                    limit), RuntimeWarning)
             return False
+        else:
+            return True
