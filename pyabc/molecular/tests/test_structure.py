@@ -1,28 +1,32 @@
 import unittest
 import numpy
+
 from pyabc.molecular.structure import Molecular
 
 
 class TestMol(unittest.TestCase):
 
-    # def setUp(self):
-    #     # positions = numpy.loadtxt('z12.txt')
-    #     # atoms = ['C'] * 20
-    #     # self.molecular = Molecular(positions, atoms)
-
     def test_init(self):
-
         positions = [0, 0, 0]
         atoms = ['NaN_10']
         mole = Molecular(positions, atoms)
         self.assertEqual(mole.atoms.tolist(), [1010])
 
     def test_get_permutations(self):
-        pos = numpy.loadtxt('pos.txt')
-        atoms = ['C'] * 60
-        c60 = Molecular(pos, atoms)
-        self.assertEqual(numpy.shape(c60.get_symmetry_permutation(pres=0.05))
-                         [0], 120)
+        pos = numpy.array([0.5288,  0.1610,  0.9359,
+                           0.0000,  0.0000,  0.0000,
+                           0.2051,  0.8240, -0.6786,
+                           0.3345, -0.9314, -0.4496,
+                           -1.0685, -0.0537, 0.1921]).reshape((-1, 3))
+        atoms = ['H', 'C', 'H', 'H', 'H']
+        methane = Molecular(pos, atoms)
+
+        symprec = 1e-2
+        perm = methane.get_symmetry_permutation(symprec)
+        num_sym = numpy.shape(perm)[0]
+        # methane have 12 symmetry operation
+        expected_num_sym = 12
+        self.assertEqual(num_sym, expected_num_sym)
 
     def test_check(self):
         # c-c键和c-o键均距离不大于0.1A

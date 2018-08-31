@@ -13,8 +13,8 @@ def get_distance_matrix(pos):
     n = np.shape(pos)[0]
     d = np.zeros((n, n))
     for ii in range(n):
-        for jj in range(ii+1, n):
-            d[ii, jj] = np.linalg.norm(pos[ii]-pos[jj])
+        for jj in range(ii + 1, n):
+            d[ii, jj] = np.linalg.norm(pos[ii] - pos[jj])
     d = d + d.T
     return d
 
@@ -31,7 +31,8 @@ def get_three_permutation(d, atoms, pres=1e-3):
     all_tri = np.array(all_tri).reshape(-1, 3)
     corre_comb = np.array(corre_comb).reshape(-1, 3)
     n_all_tri = np.shape(all_tri)[0]
-    temp_d = np.linalg.norm(all_tri-np.tile(all_tri[0], (n_all_tri, 1)), axis=1)
+    temp_d = np.linalg.norm(
+        all_tri - np.tile(all_tri[0], (n_all_tri, 1)), axis=1)
     ind = np.where(temp_d < pres)
     poss_com = corre_comb[ind]
     # here we have known that `1 2 3` atoms can transform into ind atoms
@@ -62,11 +63,11 @@ def get_new_symm(d, origin_d, tri_symm, atoms, pres=1e-3):
         left_index = np.setdiff1d(range(n), each_symm)
         for index in left_index:
             nn = np.shape(origin_d)[0]
-            new_d = np.zeros((nn+1, nn+1))
+            new_d = np.zeros((nn + 1, nn + 1))
             new_d[0:nn, 0:nn] = origin_d
             new_d[nn, 0:nn] = d[index, each_symm]
             new_d[0:nn, nn] = d[each_symm, index]
-            temp_dis = np.linalg.norm(new_d - d[0:nn+1, 0:nn+1])
+            temp_dis = np.linalg.norm(new_d - d[0:nn + 1, 0:nn + 1])
             if temp_dis < pres and atoms[nn] == atoms[index]:
                 new_tri_symm.append(np.hstack((each_symm, index)))
                 break
@@ -80,7 +81,7 @@ def get_permutations(pos, atoms, pres=1e-3):
     d = get_distance_matrix(pos)
     tri_symm = get_three_permutation(d, atoms, pres=pres)
     n = np.shape(d)[0]
-    for ii in range(n-3):
-        origin_d = d[0:ii+3, 0:ii+3]
+    for ii in range(n - 3):
+        origin_d = d[0:ii + 3, 0:ii + 3]
         tri_symm = get_new_symm(d, origin_d, tri_symm, atoms, pres=pres)
     return np.array(tri_symm)
