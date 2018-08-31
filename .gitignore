@@ -10,3 +10,4 @@ POSCAR*/
 SUPERLATT*/
 test/*
 x
+*/__pycache__/
