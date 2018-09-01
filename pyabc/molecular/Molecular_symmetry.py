@@ -10,6 +10,7 @@ from itertools import combinations, permutations
 
 
 def get_distance_matrix(pos):
+    pos = np.array(pos).reshape((-1,3))
     n = np.shape(pos)[0]
     d = np.zeros((n, n))
     for ii in range(n):
@@ -84,3 +85,14 @@ def get_permutations(pos, atoms, pres=1e-3):
         origin_d = d[0:ii+3, 0:ii+3]
         tri_symm = get_new_symm(d, origin_d, tri_symm, atoms, pres=pres)
     return np.array(tri_symm)
+
+
+if __name__ == "__main__":
+    pos = [[0.5288,0.1610,0.9359], [0,0,0], [0.2051,0.8240,-0.6786], 
+           [0.3345,-0.9314,-0.4496],[-1.0685,-0.0537,0.1921]]
+    atoms = ['H', 'C', 'H', 'H','H']
+    C = get_permutations(pos, atoms, pres=1e-2)
+    print(np.shape(C)[0])
+    
+    
+    

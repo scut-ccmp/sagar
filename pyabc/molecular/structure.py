@@ -62,7 +62,6 @@ class Molecular(object):
             raise ValueError("When init Cell, number of atoms not equal to "
                              "number of positions.\n"
                              "CHECK YOUR INPUT!")
-
         if isinstance(atoms, numpy.ndarray):
             atoms = atoms.tolist()
         a = []
@@ -76,9 +75,7 @@ class Molecular(object):
                 else:
                     raise ValueError("Unkown atom symbols {:}".format(s))
             else:
-
                 a.append(round(s))
-
         self._atoms = numpy.array(a, dtype='intc')
 
     @property
@@ -102,9 +99,17 @@ class Molecular(object):
         outs = out_pos
         return "\n".join(outs)
 
-    def get_symmetry_permutation(self, pres=1e-3):
+    def molecular2cell(self, vac_layer=10):
+        # 将Molecular转化成Cell的方法
+        from pyabc.crystal.structure import Cell
+        max_ = numpy.max(self._positions, axis=0)
+        min_ = numpy.min(self._positions, axis=0)
+        basis = numpy.diag(max_-min_+vac_layer)
+        pos = numpy.dot(self._positions, numpy.linalg.inv(basis))
+        return Cell(basis, pos, self.atoms.tolist())
 
-        return Molecular_symmetry.get_permutations(self._positions, \
+    def get_symmetry_permutation(self, pres=1e-3):
+        return Molecular_symmetry.get_permutations(self._positions,
                                                    self._atoms.tolist(), pres)
 
     def check(self, limit=0.1):
