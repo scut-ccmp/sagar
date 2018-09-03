@@ -1,7 +1,7 @@
 import numpy
 from itertools import combinations
 
-from pyyabc.molecular.structure import Molecular
+from pyyabc.molecule.structure import Molecule
 from pyyabc.utils.core import remove_redundant
 
 class ConfigurationGenerator(object):
@@ -10,16 +10,16 @@ class ConfigurationGenerator(object):
     '''
 
     def __init__(self, mol, symprec=1e-3):
-        if not isinstance(mol, Molecular):
+        if not isinstance(mol, Molecule):
             raise TypeError(
-                "want pyyabc.molecular.structure.Molecular, got {:}".
+                "want pyyabc.molecule.structure.molecule, got {:}".
                 format(type(mol)))
         self.mol = mol
         self.perms = mol.get_symmetry_permutation(symprec)
 
     def get_configurations(self, sites, e_num):
         '''
-        get_configurations output specific molecular
+        get_configurations output specific molecule
         for specific concentration.
 
         parameters:
@@ -35,5 +35,5 @@ class ConfigurationGenerator(object):
         perms = self.perms
         mol_positions = self.mol.positions
         for pa, d in remove_redundant(mol_positions, sites, perms, e_num=e_num):
-            m = Molecular(pa[0], pa[1])
+            m = Molecule(pa[0], pa[1])
             yield (m, d)

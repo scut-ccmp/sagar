@@ -1,8 +1,8 @@
 import unittest
 import numpy
 
-from pyyabc.molecular.structure import Molecular
-from pyyabc.molecular.derive import ConfigurationGenerator
+from pyyabc.molecule.structure import Molecule
+from pyyabc.molecule.derive import ConfigurationGenerator
 
 # c60的用于测试
 positions_c60 = numpy.array([8.0139797e+00, 1.2307888e+01, 1.1831318e+01,
@@ -71,8 +71,8 @@ atoms_c60 = ['C'] * 60
 class TestDerive(unittest.TestCase):
 
     def setUp(self):
-        molecular = Molecular(positions_c60, atoms_c60)
-        self.cg = ConfigurationGenerator(molecular, symprec=0.05)
+        molecule = Molecule(positions_c60, atoms_c60)
+        self.cg = ConfigurationGenerator(molecule, symprec=0.05)
 
     def test_get_configurations_binary_alloy(self):
         e_num = (59, 1)
@@ -97,8 +97,8 @@ class TestDerive(unittest.TestCase):
                                  2.0, 2.0, 0.0,
                                  2.0, 2.0, 2.0]).reshape((-1, 3))
         atoms = ['C'] * 8
-        molecular = Molecular(positions, atoms)
-        cg = ConfigurationGenerator(molecular, symprec=0.05)
+        molecule = Molecule(positions, atoms)
+        cg = ConfigurationGenerator(molecule, symprec=0.05)
         e_num = (6, 2)
         sites = [(5, 6)] * 8
         all_type = cg.get_configurations(sites, e_num)
