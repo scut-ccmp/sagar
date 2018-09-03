@@ -6,7 +6,7 @@ Modified by: Jason Yu
 """
 import numpy
 
-from pyabc.molecular import Molecular_symmetry
+from pyabc.molecular import symmetry
 from pyabc.utils.math import closest_pair
 from pyabc.element.base import periodic_table_dict, get_symbol, symbol2number
 
@@ -73,8 +73,9 @@ class Molecular(object):
 
     def get_symmetry_permutation(self, symprec=1e-3):
 
-        return Molecular_symmetry.get_permutations(self._positions,
-                                                   self._atoms.tolist(), symprec)
+        return symmetry.get_permutations(self._positions,
+                                         self._atoms.tolist(),
+                                         symprec)
 
     def check(self, elements=None, limit=0.1, warn=False):
         """
