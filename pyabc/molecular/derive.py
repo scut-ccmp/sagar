@@ -2,7 +2,7 @@ import numpy
 from itertools import combinations
 
 from pyabc.molecular.structure import Molecular
-from pyabc.utils.core import _remove_redundant
+from pyabc.utils.core import remove_redundant
 
 class ConfigurationGenerator(object):
     '''
@@ -33,7 +33,7 @@ class ConfigurationGenerator(object):
         tuple[1]: int object, degeneracy of the configuration in all configurations of this volume.
         '''
         perms = self.perms
-        mol = self.mol
-        for pa, d in _remove_redundant(mol, sites, perms, e_num=e_num):
+        mol_positions = self.mol.positions
+        for pa, d in remove_redundant(mol_positions, sites, perms, e_num=e_num):
             m = Molecular(pa[0], pa[1])
             yield (m, d)

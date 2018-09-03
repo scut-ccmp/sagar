@@ -3,7 +3,15 @@ from itertools import product
 
 from pyabc.utils.math import binomialCoeff
 
-def _remove_redundant(mol, sites, perms, e_num=None):
+def remove_redundant(mol_positions, sites, perms, e_num=None):
+    """
+    输入一个分子坐标`mol_positions`
+    和每个坐标位点上的可能取代情况`sites`
+    母体结构所有的置换操作`perms`
+
+    options:
+        位点上元素的比例`e_num`
+    """
     # perms = self._get_perms_from_rots_and_trans(rots, trans)
     # TODO: 加入一个机制，来清晰的设定位点上无序的状态
     sites = numpy.array(sites)
@@ -35,7 +43,7 @@ def _remove_redundant(mol, sites, perms, e_num=None):
 
             # 返回一个包含不重复位置和原子类别的tuple
             # TODO: 合并成为一个独特的类？？
-            m = (mol.positions, atoms)
+            m = (mol_positions, atoms)
             yield (m, deg)
 
 def _mark_to_atoms(arr_mark, sites):

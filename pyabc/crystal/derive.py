@@ -2,7 +2,7 @@ import numpy
 
 from pyabc.crystal.utils import non_dup_hnfs, snf
 from pyabc.utils.math import is_int_np_array, refine_positions
-from pyabc.utils.core import _remove_redundant
+from pyabc.utils.core import remove_redundant
 
 from pyabc.crystal.structure import Cell
 
@@ -126,8 +126,8 @@ class ConfigurationGenerator(object):
                 supercell = self._pcell.extend(h)
                 _sites = numpy.repeat(sites, volume)
 
-                for c, _ in _remove_redundant(supercell, _sites, perms):
-                    c = Cell(supercell.lattice, c[0], c[1])
+                for mol, _ in remove_redundant(supercell.positions, _sites, perms):
+                    c = Cell(supercell.lattice, mol[0], mol[1])
                     if c.is_primitive(symprec):
                         yield c
 
@@ -164,8 +164,8 @@ class ConfigurationGenerator(object):
             supercell = self._pcell.extend(h)
             _sites = numpy.repeat(sites, volume)
 
-            for c, d in _remove_redundant(supercell, _sites, perms, e_num):
-                c = Cell(supercell.lattice, c[0], c[1])
+            for mol, d in remove_redundant(supercell.positions, _sites, perms, e_num):
+                c = Cell(supercell.lattice, mol[0], mol[1])
                 yield (c, d)
 
     def cons_specific_cell(self, sites, e_num=None, symprec=1e-5):
@@ -195,6 +195,6 @@ class ConfigurationGenerator(object):
         perms = hfpg.get_symmetry_perms(symprec)
 
         supercell = self._pcell.extend(mat)
-        for c, d in _remove_redundant(supercell, sites, perms, e_num=e_num):
-            c = Cell(supercell.lattice, c[0], c[1])
+        for mol, d in remove_redundant(supercell.positions, sites, perms, e_num=e_num):
+            c = Cell(supercell.lattice, mol[0], mol[1])
             yield (c, d)
