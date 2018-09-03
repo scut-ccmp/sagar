@@ -3,7 +3,8 @@ import warnings
 import operator
 import collections
 
-from pyyabc.crystal.structure import Cell, get_symbol
+from pyyabc.crystal.structure import Cell
+from pyyabc.element.base import get_symbol
 
 
 def read_vasp(filename='POSCAR'):
