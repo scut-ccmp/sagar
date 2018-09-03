@@ -209,7 +209,7 @@ class ConfigurationGenerator(object):
             ahash = _hash_atoms(atoms_mark)
 
             if remove_super:
-                flag = (ahash in redundant) or self._is_super(
+                flag = (ahash in redundant) or _is_super(
                     cell, arr_atoms_mark)
             else:
                 flag = ahash in redundant
@@ -236,9 +236,9 @@ class ConfigurationGenerator(object):
         #     deg_total += deg
         # print(deg_total)
 
-    def _is_super(self, cell, arr_atoms_mark):
-        newcell = Cell(cell.lattice, cell.positions, arr_atoms_mark)
-        return not newcell.is_primitive()
+def _is_super(cell, arr_atoms_mark):
+    newcell = Cell(cell.lattice, cell.positions, arr_atoms_mark)
+    return not newcell.is_primitive()
 
 def _mark_to_atoms(arr_mark, sites):
     num_of_site_groups = len(sites)
