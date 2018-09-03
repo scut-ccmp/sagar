@@ -227,7 +227,7 @@ class ConfigurationGenerator(object):
                 arr_all_transmuted = numpy.array(list_all_transmuted)
                 deg = numpy.unique(arr_all_transmuted, axis=0).shape[0]
 
-                atoms = self._mark_to_atoms(arr_atoms_mark, sites)
+                atoms = _mark_to_atoms(arr_atoms_mark, sites)
                 # print(str(atoms) + '  ' + str(deg))
 
                 c = Cell(cell.lattice, cell.positions, atoms)
@@ -236,33 +236,20 @@ class ConfigurationGenerator(object):
         #     deg_total += deg
         # print(deg_total)
 
-    def _get_perms_from_rots_and_trans(self, rots, trans):
-        nrot = rots.shape[0]
-        ntran = trans.shape[0]
-        size = nrot * ntran
-        perms = numpy.zeros((size, trans.shape[1]), dtype='int')
-        idx = 0
-        for r in rots:
-            for t in trans:
-                p = r[t]
-                perms[idx] = p
-                idx += 1
-        return perms
-
     def _is_super(self, cell, arr_atoms_mark):
         newcell = Cell(cell.lattice, cell.positions, arr_atoms_mark)
         return not newcell.is_primitive()
 
-    def _mark_to_atoms(self, arr_mark, sites):
-        num_of_site_groups = len(sites)
-        arr_atoms = arr_mark.reshape(num_of_site_groups, -1)
-        # import pdb; pdb.set_trace()
-        atoms = numpy.zeros_like(arr_atoms)
-        for i, row in enumerate(arr_atoms):
-            for j, v in enumerate(row):
-                atoms[i][j] = sites[i][v]
+def _mark_to_atoms(arr_mark, sites):
+    num_of_site_groups = len(sites)
+    arr_atoms = arr_mark.reshape(num_of_site_groups, -1)
+    # import pdb; pdb.set_trace()
+    atoms = numpy.zeros_like(arr_atoms)
+    for i, row in enumerate(arr_atoms):
+        for j, v in enumerate(row):
+            atoms[i][j] = sites[i][v]
 
-        return atoms.flatten().tolist()
+    return atoms.flatten().tolist()
 
 
 def _atoms_gen(args, e_num=None):
