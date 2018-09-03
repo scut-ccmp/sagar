@@ -161,7 +161,8 @@ class ConfigurationGenerator(object):
 
             supercell = self._pcell.extend(h)
 
-            for c, d in _remove_redundant(supercell, sites, perms, volume, e_num):
+            sites = sites * volume
+            for c, d in _remove_redundant(supercell, sites, perms, e_num):
                 yield (c, d)
 
     def cons_specific_cell(self, sites, e_num=None, symprec=1e-5):
