@@ -44,9 +44,12 @@ def binomialCoeff(n, k):
     if k < 0:
         return -1
     result = 1
+    if n - k < k:
+        k = n - k
+
     for i in range(1, k + 1):
         result = result * (n - i + 1) / i
-    return result
+    return int(result)
 
 
 def distance(p1, p2):
