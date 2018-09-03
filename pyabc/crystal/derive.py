@@ -125,8 +125,9 @@ class ConfigurationGenerator(object):
 
                 supercell = self._pcell.extend(h)
 
-                for c, _ in self._remove_redundant(supercell, sites, perms, volume, remove_super=True):
-                    yield c
+                for c, _ in _remove_redundant(supercell, sites, perms, volume):
+                    if c.is_primitive(symprec):
+                        yield c
 
     # 特定体积胞
     def cons_specific_volume(self, sites, volume=2, e_num=None, dimension=3, symprec=1e-5):
@@ -160,7 +161,7 @@ class ConfigurationGenerator(object):
 
             supercell = self._pcell.extend(h)
 
-            for c, d in self._remove_redundant(supercell, sites, perms, volume, e_num):
+            for c, d in _remove_redundant(supercell, sites, perms, volume, e_num):
                 yield (c, d)
 
     def cons_specific_cell(self, sites, e_num=None, symprec=1e-5):
@@ -190,55 +191,45 @@ class ConfigurationGenerator(object):
         perms = hfpg.get_symmetry_perms(symprec)
 
         supercell = self._pcell.extend(mat)
-        for c, d in self._remove_redundant(supercell, sites, perms, e_num=e_num):
+        for c, d in _remove_redundant(supercell, sites, perms, e_num=e_num):
             yield (c, d)
 
-    def _remove_redundant(self, cell, sites, perms, volume=1, e_num=None, remove_super=False):
-        # perms = self._get_perms_from_rots_and_trans(rots, trans)
-        # TODO: 加入一个机制，来清晰的设定位点上无序的状态
-        arg_sites = [len(i) for i in sites]
-        arg_sites = numpy.repeat(arg_sites, volume)
-        # redundant configurations do not want see again
-        # 用于记录在操作作用后已经存在的构型排列，而无序每次都再次对每个结构作用所有操作
-        redundant = set()
+def _remove_redundant(cell, sites, perms, volume=1, e_num=None):
+    # perms = self._get_perms_from_rots_and_trans(rots, trans)
+    # TODO: 加入一个机制，来清晰的设定位点上无序的状态
+    arg_sites = [len(i) for i in sites]
+    arg_sites = numpy.repeat(arg_sites, volume)
+    # redundant configurations do not want see again
+    # 用于记录在操作作用后已经存在的构型排列，而无序每次都再次对每个结构作用所有操作
+    redundant = set()
 
-        # deg_total = 0
-        # loop over configurations
-        for atoms_mark in _atoms_gen(arg_sites, e_num):
-            arr_atoms_mark = numpy.array(atoms_mark)
-            ahash = _hash_atoms(atoms_mark)
+    # deg_total = 0
+    # loop over configurations
+    for atoms_mark in _atoms_gen(arg_sites, e_num):
+        arr_atoms_mark = numpy.array(atoms_mark)
+        ahash = _hash_atoms(atoms_mark)
 
-            if remove_super:
-                flag = (ahash in redundant) or _is_super(
-                    cell, arr_atoms_mark)
-            else:
-                flag = ahash in redundant
+        if ahash in redundant:
+            continue
+        else:
+            list_all_transmuted = []
+            for p in perms:
+                atoms_transmuted = arr_atoms_mark[p]
+                redundant.add(_hash_atoms(atoms_transmuted))
+                # degeneracy
+                list_all_transmuted.append(atoms_transmuted)
 
-            if flag:
-                continue
-            else:
-                list_all_transmuted = []
-                for p in perms:
-                    atoms_transmuted = arr_atoms_mark[p]
-                    redundant.add(_hash_atoms(atoms_transmuted))
-                    # degeneracy
-                    list_all_transmuted.append(atoms_transmuted)
+            arr_all_transmuted = numpy.array(list_all_transmuted)
+            deg = numpy.unique(arr_all_transmuted, axis=0).shape[0]
 
-                arr_all_transmuted = numpy.array(list_all_transmuted)
-                deg = numpy.unique(arr_all_transmuted, axis=0).shape[0]
+            atoms = _mark_to_atoms(arr_atoms_mark, sites)
+            # print(str(atoms) + '  ' + str(deg))
 
-                atoms = _mark_to_atoms(arr_atoms_mark, sites)
-                # print(str(atoms) + '  ' + str(deg))
+            c = Cell(cell.lattice, cell.positions, atoms)
+            yield (c, deg)
 
-                c = Cell(cell.lattice, cell.positions, atoms)
-                yield (c, deg)
-
-        #     deg_total += deg
-        # print(deg_total)
-
-def _is_super(cell, arr_atoms_mark):
-    newcell = Cell(cell.lattice, cell.positions, arr_atoms_mark)
-    return not newcell.is_primitive()
+    #     deg_total += deg
+    # print(deg_total)
 
 def _mark_to_atoms(arr_mark, sites):
     num_of_site_groups = len(sites)

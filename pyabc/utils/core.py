@@ -16,9 +16,7 @@ def _remove_redundant(mol, sites, perms, e_num=None):
         arr_atoms_mark = numpy.array(atoms_mark)
         ahash = _hash_atoms(atoms_mark)
 
-        flag = ahash in redundant
-
-        if flag:
+        if abash in redundant:
             continue
         else:
             list_all_transmuted = []
