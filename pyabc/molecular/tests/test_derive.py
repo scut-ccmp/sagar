@@ -1,11 +1,8 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-
 import unittest
 import numpy
+
 from pyabc.molecular.structure import Molecular
 from pyabc.molecular.derive import ConfigurationGenerator
-from pyabc.molecular.derive import _serial_int_to_arrangement
 
 # c60的用于测试
 positions_c60 = numpy.array([8.0139797e+00, 1.2307888e+01, 1.1831318e+01,
