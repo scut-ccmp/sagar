@@ -6,14 +6,14 @@ Modified by: Jason Yu
 """
 import numpy
 
-from pyyabc.molecular import symmetry
+from pyyabc.molecule import symmetry
 from pyyabc.utils.math import closest_pair
 from pyyabc.element.base import periodic_table_dict, get_symbol, symbol2number
 
 
-class Molecular(object):
+class Molecule(object):
     """
-    Molecular object represent a 1D Molecular structure.
+    Molecule object represent a 1D Molecule structure.
 
     parameters:
 
