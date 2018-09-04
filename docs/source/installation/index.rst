@@ -8,4 +8,3 @@ Installation
 
   quick_install
   virtual_environment
-  installation_requirements

@@ -20,7 +20,7 @@ Developer's guide
 .. toctree::
   :maxdepth: 4
 
-  API reference 
+  
 
 
 Indices and tables
