@@ -11,3 +11,5 @@ SUPERLATT*/
 test/*
 x
 */__pycache__/
+doctrees/
+.buildinfo
