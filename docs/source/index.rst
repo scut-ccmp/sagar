@@ -6,10 +6,21 @@
 Welcome to pyyabc's documentation!
 ==================================
 
-.. toctree::
-   :maxdepth: 2
-   :caption: Contents:
+User's guide
+++++++++++++
 
+.. toctree::
+   :maxdepth: 4
+
+   user_guide/index
+
+
+Developer's guide
+
+.. toctree::
+  :maxdepth: 4
+
+  API reference 
 
 
 Indices and tables
