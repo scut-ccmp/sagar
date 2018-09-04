@@ -27,9 +27,6 @@ Direct
         atoms = ['H', 'He']
         self.cell = Cell(latt, positions, atoms)
 
-    def test(self):
-        pass
-
     def test_read_string(self):
         data = self.string
         got_cell = _read_string(data)
