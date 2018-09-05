@@ -3,3 +3,8 @@
 ==========
 Get Start
 ==========
+
+.. toctree::
+
+  cmdline
+  pynotebook
