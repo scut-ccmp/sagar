@@ -52,8 +52,7 @@
 <li><a class="reference internal" href="#">python虚拟环境</a><ul>
 <li><a class="reference internal" href="#id1">为什么要使用python虚拟环境?</a></li>
 <li><a class="reference internal" href="#id2">什么是python虚拟环境?</a></li>
-<li><a class="reference internal" href="#creating-a-virtual-environment">Creating a virtual environment</a></li>
-<li><a class="reference internal" href="#creating-a-aiida-folder-in-your-virtualenvironment">Creating a <code class="docutils literal notranslate"><span class="pre">.aiida</span></code> folder in your virtualenvironment</a></li>
+<li><a class="reference internal" href="#id3">创建一个虚拟环境</a></li>
 </ul>
 </li>
 </ul>
@@ -113,70 +112,35 @@
 这就使得可以通过建立多个文件夹来独立python的使用环境。</p>
 <p>并且，虚拟环境所依赖的文件夹可以在用户的目录下，这就使得用户创建虚拟环境和安装软件时无须去的管理员权限。</p>
 </div>
-<div class="section" id="creating-a-virtual-environment">
-<h2>Creating a virtual environment<a class="headerlink" href="#creating-a-virtual-environment" title="永久链接至标题">¶</a></h2>
-<p>There are different programs that can create and work with virtual environments.
-An example for python virtual environments is called <code class="docutils literal notranslate"><span class="pre">virtualenv</span></code> and can be installed with for example <code class="docutils literal notranslate"><span class="pre">pip</span></code> by running:</p>
+<div class="section" id="id3">
+<h2>创建一个虚拟环境<a class="headerlink" href="#id3" title="永久链接至标题">¶</a></h2>
+<p>有多种方式可以用来创建python虚拟环境，在这里，我们选用 <code class="docutils literal notranslate"><span class="pre">virtualenv</span></code> ,通过下列命令安装:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ pip install --user -U virtualenv
 </pre></div>
 </div>
-<p>As explained before, a virtual environment is in essence little more than a directory containing everything it needs.
-In principle a virtual environment can thus be created anywhere where you can create a directory.
-You could for example opt to create a directory for all your virtual environments in your home folder:</p>
+<p>一个特定python的虚拟环境就是一个包含有环境独立的所有python软件和库的文件夹。
+因此，理论上一个虚拟环境可以创建在任何一个你可以创建文件夹的地方。
+比如，你可以在你的家目录下创建管理虚拟环境的文件夹:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ mkdir ~/.virtualenvs
 </pre></div>
 </div>
-<p>Using <code class="docutils literal notranslate"><span class="pre">virtualenv</span></code> you can then create a new virtual environment with python 2.7 by running:</p>
+<p>使用 <code class="docutils literal notranslate"><span class="pre">virtualenv</span></code> 命令，你可以创建一个使用python 2.7的环境:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ virtualenv --python=&lt;path/to/python2.7&gt; ~/.virtualenvs/my_env
 </pre></div>
 </div>
-<p>This will create the environment <code class="docutils literal notranslate"><span class="pre">my_env</span></code> and automatically activate it for you.
-If you open a new terminal, or you have deactivated the environment, you can reactivate it as follows:</p>
+<p>这将创建一个名为 <code class="docutils literal notranslate"><span class="pre">my_env</span></code> 的环境并且自动加载它。
+如果你打开一个新的命令行窗口，或者你已经 <code class="docutils literal notranslate"><span class="pre">deactivate</span></code> 该独立虚拟环境，你可以通过下列命令重新激活(reactivate)该环境:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ ~/.virtualenvs/my_env/bin/activate
 </pre></div>
 </div>
-<p>If it is activated successfully, you should see that your prompt is prefixed with the name of the environment:</p>
+<p>如果环境激活成功，你将看到命令行提示符出现如下变更，在提示符的开头出现环境的名称:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>(my_env) $
 </pre></div>
 </div>
-<p>To leave or deactivate the environment and set all the settings back to default, simply run:</p>
+<p>要退出或deactivate当前虚拟环境，或将所有设置退回默认，你只需要运行:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>(my_env) $ deactivate
 </pre></div>
 </div>
-</div>
-<div class="section" id="creating-a-aiida-folder-in-your-virtualenvironment">
-<span id="aiida-path-in-virtualenv"></span><h2>Creating a <code class="docutils literal notranslate"><span class="pre">.aiida</span></code> folder in your virtualenvironment<a class="headerlink" href="#creating-a-aiida-folder-in-your-virtualenvironment" title="永久链接至标题">¶</a></h2>
-<p>When you run AiiDA in multiple virtual environments, it can be convenient to use a separate <code class="docutils literal notranslate"><span class="pre">.aiida</span></code> folder for each virtualenv. To do this, you can use the <span class="xref std std-ref">AIIDA_PATH mechanism</span> as follows:</p>
-<ol class="arabic">
-<li><p class="first">Create your virtualenv, as described above</p>
-</li>
-<li><p class="first">Create a <code class="docutils literal notranslate"><span class="pre">.aiida</span></code> directory in your virtualenv directory:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ mkdir ~/.virtualenvs/my_env/.aiida
-</pre></div>
-</div>
-</li>
-<li><p class="first">At the end of <code class="docutils literal notranslate"><span class="pre">~/.virtualenvs/my_env/bin/activate</span></code>, add the following line:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">export</span> <span class="n">AIIDA_PATH</span><span class="o">=</span><span class="s1">&#39;~/.virtualenvs/my_env&#39;</span>
-</pre></div>
-</div>
-</li>
-<li><p class="first">Deactivate and re-activate the virtualenv</p>
-</li>
-<li><p class="first">You can test that everything is set up correctly if you can reproduce the following:</p>
-<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>(my_env)$ echo $AIIDA_PATH
-&gt;&gt;&gt; ~/.virtualenvs/my_env
-
-(my_env)$ verdi profile list
-&gt;&gt;&gt; Configuration folder: /home/my_username/.virtualenvs/my_env/.aiida
-&gt;&gt;&gt; Stopping: No configuration file found
-&gt;&gt;&gt; Note: if no configuration file was found, it means that you have not run
-&gt;&gt;&gt; &#39;verdi setup&#39; yet to configure at least one AiiDA profile.
-</pre></div>
-</div>
-</li>
-<li><p class="first">Continue setting up AiiDA with <code class="docutils literal notranslate"><span class="pre">verdi</span> <span class="pre">setup</span></code> or <code class="docutils literal notranslate"><span class="pre">verdi</span> <span class="pre">quicksetup</span></code>.</p>
-</li>
-</ol>
 </div>
 </div>
 

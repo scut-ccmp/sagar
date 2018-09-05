@@ -53,6 +53,7 @@
 <li><a class="reference internal" href="#id2">依赖软件的安装</a></li>
 <li><a class="reference internal" href="#pyyabc">安装 <code class="docutils literal notranslate"><span class="pre">pyyabc</span></code> 软件包</a></li>
 <li><a class="reference internal" href="#option-jupyter-notebook">(option) jupyter notebook的安装</a></li>
+<li><a class="reference internal" href="#option-nose2">(option) 运行nose2执行单元测试</a></li>
 </ul>
 </li>
 </ul>
@@ -155,7 +156,7 @@ $ which python
 </pre></div>
 </div>
 </div>
-<p>最后，进入克隆的 <code class="docutils literal notranslate"><span class="pre">pyyabc</span></code> 项目所在的目录执行安装:</p>
+<p>最后，在克隆的 <code class="docutils literal notranslate"><span class="pre">pyyabc</span></code> 项目所在的目录下执行安装:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>(pyyabc) $ pip install -e pyyabc
 </pre></div>
 </div>
@@ -172,8 +173,15 @@ $ which python
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>(pyyabc) $ pip install jupyter
 </pre></div>
 </div>
-<p>At this point, you can choose you can choose to start using
-pyyabc and go straight to the section <a class="reference internal" href="../get_started/index.html#get-started"><span class="std std-ref">Get Start</span></a>.</p>
+</div>
+<div class="section" id="option-nose2">
+<h2>(option) 运行nose2执行单元测试<a class="headerlink" href="#option-nose2" title="永久链接至标题">¶</a></h2>
+<p>进入pyyabc目录，执行:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ nose2 -v
+</pre></div>
+</div>
+<p>测试通过则软件确保可用。</p>
+<p>现在你就可以开始使用软件包，或者继续查看后续手册 <a class="reference internal" href="../get_started/index.html#get-started"><span class="std std-ref">Get Start</span></a>.</p>
 </div>
 </div>
 
