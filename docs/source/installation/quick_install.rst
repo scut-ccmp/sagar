@@ -75,7 +75,7 @@ virtual environment进行独立python环境的管理。
 
     (pyyabc) $ pip install -U setuptools pip
 
-最后，进入克隆的 ``pyyabc`` 项目所在的目录执行安装::
+最后，在克隆的 ``pyyabc`` 项目所在的目录下执行安装::
 
     (pyyabc) $ pip install -e pyyabc
 
@@ -93,5 +93,13 @@ virtual environment进行独立python环境的管理。
 
     (pyyabc) $ pip install jupyter
 
-At this point, you can choose you can choose to start using
-pyyabc and go straight to the section :ref:`get-started`.
+(option) 运行nose2执行单元测试
++++++++++++++++++++++++++++++++++++++++++
+
+进入pyyabc目录，执行::
+
+    $ nose2 -v
+
+测试通过则软件确保可用。
+
+现在你就可以开始使用软件包，或者继续查看后续手册 :ref:`get-started`.

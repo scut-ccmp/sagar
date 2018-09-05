@@ -28,60 +28,31 @@ python的软件通常会依赖于其他的第三方python包，而且很多情�
 
 并且，虚拟环境所依赖的文件夹可以在用户的目录下，这就使得用户创建虚拟环境和安装软件时无须去的管理员权限。
 
-Creating a virtual environment
+创建一个虚拟环境
 ++++++++++++++++++++++++++++++
-There are different programs that can create and work with virtual environments.
-An example for python virtual environments is called ``virtualenv`` and can be installed with for example ``pip`` by running::
+有多种方式可以用来创建python虚拟环境，在这里，我们选用 ``virtualenv`` ,通过下列命令安装::
 
     $ pip install --user -U virtualenv
 
-As explained before, a virtual environment is in essence little more than a directory containing everything it needs.
-In principle a virtual environment can thus be created anywhere where you can create a directory.
-You could for example opt to create a directory for all your virtual environments in your home folder::
+一个特定python的虚拟环境就是一个包含有环境独立的所有python软件和库的文件夹。
+因此，理论上一个虚拟环境可以创建在任何一个你可以创建文件夹的地方。
+比如，你可以在你的家目录下创建管理虚拟环境的文件夹::
 
     $ mkdir ~/.virtualenvs
 
-Using ``virtualenv`` you can then create a new virtual environment with python 2.7 by running::
+使用 ``virtualenv`` 命令，你可以创建一个使用python 2.7的环境::
 
     $ virtualenv --python=<path/to/python2.7> ~/.virtualenvs/my_env
 
-This will create the environment ``my_env`` and automatically activate it for you.
-If you open a new terminal, or you have deactivated the environment, you can reactivate it as follows::
+这将创建一个名为 ``my_env`` 的环境并且自动加载它。
+如果你打开一个新的命令行窗口，或者你已经 ``deactivate`` 该独立虚拟环境，你可以通过下列命令重新激活(reactivate)该环境::
 
     $ ~/.virtualenvs/my_env/bin/activate
 
-If it is activated successfully, you should see that your prompt is prefixed with the name of the environment::
+如果环境激活成功，你将看到命令行提示符出现如下变更，在提示符的开头出现环境的名称::
 
     (my_env) $
 
-To leave or deactivate the environment and set all the settings back to default, simply run::
+要退出或deactivate当前虚拟环境，或将所有设置退回默认，你只需要运行::
 
     (my_env) $ deactivate
-
-
-.. _aiida_path_in_virtualenv:
-
-Creating a ``.aiida`` folder in your virtualenvironment
-+++++++++++++++++++++++++++++++++++++++++++++++++++++++
-
-When you run AiiDA in multiple virtual environments, it can be convenient to use a separate ``.aiida`` folder for each virtualenv. To do this, you can use the :ref:`AIIDA_PATH mechanism <directory_location>` as follows:
-
-1. Create your virtualenv, as described above
-2. Create a ``.aiida`` directory in your virtualenv directory::
-
-    $ mkdir ~/.virtualenvs/my_env/.aiida
-3. At the end of ``~/.virtualenvs/my_env/bin/activate``, add the following line::
-
-    export AIIDA_PATH='~/.virtualenvs/my_env'
-4. Deactivate and re-activate the virtualenv
-5. You can test that everything is set up correctly if you can reproduce the following::
-
-    (my_env)$ echo $AIIDA_PATH
-    >>> ~/.virtualenvs/my_env
-
-    (my_env)$ verdi profile list
-    >>> Configuration folder: /home/my_username/.virtualenvs/my_env/.aiida
-    >>> Stopping: No configuration file found
-    >>> Note: if no configuration file was found, it means that you have not run
-    >>> 'verdi setup' yet to configure at least one AiiDA profile.
-6. Continue setting up AiiDA with ``verdi setup`` or ``verdi quicksetup``.
