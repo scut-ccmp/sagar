@@ -50,7 +50,6 @@ Pygments==2.2.0
 pyparsing==2.2.0
 python-dateutil==2.7.3
 pytz==2018.5
--e git+git@github.com:unkcpz/pyabc.git@9c42b2b6f2369ebd82af28d664815dbded487ec7#egg=pyyabc
 pyzmq==17.1.2
 qtconsole==4.4.1
 requests==2.19.1
