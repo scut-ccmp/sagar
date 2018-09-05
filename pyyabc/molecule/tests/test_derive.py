@@ -80,10 +80,9 @@ class TestDerive(unittest.TestCase):
         all_type = self.cg.get_configurations(sites, e_num)
         num_confs = len([i for i in all_type])
         self.assertEqual(num_confs, 1)
-
         e_num = (58, 2)
         sites = [(6, 5)] * 60
-        all_type = self.cg.get_configurations(sites, e_num)
+        all_type = self.cg.get_configurations(sites, e_num, method='B')
         num_confs = len([i for i in all_type])
         self.assertEqual(num_confs, 23)
 
@@ -101,16 +100,23 @@ class TestDerive(unittest.TestCase):
         cg = ConfigurationGenerator(molecule, symprec=0.05)
         e_num = (6, 2)
         sites = [(5, 6)] * 8
-        all_type = cg.get_configurations(sites, e_num)
+        all_type = cg.get_configurations(sites, e_num, method='B')
         num_confs = len([i for i in all_type])
         self.assertEqual(num_confs, 3)
+        
+    def test_get_configurations_trinary_alloy_A(self):
+         e_num = (57, 2, 1)
+         sites = [(5, 6, 7)] * 60
+         all_type = self.cg.get_configurations(sites, e_num, method='A')
+         num_confs = len([i for i in all_type])
+         self.assertEqual(num_confs, 871)
 
-    # def test_get_configurations_trinary_alloy(self):
-    #     e_num = (57, 2, 1)
-    #     sites = [(5, 6, 7)] * 60
-    #     all_type = self.cg.get_configurations(sites, e_num)
-    #     num_confs = len([i for i in all_type])
-    #     self.assertEqual(num_confs, 871)
+    def test_get_configurations_trinary_alloy_B(self):
+         e_num = (2, 57, 1)
+         sites = [(5, 6, 7)] * 60
+         all_type = self.cg.get_configurations(sites, e_num, method='B')
+         num_confs = len([i for i in all_type])
+         self.assertEqual(num_confs, 871)
 
 
 if __name__ == "__main__":
