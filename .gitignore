@@ -4,7 +4,6 @@
 *.pyc
 *.swp
 *.swo
-*.txt
 *.egg-info/
 POSCAR*/
 SUPERLATT*/
