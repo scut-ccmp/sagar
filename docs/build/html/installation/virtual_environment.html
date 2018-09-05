@@ -2,21 +2,22 @@
 
 <!doctype html>
 
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html xmlns="http://www.w3.org/1999/xhtml" lang="zh_CN">
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Virtual environment &#8212; pyyabc 1.0.0 documentation</title>
+    <title>Virtual environment &#8212; pyyabc 1.0.0 文档</title>
     <link rel="stylesheet" href="../_static/bizstyle.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
+    <script type="text/javascript" src="../_static/translations.js"></script>
     <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
     <script type="text/javascript" src="../_static/bizstyle.js"></script>
-    <link rel="index" title="Index" href="../genindex.html" />
-    <link rel="search" title="Search" href="../search.html" />
+    <link rel="index" title="索引" href="../genindex.html" />
+    <link rel="search" title="搜索" href="../search.html" />
     <link rel="next" title="Get Start" href="../get_started/index.html" />
     <link rel="prev" title="Quick Install" href="quick_install.html" />
     <meta name="viewport" content="width=device-width,initial-scale=1.0">
@@ -25,28 +26,28 @@
     <![endif]-->
   </head><body>
     <div class="related" role="navigation" aria-label="related navigation">
-      <h3>Navigation</h3>
+      <h3>导航</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
-          <a href="../genindex.html" title="General Index"
-             accesskey="I">index</a></li>
+          <a href="../genindex.html" title="总目录"
+             accesskey="I">索引</a></li>
         <li class="right" >
-          <a href="../py-modindex.html" title="Python Module Index"
-             >modules</a> |</li>
+          <a href="../py-modindex.html" title="Python 模块索引"
+             >模块</a> |</li>
         <li class="right" >
           <a href="../get_started/index.html" title="Get Start"
-             accesskey="N">next</a> |</li>
+             accesskey="N">下一页</a> |</li>
         <li class="right" >
           <a href="quick_install.html" title="Quick Install"
-             accesskey="P">previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">pyyabc 1.0.0 documentation</a> &#187;</li>
+             accesskey="P">上一页</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">pyyabc 1.0.0 文档</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../user_guide/index.html" >User’s guide</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="index.html" accesskey="U">Installation</a> &#187;</li> 
       </ul>
     </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
-  <h3><a href="../index.html">Table Of Contents</a></h3>
+  <h3><a href="../index.html">內容目录</a></h3>
   <ul>
 <li><a class="reference internal" href="#">Virtual environment</a><ul>
 <li><a class="reference internal" href="#why-a-virtual-environment">Why a virtual environment?</a></li>
@@ -57,25 +58,25 @@
 </li>
 </ul>
 
-  <h4>Previous topic</h4>
+  <h4>上一个主题</h4>
   <p class="topless"><a href="quick_install.html"
-                        title="previous chapter">Quick Install</a></p>
-  <h4>Next topic</h4>
+                        title="上一章">Quick Install</a></p>
+  <h4>下一个主题</h4>
   <p class="topless"><a href="../get_started/index.html"
-                        title="next chapter">Get Start</a></p>
+                        title="下一章">Get Start</a></p>
   <div role="note" aria-label="source link">
-    <h3>This Page</h3>
+    <h3>本页</h3>
     <ul class="this-page-menu">
       <li><a href="../_sources/installation/virtual_environment.rst.txt"
-            rel="nofollow">Show Source</a></li>
+            rel="nofollow">显示源代码</a></li>
     </ul>
    </div>
 <div id="searchbox" style="display: none" role="search">
-  <h3>Quick search</h3>
+  <h3>快速搜索</h3>
     <div class="searchformwrapper">
     <form class="search" action="../search.html" method="get">
       <input type="text" name="q" />
-      <input type="submit" value="Go" />
+      <input type="submit" value="转向" />
       <input type="hidden" name="check_keywords" value="yes" />
       <input type="hidden" name="area" value="default" />
     </form>
@@ -91,9 +92,9 @@
           <div class="body" role="main">
             
   <div class="section" id="virtual-environment">
-<span id="id1"></span><h1>Virtual environment<a class="headerlink" href="#virtual-environment" title="Permalink to this headline">¶</a></h1>
+<span id="id1"></span><h1>Virtual environment<a class="headerlink" href="#virtual-environment" title="永久链接至标题">¶</a></h1>
 <div class="section" id="why-a-virtual-environment">
-<h2>Why a virtual environment?<a class="headerlink" href="#why-a-virtual-environment" title="Permalink to this headline">¶</a></h2>
+<h2>Why a virtual environment?<a class="headerlink" href="#why-a-virtual-environment" title="永久链接至标题">¶</a></h2>
 <p>AiiDA depends on third party python packages and very often on specific versions of those packages.
 If AiiDA were to be installed system wide, it may up- or downgrade third party packages used by other parts of the system and leave them potentially broken.
 Conversely, if a different version of a package is later installed which is incompatible with AiiDA, it too will become broken.</p>
@@ -103,7 +104,7 @@ Since your scientific data is important to you and to us, we <em>strongly</em> r
 In this case, you may want to install AiiDA and its dependencies in user space by using a <code class="docutils literal notranslate"><span class="pre">--user</span></code> flag, to avoid the need for administrative rights to install them system wide.</p>
 </div>
 <div class="section" id="what-is-a-virtual-environment">
-<h2>What is a virtual environment?<a class="headerlink" href="#what-is-a-virtual-environment" title="Permalink to this headline">¶</a></h2>
+<h2>What is a virtual environment?<a class="headerlink" href="#what-is-a-virtual-environment" title="永久链接至标题">¶</a></h2>
 <p>A python virtual environment is essentially a folder, that contains everything that is needed to run python programs, including</p>
 <ul class="simple">
 <li>python executable</li>
@@ -117,7 +118,7 @@ This allows to have an isolated environment for programs that rely on running wi
 <p>A virtual environment as well as the packages that will be installed within it, will often be installed in the home space of the user such that administrative rights are not required, therefore also making this technique very useful on machines where one has restricted access.</p>
 </div>
 <div class="section" id="creating-a-virtual-environment">
-<h2>Creating a virtual environment<a class="headerlink" href="#creating-a-virtual-environment" title="Permalink to this headline">¶</a></h2>
+<h2>Creating a virtual environment<a class="headerlink" href="#creating-a-virtual-environment" title="永久链接至标题">¶</a></h2>
 <p>There are different programs that can create and work with virtual environments.
 An example for python virtual environments is called <code class="docutils literal notranslate"><span class="pre">virtualenv</span></code> and can be installed with for example <code class="docutils literal notranslate"><span class="pre">pip</span></code> by running:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ pip install --user -U virtualenv
@@ -148,7 +149,7 @@ If you open a new terminal, or you have deactivated the environment, you can rea
 </div>
 </div>
 <div class="section" id="creating-a-aiida-folder-in-your-virtualenvironment">
-<span id="aiida-path-in-virtualenv"></span><h2>Creating a <code class="docutils literal notranslate"><span class="pre">.aiida</span></code> folder in your virtualenvironment<a class="headerlink" href="#creating-a-aiida-folder-in-your-virtualenvironment" title="Permalink to this headline">¶</a></h2>
+<span id="aiida-path-in-virtualenv"></span><h2>Creating a <code class="docutils literal notranslate"><span class="pre">.aiida</span></code> folder in your virtualenvironment<a class="headerlink" href="#creating-a-aiida-folder-in-your-virtualenvironment" title="永久链接至标题">¶</a></h2>
 <p>When you run AiiDA in multiple virtual environments, it can be convenient to use a separate <code class="docutils literal notranslate"><span class="pre">.aiida</span></code> folder for each virtualenv. To do this, you can use the <span class="xref std std-ref">AIIDA_PATH mechanism</span> as follows:</p>
 <ol class="arabic">
 <li><p class="first">Create your virtualenv, as described above</p>
@@ -190,28 +191,28 @@ If you open a new terminal, or you have deactivated the environment, you can rea
       <div class="clearer"></div>
     </div>
     <div class="related" role="navigation" aria-label="related navigation">
-      <h3>Navigation</h3>
+      <h3>导航</h3>
       <ul>
         <li class="right" style="margin-right: 10px">
-          <a href="../genindex.html" title="General Index"
-             >index</a></li>
+          <a href="../genindex.html" title="总目录"
+             >索引</a></li>
         <li class="right" >
-          <a href="../py-modindex.html" title="Python Module Index"
-             >modules</a> |</li>
+          <a href="../py-modindex.html" title="Python 模块索引"
+             >模块</a> |</li>
         <li class="right" >
           <a href="../get_started/index.html" title="Get Start"
-             >next</a> |</li>
+             >下一页</a> |</li>
         <li class="right" >
           <a href="quick_install.html" title="Quick Install"
-             >previous</a> |</li>
-        <li class="nav-item nav-item-0"><a href="../index.html">pyyabc 1.0.0 documentation</a> &#187;</li>
+             >上一页</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../index.html">pyyabc 1.0.0 文档</a> &#187;</li>
           <li class="nav-item nav-item-1"><a href="../user_guide/index.html" >User’s guide</a> &#187;</li>
           <li class="nav-item nav-item-2"><a href="index.html" >Installation</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">
-        &#169; Copyright 2018, Jason Yu, ChangChun He, ShaoBin Qiu.
-      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.6.
+        &#169; 版权所有 2018, Jason Yu, ChangChun He, ShaoBin Qiu.
+      由 <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.6 创建。
     </div>
   </body>
 </html>
