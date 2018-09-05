@@ -6,7 +6,7 @@
   <head>
     <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
-    <title>Quick Install &#8212; pyyabc 1.0.0 文档</title>
+    <title>快速安装 &#8212; pyyabc 1.0.0 文档</title>
     <link rel="stylesheet" href="../_static/bizstyle.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
     <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
@@ -18,8 +18,8 @@
     <script type="text/javascript" src="../_static/bizstyle.js"></script>
     <link rel="index" title="索引" href="../genindex.html" />
     <link rel="search" title="搜索" href="../search.html" />
-    <link rel="next" title="Virtual environment" href="virtual_environment.html" />
-    <link rel="prev" title="Installation" href="index.html" />
+    <link rel="next" title="python虚拟环境" href="virtual_environment.html" />
+    <link rel="prev" title="安装说明" href="index.html" />
     <meta name="viewport" content="width=device-width,initial-scale=1.0">
     <!--[if lt IE 9]>
     <script type="text/javascript" src="_static/css3-mediaqueries.js"></script>
@@ -35,21 +35,21 @@
           <a href="../py-modindex.html" title="Python 模块索引"
              >模块</a> |</li>
         <li class="right" >
-          <a href="virtual_environment.html" title="Virtual environment"
+          <a href="virtual_environment.html" title="python虚拟环境"
              accesskey="N">下一页</a> |</li>
         <li class="right" >
-          <a href="index.html" title="Installation"
+          <a href="index.html" title="安装说明"
              accesskey="P">上一页</a> |</li>
         <li class="nav-item nav-item-0"><a href="../index.html">pyyabc 1.0.0 文档</a> &#187;</li>
-          <li class="nav-item nav-item-1"><a href="../user_guide/index.html" >User’s guide</a> &#187;</li>
-          <li class="nav-item nav-item-2"><a href="index.html" accesskey="U">Installation</a> &#187;</li> 
+          <li class="nav-item nav-item-1"><a href="../user_guide/index.html" >用户手册</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="index.html" accesskey="U">安装说明</a> &#187;</li> 
       </ul>
     </div>
       <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
         <div class="sphinxsidebarwrapper">
   <h3><a href="../index.html">內容目录</a></h3>
   <ul>
-<li><a class="reference internal" href="#">Quick Install</a><ul>
+<li><a class="reference internal" href="#">快速安装</a><ul>
 <li><a class="reference internal" href="#id2">依赖软件的安装</a></li>
 <li><a class="reference internal" href="#pyyabc">安装 <code class="docutils literal notranslate"><span class="pre">pyyabc</span></code> 软件包</a></li>
 <li><a class="reference internal" href="#option-jupyter-notebook">(option) jupyter notebook的安装</a></li>
@@ -59,10 +59,10 @@
 
   <h4>上一个主题</h4>
   <p class="topless"><a href="index.html"
-                        title="上一章">Installation</a></p>
+                        title="上一章">安装说明</a></p>
   <h4>下一个主题</h4>
   <p class="topless"><a href="virtual_environment.html"
-                        title="下一章">Virtual environment</a></p>
+                        title="下一章">python虚拟环境</a></p>
   <div role="note" aria-label="source link">
     <h3>本页</h3>
     <ul class="this-page-menu">
@@ -91,7 +91,7 @@
           <div class="body" role="main">
             
   <div class="section" id="quick-install">
-<span id="id1"></span><h1>Quick Install<a class="headerlink" href="#quick-install" title="永久链接至标题">¶</a></h1>
+<span id="id1"></span><h1>快速安装<a class="headerlink" href="#quick-install" title="永久链接至标题">¶</a></h1>
 <p>这一章将简述安装步骤，该包只能安装在Unix类型的系统上，在 <code class="docutils literal notranslate"><span class="pre">OS</span> <span class="pre">X</span></code> 和 <code class="docutils literal notranslate"><span class="pre">Ubuntu</span></code> 以及 <code class="docutils literal notranslate"><span class="pre">Debian</span></code>,
 <code class="docutils literal notranslate"><span class="pre">Archlinux</span></code> 均测试安装。
 该章节分为下列几个部分：</p>
@@ -126,11 +126,12 @@
 <div class="section" id="pyyabc">
 <h2>安装 <code class="docutils literal notranslate"><span class="pre">pyyabc</span></code> 软件包<a class="headerlink" href="#pyyabc" title="永久链接至标题">¶</a></h2>
 <p>当前仅支持从源码安装。创建安装地址所在的文件夹并且克隆软件所在仓库到本地，
-运行下述命令：：</p>
-<blockquote>
-<div>$ mkdir &lt;your_directory&gt;
+运行下述命令:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ mkdir &lt;your_directory&gt;
 $ cd &lt;your_directory&gt;
-$ git clone <a class="reference external" href="https://github.com/unkcpz/pyyabc.git">https://github.com/unkcpz/pyyabc.git</a></div></blockquote>
+$ git clone https://github.com/unkcpz/pyyabc.git
+</pre></div>
+</div>
 <p>为了避免安装该软件时同时安装的依赖包与系统正在使用的python包产生冲突， <em>强烈建议</em> 使用
 virtual environment进行独立python环境的管理。
 有关虚拟环境的管理请参考内容 <a class="reference internal" href="virtual_environment.html#virtual-environment"><span class="std std-ref">virtual environments</span></a>.
@@ -192,14 +193,14 @@ pyyabc and go straight to the section <a class="reference internal" href="../get
           <a href="../py-modindex.html" title="Python 模块索引"
              >模块</a> |</li>
         <li class="right" >
-          <a href="virtual_environment.html" title="Virtual environment"
+          <a href="virtual_environment.html" title="python虚拟环境"
              >下一页</a> |</li>
         <li class="right" >
-          <a href="index.html" title="Installation"
+          <a href="index.html" title="安装说明"
              >上一页</a> |</li>
         <li class="nav-item nav-item-0"><a href="../index.html">pyyabc 1.0.0 文档</a> &#187;</li>
-          <li class="nav-item nav-item-1"><a href="../user_guide/index.html" >User’s guide</a> &#187;</li>
-          <li class="nav-item nav-item-2"><a href="index.html" >Installation</a> &#187;</li> 
+          <li class="nav-item nav-item-1"><a href="../user_guide/index.html" >用户手册</a> &#187;</li>
+          <li class="nav-item nav-item-2"><a href="index.html" >安装说明</a> &#187;</li> 
       </ul>
     </div>
     <div class="footer" role="contentinfo">

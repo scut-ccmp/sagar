@@ -1,7 +1,7 @@
 .. _installation:
 
 ############
-Installation
+安装说明
 ############
 
 .. toctree::

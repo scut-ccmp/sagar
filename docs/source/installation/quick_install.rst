@@ -1,7 +1,7 @@
 .. _quick_install:
 
 =============
-Quick Install
+快速安装
 =============
 
 这一章将简述安装步骤，该包只能安装在Unix类型的系统上，在 ``OS X`` 和 ``Ubuntu`` 以及 ``Debian``,
@@ -48,7 +48,7 @@ Quick Install
 +++++++++++++++++++++++++++
 
 当前仅支持从源码安装。创建安装地址所在的文件夹并且克隆软件所在仓库到本地，
-运行下述命令：：
+运行下述命令::
 
     $ mkdir <your_directory>
     $ cd <your_directory>

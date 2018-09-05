@@ -3,10 +3,10 @@
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-Welcome to pyyabc's documentation!
+pyyabc使用手册!
 ==================================
 
-User's guide
+用户手册
 ++++++++++++
 
 .. toctree::
@@ -15,12 +15,12 @@ User's guide
    user_guide/index
 
 
-Developer's guide
+开发者手册
 
 .. toctree::
   :maxdepth: 4
 
-  
+
 
 
 Indices and tables

@@ -1,36 +1,32 @@
 .. _virtual_environment:
 
 ===================
-Virtual environment
+python虚拟环境
 ===================
 
-Why a virtual environment?
-++++++++++++++++++++++++++
+为什么要使用python虚拟环境?
++++++++++++++++++++++++++++++++++++
 
-AiiDA depends on third party python packages and very often on specific versions of those packages.
-If AiiDA were to be installed system wide, it may up- or downgrade third party packages used by other parts of the system and leave them potentially broken.
-Conversely, if a different version of a package is later installed which is incompatible with AiiDA, it too will become broken.
+python的软件通常会依赖于其他的第三方python包，而且很多情况下，不同的软件有不同的依赖需求。
+如果pyyabc以全局的方式安装，则它可能会升级或者降级已有的第三方python库，这将可能导致其他的软件不可用。
+相对的，如果在安装了pyyabc之后又安装了其他的python库或软件，可能打破现有的依赖，这就可能导致pyyabc不可用。
 
-In short, installing AiiDA might interfere with installed python packages and installing other packages might interfere with AiiDA.
-Since your scientific data is important to you and to us, we *strongly* recommend isolating AiiDA in what is called a virtual environment.
+因此，我们 *强烈* 建议对几种合作使用的软件进行环境独立，以避免软件的不可用。
 
-For a single purpose machine, only meant to run AiiDA and nothing else, you may at your own risk opt to omit working in a virtual environment.
-In this case, you may want to install AiiDA and its dependencies in user space by using a ``--user`` flag, to avoid the need for administrative rights to install them system wide.
-
-What is a virtual environment?
+什么是python虚拟环境?
 ++++++++++++++++++++++++++++++
-A python virtual environment is essentially a folder, that contains everything that is needed to run python programs, including
 
-* python executable
-* python standard packages
-* package managers such as ``pip``
-* an activation script that sets the ``PYTHONPATH`` and ``PATH`` variables
+一个特定python的虚拟环境就是一个包含有环境独立的所有python软件和库的文件夹，文件夹内包含了下列内容：
 
-The ``python`` executable might be a link to an executable elsewhere, depending on the way the environment is created.
-The activation script ensures that the python executable of the virtualenv is the first in ``PATH``, and that python programs have access only to packages installed inside the virtualenv (unless specified otherwise during creation).
-This allows to have an isolated environment for programs that rely on running with a specific version of python or specific versions of third party python packages.
+* python 可执行文件(executable)
+* python 标准包(standard packages)
+* python包管理软件 如 ``pip``
+* 一个激活和设置环境变量参数的脚本，用来设置 ``PYTHONPATH`` 和 ``PATH`` 变量
 
-A virtual environment as well as the packages that will be installed within it, will often be installed in the home space of the user such that administrative rights are not required, therefore also making this technique very useful on machines where one has restricted access.
+激活环境的脚本确保了新创建的，指定环境文件夹下的python可执行文件在 ``PATH`` 环境变量的开头，以及所有python的软件包都在虚拟环境的文件夹中。
+这就使得可以通过建立多个文件夹来独立python的使用环境。
+
+并且，虚拟环境所依赖的文件夹可以在用户的目录下，这就使得用户创建虚拟环境和安装软件时无须去的管理员权限。
 
 Creating a virtual environment
 ++++++++++++++++++++++++++++++
