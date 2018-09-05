@@ -40,7 +40,6 @@
   <ul>
 <li><a class="reference internal" href="#">pyyabc.crystal package</a><ul>
 <li><a class="reference internal" href="#submodules">Submodules</a></li>
-<li><a class="reference internal" href="#pyyabc-crystal-lattmatch-module">pyyabc.crystal.Lattmatch module</a></li>
 <li><a class="reference internal" href="#module-pyyabc.crystal.derive">pyyabc.crystal.derive module</a></li>
 <li><a class="reference internal" href="#module-pyyabc.crystal.filter">pyyabc.crystal.filter module</a></li>
 <li><a class="reference internal" href="#module-pyyabc.crystal.mutate">pyyabc.crystal.mutate module</a></li>
@@ -82,9 +81,6 @@
 <h1>pyyabc.crystal package<a class="headerlink" href="#pyyabc-crystal-package" title="Permalink to this headline">¶</a></h1>
 <div class="section" id="submodules">
 <h2>Submodules<a class="headerlink" href="#submodules" title="Permalink to this headline">¶</a></h2>
-</div>
-<div class="section" id="pyyabc-crystal-lattmatch-module">
-<h2>pyyabc.crystal.Lattmatch module<a class="headerlink" href="#pyyabc-crystal-lattmatch-module" title="Permalink to this headline">¶</a></h2>
 </div>
 <div class="section" id="module-pyyabc.crystal.derive">
 <span id="pyyabc-crystal-derive-module"></span><h2>pyyabc.crystal.derive module<a class="headerlink" href="#module-pyyabc.crystal.derive" title="Permalink to this headline">¶</a></h2>
@@ -149,15 +145,12 @@ tuple[1]: int object, degeneracy of the configuration in all configurations of t
 <p>parameters:</p>
 <p>pcell: Cell object, The primitive cell to be extended
 volume: int, Extend to how large supercellself, default=1
-symprec: int, symmetry precision</p>
-<blockquote>
-<div>When finding duplicated hnfs the precesion, default=1e-5</div></blockquote>
-<dl class="docutils">
-<dt>comprec: float, compare precision</dt>
-<dd>When finding the rotations symmetry of primitive cell, defalut=1e-5</dd>
-</dl>
-<p>yield:</p>
-<p>A list of Cell objects.</p>
+symprec: int, symmetry precision
+When finding duplicated hnfs the precesion, default=1e-5
+comprec: float, compare precision
+When finding the rotations symmetry of primitive cell, defalut=1e-5</p>
+<p>yield:
+A list of Cell objects.</p>
 </dd></dl>
 
 </div>
@@ -241,9 +234,8 @@ ele: 要删除的元素的list，若为None，则删除所有元素找到的位�
 <p>parameters:</p>
 <p>lattice: 3x3 1D-list, lattice of cell
 positions: n tuples(x,y,z) in fraction. 可多态初始化
-atoms: list of atoms, can be atomic number (int), can be atomic symbol (string),</p>
-<blockquote>
-<div>represent atom in periodic table. (用全称初始化？？谁TM会这么用？)</div></blockquote>
+atoms: list of atoms, can be atomic number (int), can be atomic symbol (string),
+represent atom in periodic table. (用全称初始化？？谁TM会这么用？)</p>
 <dl class="attribute">
 <dt id="pyyabc.crystal.structure.Cell.atoms">
 <code class="descname">atoms</code><a class="headerlink" href="#pyyabc.crystal.structure.Cell.atoms" title="Permalink to this definition">¶</a></dt>
@@ -276,10 +268,9 @@ A new Cell object.</p>
 <code class="descname">get_pure_translations</code><span class="sig-paren">(</span><em>symprec=1e-05</em><span class="sig-paren">)</span><a class="reference internal" href="../_modules/pyyabc/crystal/structure.html#Cell.get_pure_translations"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#pyyabc.crystal.structure.Cell.get_pure_translations" title="Permalink to this definition">¶</a></dt>
 <dd><p>get_pure_translations return pure translations.</p>
 <p>Info:
-For the supercell, translations and ratations can be seperated.</p>
-<blockquote>
-<div>total length of symmetry operations is len(rot)*len(trans)</div></blockquote>
-<p>For the primitive cell, the translation is (0, 0, 0)</p>
+For the supercell, translations and ratations can be seperated.
+total length of symmetry operations is len(rot)*len(trans)
+For the primitive cell, the translation is (0, 0, 0)</p>
 </dd></dl>
 
 <dl class="method">
@@ -438,13 +429,10 @@ op: is a row permute matrix</p>
 <p>parameters:</p>
 <p>pcell: Cell object, The primitive cell to be extended
 volume: int, Extend to how large supercellself, default=1
-symprec: int, symmetry precision</p>
-<blockquote>
-<div>When finding duplicated hnfs the precesion, default=5</div></blockquote>
-<dl class="docutils">
-<dt>comprec: float, compare precision</dt>
-<dd>When finding the rotations symmetry of primitive cell, defalut=1e-5</dd>
-</dl>
+symprec: int, symmetry precision
+When finding duplicated hnfs the precesion, default=5
+comprec: float, compare precision
+When finding the rotations symmetry of primitive cell, defalut=1e-5</p>
 <p>return:</p>
 <p>A list of 2D numpy.ndarray.</p>
 </dd></dl>

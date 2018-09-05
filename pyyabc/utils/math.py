@@ -60,7 +60,7 @@ def closest_pair(points):
     """
     points is a list or numpy.array of 1x3 cartesian positions
     algorithm: http://en.wikipedia.org/wiki/Closest_pair_of_points
-        (brute force) O(n^2)
+    (brute force) O(n^2)
     """
     # TODO: using O(n log n) algorithm
     num_points = len(points)

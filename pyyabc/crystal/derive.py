@@ -16,12 +16,11 @@ def cells_nonredundant(pcell, volume=1, symprec=1e-5, comprec=1e-5):
     pcell: Cell object, The primitive cell to be extended
     volume: int, Extend to how large supercellself, default=1
     symprec: int, symmetry precision
-                When finding duplicated hnfs the precesion, default=1e-5
+    When finding duplicated hnfs the precesion, default=1e-5
     comprec: float, compare precision
-                When finding the rotations symmetry of primitive cell, defalut=1e-5
+    When finding the rotations symmetry of primitive cell, defalut=1e-5
 
     yield:
-
     A list of Cell objects.
     """
     return [pcell.extend(hnf) for hnf in non_dup_hnfs(pcell, volume, symprec, comprec)]

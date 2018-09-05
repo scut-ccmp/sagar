@@ -85,7 +85,7 @@
 <span class="sd">    lattice: 3x3 1D-list, lattice of cell</span>
 <span class="sd">    positions: n tuples(x,y,z) in fraction. 可多态初始化</span>
 <span class="sd">    atoms: list of atoms, can be atomic number (int), can be atomic symbol (string),</span>
-<span class="sd">           represent atom in periodic table. (用全称初始化？？谁TM会这么用？)</span>
+<span class="sd">    represent atom in periodic table. (用全称初始化？？谁TM会这么用？)</span>
 <span class="sd">    &quot;&quot;&quot;</span>
 
     <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">lattice</span><span class="p">,</span> <span class="n">positions</span><span class="p">,</span> <span class="n">atoms</span><span class="p">):</span>
@@ -263,7 +263,7 @@
 
 <span class="sd">        Info:</span>
 <span class="sd">        For the supercell, translations and ratations can be seperated.</span>
-<span class="sd">            total length of symmetry operations is len(rot)*len(trans)</span>
+<span class="sd">        total length of symmetry operations is len(rot)*len(trans)</span>
 <span class="sd">        For the primitive cell, the translation is (0, 0, 0)</span>
 <span class="sd">        &quot;&quot;&quot;</span>
         <span class="c1"># trans_all = self.get_symmetry(symprec)[&#39;translations&#39;]</span>

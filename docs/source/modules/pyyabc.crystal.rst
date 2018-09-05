@@ -4,14 +4,6 @@ pyyabc.crystal package
 Submodules
 ----------
 
-pyyabc.crystal.Lattmatch module
--------------------------------
-
-.. automodule:: pyyabc.crystal.Lattmatch
-    :members:
-    :undoc-members:
-    :show-inheritance:
-
 pyyabc.crystal.derive module
 ----------------------------
 
