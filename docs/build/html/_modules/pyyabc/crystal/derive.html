@@ -1,0 +1,286 @@
+
+
+<!doctype html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
+  <head>
+    <meta http-equiv="X-UA-Compatible" content="IE=Edge" />
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>pyyabc.crystal.derive &#8212; pyyabc 1.0.0 documentation</title>
+    <link rel="stylesheet" href="../../../_static/bizstyle.css" type="text/css" />
+    <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+    <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../../../_static/jquery.js"></script>
+    <script type="text/javascript" src="../../../_static/underscore.js"></script>
+    <script type="text/javascript" src="../../../_static/doctools.js"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.1/MathJax.js?config=TeX-AMS-MML_HTMLorMML"></script>
+    <script type="text/javascript" src="../../../_static/bizstyle.js"></script>
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" />
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <!--[if lt IE 9]>
+    <script type="text/javascript" src="_static/css3-mediaqueries.js"></script>
+    <![endif]-->
+  </head><body>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             accesskey="I">index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">pyyabc 1.0.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" accesskey="U">Module code</a> &#187;</li> 
+      </ul>
+    </div>
+      <div class="sphinxsidebar" role="navigation" aria-label="main navigation">
+        <div class="sphinxsidebarwrapper">
+<div id="searchbox" style="display: none" role="search">
+  <h3>Quick search</h3>
+    <div class="searchformwrapper">
+    <form class="search" action="../../../search.html" method="get">
+      <input type="text" name="q" />
+      <input type="submit" value="Go" />
+      <input type="hidden" name="check_keywords" value="yes" />
+      <input type="hidden" name="area" value="default" />
+    </form>
+    </div>
+</div>
+<script type="text/javascript">$('#searchbox').show(0);</script>
+        </div>
+      </div>
+
+    <div class="document">
+      <div class="documentwrapper">
+        <div class="bodywrapper">
+          <div class="body" role="main">
+            
+  <h1>Source code for pyyabc.crystal.derive</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">numpy</span>
+
+<span class="kn">from</span> <span class="nn">pyyabc.crystal.utils</span> <span class="k">import</span> <span class="n">non_dup_hnfs</span><span class="p">,</span> <span class="n">snf</span>
+<span class="kn">from</span> <span class="nn">pyyabc.utils.math</span> <span class="k">import</span> <span class="n">is_int_np_array</span><span class="p">,</span> <span class="n">refine_positions</span>
+<span class="kn">from</span> <span class="nn">pyyabc.utils.core</span> <span class="k">import</span> <span class="n">remove_redundant</span>
+
+<span class="kn">from</span> <span class="nn">pyyabc.crystal.structure</span> <span class="k">import</span> <span class="n">Cell</span>
+
+
+<div class="viewcode-block" id="cells_nonredundant"><a class="viewcode-back" href="../../../modules/pyyabc.crystal.html#pyyabc.crystal.derive.cells_nonredundant">[docs]</a><span class="k">def</span> <span class="nf">cells_nonredundant</span><span class="p">(</span><span class="n">pcell</span><span class="p">,</span> <span class="n">volume</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">symprec</span><span class="o">=</span><span class="mf">1e-5</span><span class="p">,</span> <span class="n">comprec</span><span class="o">=</span><span class="mf">1e-5</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    cells_nonredundant return all non duplicated hnf extend cells.</span>
+
+<span class="sd">    parameters:</span>
+
+<span class="sd">    pcell: Cell object, The primitive cell to be extended</span>
+<span class="sd">    volume: int, Extend to how large supercellself, default=1</span>
+<span class="sd">    symprec: int, symmetry precision</span>
+<span class="sd">                When finding duplicated hnfs the precesion, default=1e-5</span>
+<span class="sd">    comprec: float, compare precision</span>
+<span class="sd">                When finding the rotations symmetry of primitive cell, defalut=1e-5</span>
+
+<span class="sd">    yield:</span>
+
+<span class="sd">    A list of Cell objects.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+    <span class="k">return</span> <span class="p">[</span><span class="n">pcell</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">hnf</span><span class="p">)</span> <span class="k">for</span> <span class="n">hnf</span> <span class="ow">in</span> <span class="n">non_dup_hnfs</span><span class="p">(</span><span class="n">pcell</span><span class="p">,</span> <span class="n">volume</span><span class="p">,</span> <span class="n">symprec</span><span class="p">,</span> <span class="n">comprec</span><span class="p">)]</span></div>
+    <span class="c1"># for hnf in non_dup_hnfs(pcell, volume, symprec, comprec):</span>
+    <span class="c1">#     yield pcell.extend(hnf)</span>
+
+
+<div class="viewcode-block" id="PermutationGroup"><a class="viewcode-back" href="../../../modules/pyyabc.crystal.html#pyyabc.crystal.derive.PermutationGroup">[docs]</a><span class="k">class</span> <span class="nc">PermutationGroup</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    所有的对称操作都是以置换矩阵的形式，作用在一个元素排列上。</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">pcell</span><span class="p">,</span> <span class="n">mat</span><span class="p">):</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">isinstance</span><span class="p">(</span><span class="n">pcell</span><span class="p">,</span> <span class="n">Cell</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">TypeError</span><span class="p">(</span>
+                <span class="s2">&quot;want pyyabc.crystal.structure.Cell, got </span><span class="si">{:}</span><span class="s2">&quot;</span><span class="o">.</span><span class="n">format</span><span class="p">(</span><span class="nb">type</span><span class="p">(</span><span class="n">pcell</span><span class="p">)))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_pcell</span> <span class="o">=</span> <span class="n">pcell</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_mat</span> <span class="o">=</span> <span class="n">mat</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_snf</span><span class="p">,</span> <span class="n">L</span><span class="p">,</span> <span class="n">R</span> <span class="o">=</span> <span class="n">snf</span><span class="p">(</span><span class="n">mat</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_volume</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">diagonal</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_snf</span><span class="p">)</span><span class="o">.</span><span class="n">prod</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_nsites</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">pcell</span><span class="o">.</span><span class="n">atoms</span><span class="p">)</span>  <span class="c1"># 最小原胞中原子个数 如：hcp为2</span>
+
+<div class="viewcode-block" id="PermutationGroup.get_symmetry_perms"><a class="viewcode-back" href="../../../modules/pyyabc.crystal.html#pyyabc.crystal.derive.PermutationGroup.get_symmetry_perms">[docs]</a>    <span class="k">def</span> <span class="nf">get_symmetry_perms</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">symprec</span><span class="o">=</span><span class="mf">1e-5</span><span class="p">):</span>
+        <span class="c1"># Q??: use whose rotations?????</span>
+        <span class="n">supercell</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pcell</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_mat</span><span class="p">)</span>
+        <span class="c1"># import pdb; pdb.set_trace()</span>
+        <span class="c1"># 用超胞的旋转对称才是合理的</span>
+        <span class="n">syms</span> <span class="o">=</span> <span class="n">supercell</span><span class="o">.</span><span class="n">get_symmetry</span><span class="p">(</span><span class="n">symprec</span><span class="p">)</span>
+        <span class="n">arr_rots</span><span class="p">,</span> <span class="n">arr_trans</span> <span class="o">=</span> <span class="n">syms</span><span class="p">[</span><span class="s1">&#39;rotations&#39;</span><span class="p">],</span> <span class="n">syms</span><span class="p">[</span><span class="s1">&#39;translations&#39;</span><span class="p">]</span>
+
+        <span class="n">result</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">zeros</span><span class="p">(</span>
+            <span class="p">(</span><span class="nb">len</span><span class="p">(</span><span class="n">arr_rots</span><span class="p">),</span> <span class="bp">self</span><span class="o">.</span><span class="n">_nsites</span> <span class="o">*</span> <span class="bp">self</span><span class="o">.</span><span class="n">_volume</span><span class="p">),</span> <span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;intc&#39;</span><span class="p">)</span>
+
+        <span class="n">origin_positions</span> <span class="o">=</span> <span class="n">supercell</span><span class="o">.</span><span class="n">positions</span>
+        <span class="n">origin_positions</span> <span class="o">=</span> <span class="n">refine_positions</span><span class="p">(</span><span class="n">origin_positions</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="p">(</span><span class="n">rot</span><span class="p">,</span> <span class="n">trans</span><span class="p">)</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="nb">zip</span><span class="p">(</span><span class="n">arr_rots</span><span class="p">,</span> <span class="n">arr_trans</span><span class="p">)):</span>
+            <span class="n">new_positions</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">origin_positions</span><span class="p">,</span> <span class="n">rot</span><span class="o">.</span><span class="n">T</span><span class="p">)</span> <span class="o">+</span> <span class="n">trans</span>
+            <span class="n">moded</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">ones_like</span><span class="p">(</span><span class="n">new_positions</span><span class="p">,</span> <span class="n">dtype</span><span class="o">=</span><span class="s1">&#39;intc&#39;</span><span class="p">)</span>
+            <span class="n">new_positions</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">mod</span><span class="p">(</span><span class="n">new_positions</span><span class="p">,</span> <span class="n">moded</span><span class="p">)</span>
+            <span class="n">new_positions</span> <span class="o">=</span> <span class="n">refine_positions</span><span class="p">(</span><span class="n">new_positions</span><span class="p">)</span>
+            <span class="c1"># 寻找置换矩阵</span>
+            <span class="k">for</span> <span class="n">j</span><span class="p">,</span> <span class="n">row</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">origin_positions</span><span class="p">):</span>
+                <span class="n">row</span> <span class="o">=</span> <span class="n">refine_positions</span><span class="p">(</span><span class="n">row</span><span class="p">)</span>
+                <span class="n">idx</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">where</span><span class="p">(</span>
+                    <span class="p">(</span><span class="n">numpy</span><span class="o">.</span><span class="n">isclose</span><span class="p">(</span><span class="n">row</span><span class="p">,</span> <span class="n">new_positions</span><span class="p">,</span> <span class="n">atol</span><span class="o">=</span><span class="n">symprec</span><span class="p">))</span><span class="o">.</span><span class="n">all</span><span class="p">(</span><span class="n">axis</span><span class="o">=</span><span class="mi">1</span><span class="p">))[</span><span class="mi">0</span><span class="p">]</span>
+                <span class="n">result</span><span class="p">[</span><span class="n">i</span><span class="p">,</span> <span class="n">j</span><span class="p">]</span> <span class="o">=</span> <span class="n">idx</span>
+
+        <span class="n">result</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">unique</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">axis</span><span class="o">=</span><span class="mi">0</span><span class="p">)</span>
+        <span class="k">return</span> <span class="n">result</span></div></div>
+
+<span class="c1"># 在较大体积的构型中，可能有结构已经在小的体积中出现过。</span>
+<span class="c1"># 那么是否要移除这些已经出现过的结构呢？</span>
+<span class="c1">#</span>
+<span class="c1"># 暂时给出的答案是：若要目的是产生基态相图，则出现过的无需重复计算。</span>
+<span class="c1">#     若目的是计算结构能量做统计平均，则在每个体积倍数下需要得到简并度，以及总体数目，</span>
+<span class="c1">#     所以该体积倍数下的所有构型都是需要的，包括完全不取代的构型。</span>
+<span class="c1">#     TODO: 在以后的发展中，可以用到结构对比的技术，以允许统计的情况下无需重复计算。</span>
+<span class="c1">#</span>
+<span class="c1"># 该函数中没有comprec参数，是因为构型(configurations)之间的对比</span>
+<span class="c1"># 通过原子排列的对比实现，没有坐标的比较。</span>
+
+
+<div class="viewcode-block" id="ConfigurationGenerator"><a class="viewcode-back" href="../../../modules/pyyabc.crystal.html#pyyabc.crystal.derive.ConfigurationGenerator">[docs]</a><span class="k">class</span> <span class="nc">ConfigurationGenerator</span><span class="p">(</span><span class="nb">object</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    pcell: Cell object, The primitive cell to be extended</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+    <span class="k">def</span> <span class="nf">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cell</span><span class="p">,</span> <span class="n">symprec</span><span class="o">=</span><span class="mf">1e-5</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">_cell</span> <span class="o">=</span> <span class="n">cell</span>
+        <span class="k">if</span> <span class="ow">not</span> <span class="n">cell</span><span class="o">.</span><span class="n">is_primitive</span><span class="p">(</span><span class="n">symprec</span><span class="p">):</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_pcell</span> <span class="o">=</span> <span class="n">cell</span><span class="o">.</span><span class="n">get_primitive_cell</span><span class="p">(</span><span class="n">symprec</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">_pcell</span> <span class="o">=</span> <span class="n">cell</span>
+
+<div class="viewcode-block" id="ConfigurationGenerator.cons_max_volume"><a class="viewcode-back" href="../../../modules/pyyabc.crystal.html#pyyabc.crystal.derive.ConfigurationGenerator.cons_max_volume">[docs]</a>    <span class="k">def</span> <span class="nf">cons_max_volume</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sites</span><span class="p">,</span> <span class="n">max_volume</span><span class="p">,</span> <span class="n">min_volume</span><span class="o">=</span><span class="mi">1</span><span class="p">,</span> <span class="n">dimension</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">symprec</span><span class="o">=</span><span class="mf">1e-5</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        parameters:</span>
+
+<span class="sd">        pcell: Cell object, The primitive cell to be extended</span>
+<span class="sd">        sites: disorderd sites infomation.</span>
+
+<span class="sd">        yield:</span>
+
+<span class="sd">        Cell object, a list of non-redundant configurations to max volume supercells.</span>
+
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># 该函数产生所有构型用于确定基态相图</span>
+        <span class="k">for</span> <span class="n">volume</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">min_volume</span><span class="p">,</span> <span class="n">max_volume</span> <span class="o">+</span> <span class="mi">1</span><span class="p">):</span>
+            <span class="n">hnfs</span> <span class="o">=</span> <span class="n">non_dup_hnfs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_pcell</span><span class="p">,</span> <span class="n">volume</span><span class="p">,</span> <span class="n">dimension</span><span class="p">,</span> <span class="n">symprec</span><span class="p">)</span>
+            <span class="n">dict_trans</span> <span class="o">=</span> <span class="p">{}</span>  <span class="c1"># 记录已经产生过的snf，相同snf的平移操作相同。</span>
+            <span class="k">for</span> <span class="n">h</span> <span class="ow">in</span> <span class="n">hnfs</span><span class="p">:</span>
+                <span class="n">hfpg</span> <span class="o">=</span> <span class="n">PermutationGroup</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_pcell</span><span class="p">,</span> <span class="n">h</span><span class="p">)</span>
+                <span class="c1"># 此处的平移操作不必每次重新计算，因为相同snf平移操作相同</span>
+                <span class="c1"># 可以用字典来标记查询。若没有这样的操作，那么就没有snf带来的效率提升。</span>
+                <span class="c1"># quotient = hfpg.get_quotient()</span>
+                <span class="c1"># if not quotient in dict_trans:</span>
+                <span class="c1">#     dict_trans[quotient] = hfpg.get_pure_translations(symprec)</span>
+                <span class="c1"># trans = dict_trans[quotient]</span>
+                <span class="c1"># rots = hfpg.get_pure_rotations(symprec)</span>
+                <span class="n">perms</span> <span class="o">=</span> <span class="n">hfpg</span><span class="o">.</span><span class="n">get_symmetry_perms</span><span class="p">(</span><span class="n">symprec</span><span class="p">)</span>
+
+                <span class="n">supercell</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pcell</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">h</span><span class="p">)</span>
+                <span class="n">_sites</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="n">sites</span><span class="p">,</span> <span class="n">volume</span><span class="p">)</span>
+
+                <span class="k">for</span> <span class="n">mol</span><span class="p">,</span> <span class="n">_</span> <span class="ow">in</span> <span class="n">remove_redundant</span><span class="p">(</span><span class="n">supercell</span><span class="o">.</span><span class="n">positions</span><span class="p">,</span> <span class="n">_sites</span><span class="p">,</span> <span class="n">perms</span><span class="p">):</span>
+                    <span class="n">c</span> <span class="o">=</span> <span class="n">Cell</span><span class="p">(</span><span class="n">supercell</span><span class="o">.</span><span class="n">lattice</span><span class="p">,</span> <span class="n">mol</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">mol</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+                    <span class="k">if</span> <span class="n">c</span><span class="o">.</span><span class="n">is_primitive</span><span class="p">(</span><span class="n">symprec</span><span class="p">):</span>
+                        <span class="k">yield</span> <span class="n">c</span></div>
+
+    <span class="c1"># 特定体积胞</span>
+<div class="viewcode-block" id="ConfigurationGenerator.cons_specific_volume"><a class="viewcode-back" href="../../../modules/pyyabc.crystal.html#pyyabc.crystal.derive.ConfigurationGenerator.cons_specific_volume">[docs]</a>    <span class="k">def</span> <span class="nf">cons_specific_volume</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sites</span><span class="p">,</span> <span class="n">volume</span><span class="o">=</span><span class="mi">2</span><span class="p">,</span> <span class="n">e_num</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">dimension</span><span class="o">=</span><span class="mi">3</span><span class="p">,</span> <span class="n">symprec</span><span class="o">=</span><span class="mf">1e-5</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        parameters:</span>
+
+<span class="sd">        sites: 2D list, disorderd sites infomation.</span>
+<span class="sd">        volume: int, certain volume with subperiodic.</span>
+<span class="sd">        symprec: float, precision for symmetry find.</span>
+
+<span class="sd">        yield:</span>
+
+<span class="sd">        a tuple</span>
+<span class="sd">        tuple[0]: Cell object, a list of non-redundant configurations of certain volume supercell.</span>
+<span class="sd">        tuple[1]: int object, degeneracy of the configuration in all configurations of this volume.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="c1"># 该函数产生特定体积下所有构型（包括超胞）和简并度，用于统计平均</span>
+        <span class="n">hnfs</span> <span class="o">=</span> <span class="n">non_dup_hnfs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_pcell</span><span class="p">,</span> <span class="n">volume</span><span class="p">,</span> <span class="n">dimension</span><span class="p">,</span> <span class="n">symprec</span><span class="p">)</span>
+        <span class="n">dict_trans</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="k">for</span> <span class="n">h</span> <span class="ow">in</span> <span class="n">hnfs</span><span class="p">:</span>
+            <span class="n">hfpg</span> <span class="o">=</span> <span class="n">PermutationGroup</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_pcell</span><span class="p">,</span> <span class="n">h</span><span class="p">)</span>
+            <span class="c1"># 此处的平移操作不必每次重新计算，因为相同snf平移操作相同</span>
+            <span class="c1"># 可以用字典来标记查询。若没有这样的操作，那么就没有snf带来的效率提升。</span>
+            <span class="c1"># For hnf with same snf, translations are same.</span>
+            <span class="c1"># quotient = hfpg.get_quotient()</span>
+            <span class="c1"># if not quotient in dict_trans:</span>
+            <span class="c1">#     dict_trans[quotient] = hfpg.get_pure_translations(symprec)</span>
+            <span class="c1"># trans = dict_trans[quotient]</span>
+            <span class="c1"># rots = hfpg.get_pure_rotations(symprec)</span>
+            <span class="n">perms</span> <span class="o">=</span> <span class="n">hfpg</span><span class="o">.</span><span class="n">get_symmetry_perms</span><span class="p">(</span><span class="n">symprec</span><span class="p">)</span>
+
+            <span class="n">supercell</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pcell</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">h</span><span class="p">)</span>
+            <span class="n">_sites</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">repeat</span><span class="p">(</span><span class="n">sites</span><span class="p">,</span> <span class="n">volume</span><span class="p">)</span>
+
+            <span class="k">for</span> <span class="n">mol</span><span class="p">,</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">remove_redundant</span><span class="p">(</span><span class="n">supercell</span><span class="o">.</span><span class="n">positions</span><span class="p">,</span> <span class="n">_sites</span><span class="p">,</span> <span class="n">perms</span><span class="p">,</span> <span class="n">e_num</span><span class="p">):</span>
+                <span class="n">c</span> <span class="o">=</span> <span class="n">Cell</span><span class="p">(</span><span class="n">supercell</span><span class="o">.</span><span class="n">lattice</span><span class="p">,</span> <span class="n">mol</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">mol</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+                <span class="k">yield</span> <span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">d</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="ConfigurationGenerator.cons_specific_cell"><a class="viewcode-back" href="../../../modules/pyyabc.crystal.html#pyyabc.crystal.derive.ConfigurationGenerator.cons_specific_cell">[docs]</a>    <span class="k">def</span> <span class="nf">cons_specific_cell</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">sites</span><span class="p">,</span> <span class="n">e_num</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">symprec</span><span class="o">=</span><span class="mf">1e-5</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        cons_specific_cell_and_c generate configurations of specific cell</span>
+<span class="sd">        and specific concentration.</span>
+
+<span class="sd">        parameters:</span>
+<span class="sd">        sites: list of (lists or tuples), represent element disorder of each sites</span>
+<span class="sd">        e_num: tuple, number of atoms in disorderd sites.</span>
+
+<span class="sd">        e_num 特指无序位点的浓度，也就是原子比，而不是整体构型的元素原子比。有可能其他位点存在相同构型。</span>
+<span class="sd">        !!限制，无序位点的组成必须是相同的，而上面几个函数的无序位点是可以不同的。!!</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+        <span class="n">lat_cell</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_cell</span><span class="o">.</span><span class="n">lattice</span>
+        <span class="n">lat_pcell</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pcell</span><span class="o">.</span><span class="n">lattice</span>
+        <span class="n">mat</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">matmul</span><span class="p">(</span><span class="n">lat_cell</span><span class="p">,</span> <span class="n">numpy</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">inv</span><span class="p">(</span><span class="n">lat_pcell</span><span class="p">))</span>
+        <span class="k">if</span> <span class="n">is_int_np_array</span><span class="p">(</span><span class="n">mat</span><span class="p">):</span>
+            <span class="n">mat</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">around</span><span class="p">(</span><span class="n">mat</span><span class="p">)</span><span class="o">.</span><span class="n">astype</span><span class="p">(</span><span class="s1">&#39;intc&#39;</span><span class="p">)</span>
+        <span class="k">else</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;cell:</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">lat_cell</span><span class="p">)</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s2">&quot;primitive cell:</span><span class="se">\n</span><span class="s2">&quot;</span><span class="p">,</span> <span class="n">lat_pcell</span><span class="p">)</span>
+            <span class="k">raise</span> <span class="ne">ValueError</span><span class="p">(</span>
+                <span class="s2">&quot;cell lattice and its primitive cell lattice not convertable&quot;</span><span class="p">)</span>
+        <span class="n">hfpg</span> <span class="o">=</span> <span class="n">PermutationGroup</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">_pcell</span><span class="p">,</span> <span class="n">mat</span><span class="p">)</span>
+
+        <span class="n">perms</span> <span class="o">=</span> <span class="n">hfpg</span><span class="o">.</span><span class="n">get_symmetry_perms</span><span class="p">(</span><span class="n">symprec</span><span class="p">)</span>
+
+        <span class="n">supercell</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">_pcell</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">mat</span><span class="p">)</span>
+        <span class="k">for</span> <span class="n">mol</span><span class="p">,</span> <span class="n">d</span> <span class="ow">in</span> <span class="n">remove_redundant</span><span class="p">(</span><span class="n">supercell</span><span class="o">.</span><span class="n">positions</span><span class="p">,</span> <span class="n">sites</span><span class="p">,</span> <span class="n">perms</span><span class="p">,</span> <span class="n">e_num</span><span class="o">=</span><span class="n">e_num</span><span class="p">):</span>
+            <span class="n">c</span> <span class="o">=</span> <span class="n">Cell</span><span class="p">(</span><span class="n">supercell</span><span class="o">.</span><span class="n">lattice</span><span class="p">,</span> <span class="n">mol</span><span class="p">[</span><span class="mi">0</span><span class="p">],</span> <span class="n">mol</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span>
+            <span class="k">yield</span> <span class="p">(</span><span class="n">c</span><span class="p">,</span> <span class="n">d</span><span class="p">)</span></div></div>
+</pre></div>
+
+          </div>
+        </div>
+      </div>
+      <div class="clearer"></div>
+    </div>
+    <div class="related" role="navigation" aria-label="related navigation">
+      <h3>Navigation</h3>
+      <ul>
+        <li class="right" style="margin-right: 10px">
+          <a href="../../../genindex.html" title="General Index"
+             >index</a></li>
+        <li class="right" >
+          <a href="../../../py-modindex.html" title="Python Module Index"
+             >modules</a> |</li>
+        <li class="nav-item nav-item-0"><a href="../../../index.html">pyyabc 1.0.0 documentation</a> &#187;</li>
+          <li class="nav-item nav-item-1"><a href="../../index.html" >Module code</a> &#187;</li> 
+      </ul>
+    </div>
+    <div class="footer" role="contentinfo">
+        &#169; Copyright 2018, Jason Yu, ChangChun He, ShaoBin Qiu.
+      Created using <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.6.
+    </div>
+  </body>
+</html>
