@@ -56,7 +56,7 @@ def write_vasp(mol, filename='XYZ', suffix='.xyz', long_format=True):
     filename: string, filename of output file, default='XYZ'
     suffix: string, suffix of filename, default='.xyz'
     long_format: bool, if True format %.16f will be write, else %.6f
-                 ref: https://gitlab.com/ase/ase/blob/master/ase/io/vasp.py
+    ref: https://gitlab.com/ase/ase/blob/master/ase/io/vasp.py
 
     if optional parameters (filename and suffix) are not set,
     the filename will be 'XYZ.xyz'
