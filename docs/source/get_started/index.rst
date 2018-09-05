@@ -1,7 +1,7 @@
 .. _get-started:
 
 ==========
-Get Start
+使用说明
 ==========
 
 .. toctree::

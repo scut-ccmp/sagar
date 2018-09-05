@@ -8,3 +8,4 @@
   ../get_started/index
   ../tutorial/index
   ../examples/index
+  ../advance/index
