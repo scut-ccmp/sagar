@@ -8,6 +8,8 @@ def remove_redundant(mol_positions, sites, perms, e_num=None, method='jshash'):
     if method == 'jshash':
         for i in remove_redundant_by_hash(mol_positions, sites, perms, e_num):
             yield i
+    if method == 'ccsort':
+        pass
 
 def remove_redundant_by_hash(mol_positions, sites, perms, e_num):
     """
