@@ -4,7 +4,12 @@ from itertools import product
 
 from pyyabc.toolkit.mathtool import binomialCoeff
 
-def remove_redundant(mol_positions, sites, perms, e_num=None):
+def remove_redundant(mol_positions, sites, perms, e_num=None, method='jshash'):
+    if method == 'jshash':
+        for i in remove_redundant_by_hash(mol_positions, sites, perms, e_num):
+            yield i
+
+def remove_redundant_by_hash(mol_positions, sites, perms, e_num):
     """
     输入一个分子坐标`mol_positions`
     和每个坐标位点上的可能取代情况`sites`
