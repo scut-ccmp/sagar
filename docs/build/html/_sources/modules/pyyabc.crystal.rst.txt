@@ -1,6 +1,13 @@
 pyyabc.crystal package
 ======================
 
+Subpackages
+-----------
+
+.. toctree::
+
+    pyyabc.crystal.tests
+
 Submodules
 ----------
 

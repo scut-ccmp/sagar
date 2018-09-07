@@ -1,6 +1,13 @@
 pyyabc.io package
 =================
 
+Subpackages
+-----------
+
+.. toctree::
+
+    pyyabc.io.tests
+
 Submodules
 ----------
 

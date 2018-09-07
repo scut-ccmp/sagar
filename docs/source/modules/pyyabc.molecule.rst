@@ -1,6 +1,13 @@
 pyyabc.molecule package
 =======================
 
+Subpackages
+-----------
+
+.. toctree::
+
+    pyyabc.molecule.tests
+
 Submodules
 ----------
 

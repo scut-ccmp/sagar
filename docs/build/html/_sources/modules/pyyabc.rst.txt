@@ -10,7 +10,7 @@ Subpackages
     pyyabc.element
     pyyabc.io
     pyyabc.molecule
-    pyyabc.utils
+    pyyabc.toolkit
 
 Module contents
 ---------------
