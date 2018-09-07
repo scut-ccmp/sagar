@@ -2,8 +2,8 @@
 import numpy
 
 from pyyabc.crystal.utils import non_dup_hnfs, snf
-from pyyabc.utils.math import is_int_np_array, refine_positions
-from pyyabc.utils.core import remove_redundant
+from pyyabc.toolkit.mathtool import is_int_np_array, refine_positions
+from pyyabc.toolkit.derivetool import remove_redundant
 
 from pyyabc.crystal.structure import Cell
 

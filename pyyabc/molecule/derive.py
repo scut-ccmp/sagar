@@ -3,7 +3,7 @@ import numpy
 from itertools import combinations
 
 from pyyabc.molecule.structure import Molecule
-from pyyabc.utils.core import remove_redundant
+from pyyabc.toolkit.derivetool import remove_redundant
 
 class ConfigurationGenerator(object):
     '''

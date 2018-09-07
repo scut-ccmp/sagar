@@ -7,7 +7,7 @@ from itertools import product
 
 from pyyabc.crystal.structure import MutableCell
 from pyyabc.crystal.structure import get_symbol, car_to_frac, frac_to_car
-from pyyabc.utils.math import distance
+from pyyabc.toolkit.mathtool import distance
 
 
 def cell_to_mcell(cell):

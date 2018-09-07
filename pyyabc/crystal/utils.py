@@ -6,7 +6,7 @@ from math import sqrt
 from itertools import product
 
 from pyyabc.crystal.structure import Cell
-from pyyabc.utils.math import is_int_np_array, extended_gcd
+from pyyabc.toolkit.mathtool import is_int_np_array, extended_gcd
 
 
 def _factor(n):

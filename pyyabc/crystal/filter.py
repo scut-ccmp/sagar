@@ -2,7 +2,7 @@
 import numpy as np
 
 from pyyabc.crystal.structure import Cell
-from pyyabc.utils.math import distance
+from pyyabc.toolkit.mathtool import distance
 
 
 class Filter(object):

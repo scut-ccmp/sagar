@@ -5,7 +5,7 @@ import copy
 
 from pyyabc.crystal.structure import Cell, MutableCell, frac_to_car
 from pyyabc.crystal.mutate import *
-from pyyabc.utils.math import distance
+from pyyabc.toolkit.mathtool import distance
 
 
 class TestMutableMethods(unittest.TestCase):

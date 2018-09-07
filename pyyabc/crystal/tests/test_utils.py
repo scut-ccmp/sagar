@@ -6,7 +6,7 @@ import copy
 from pyyabc.crystal.structure import Cell
 from pyyabc.crystal.utils import non_dup_hnfs, _is_hnf_dup, _hnfs
 from pyyabc.crystal.utils import IntMat3x3, snf
-from pyyabc.utils.math import extended_gcd
+from pyyabc.toolkit.mathtool import extended_gcd
 
 
 class TestHnf(unittest.TestCase):
