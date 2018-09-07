@@ -16,10 +16,15 @@ setup(
                       "click>=6", "colorama", "ase==3.16"],
     classifiers=[
         "Programming Language :: Python :: 3.6",
+        "Programming Language :: Python :: 3.5",
+        "Programming Language :: Python :: 2.7",
+        "Operating System :: POSIX :: Linux",
         "Intended Audience :: Science/Research",
         "License :: MIT License",
         "Topic :: Scientific/Engineering :: Chemistry",
-        "Topic :: Scientific/Engineering :: Physics"],
+        "Topic :: Scientific/Engineering :: Physics",
+        "Natural Language :: Chinese (Simplified)",
+        "Natural Language :: English"],
     scripts=[],
     entry_points={
         'console_scripts': [
