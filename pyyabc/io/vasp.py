@@ -110,7 +110,7 @@ def _read_string(data):
 def write_vasp(cell, filename='POSCAR', suffix='.vasp', long_format=True):
     """
     write vasp POSCAR type into file, vasp5 format only.
-        always write atoms sorted POSCAR.
+    always write atoms sorted POSCAR.
 
     parameters:
 
@@ -118,7 +118,7 @@ def write_vasp(cell, filename='POSCAR', suffix='.vasp', long_format=True):
     filename: string, filename of output file, default='POSCAR'
     suffix: string, suffix of filename, default='.vasp'
     long_format: bool, if True format %.16f will be write, else %.6f
-                 ref: https://gitlab.com/ase/ase/blob/master/ase/io/vasp.py
+    ref: https://gitlab.com/ase/ase/blob/master/ase/io/vasp.py
 
     if optional parameters (filename and suffix) are not set,
     the filename will be 'POSCAR.vasp'

@@ -4,10 +4,11 @@
 *.pyc
 *.swp
 *.swo
-*.txt
 *.egg-info/
 POSCAR*/
 SUPERLATT*/
 test/*
 x
 */__pycache__/
+doctrees/
+.buildinfo
