@@ -274,7 +274,7 @@ class IntMat3x3(object):
         self._opL = numpy.matmul(op, self._opL)
 
     def _zero_first_row(self):
-        matT = __class__(self._mat.T)
+        matT = self.__class__(self._mat.T)
         matT._zero_first_column()
         op = matT.opL.T
         self._mat = numpy.matmul(self._mat, op)
@@ -298,7 +298,7 @@ class IntMat3x3(object):
         self._opL = numpy.matmul(op, self._opL)
 
     def _zero_second_row(self):
-        matT = __class__(self._mat.T)
+        matT = self.__class__(self._mat.T)
         matT._zero_second_column()
         op = matT.opL.T
         self._mat = numpy.matmul(self._mat, op)
