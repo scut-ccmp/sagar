@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
 periodic_table_dict
 Thanks for Yanan Wu. Email:

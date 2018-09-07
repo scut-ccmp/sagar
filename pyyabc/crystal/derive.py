@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import numpy
 
 from pyyabc.crystal.utils import non_dup_hnfs, snf

@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 """
 Created on Sat Aug 25 16:41:45 2018
 @author: hecc

@@ -1,3 +1,5 @@
+# -*- coding: utf-8 -*-
+
 # 该模块包含针对`pyyabc.crystal.structure`中
 # 的MutableCell产生的对象的操作。
 import numpy
