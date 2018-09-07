@@ -2,7 +2,7 @@
 import numpy
 from itertools import product
 
-from pyyabc.utils.math import binomialCoeff
+from pyyabc.toolkit.mathtool import binomialCoeff
 
 def remove_redundant(mol_positions, sites, perms, e_num=None):
     """

@@ -2,7 +2,7 @@
 import unittest
 import numpy
 
-from pyyabc.utils.math import distance, closest_pair, extended_gcd
+from pyyabc.toolkit.mathtool import distance, closest_pair, extended_gcd
 
 
 class TestCommonUtils(unittest.TestCase):
