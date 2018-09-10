@@ -8,7 +8,7 @@ from pyyabc.toolkit.derivetool import remove_redundant
 from pyyabc.crystal.structure import Cell
 
 
-def cells_nonredundant(pcell, volume=1, symprec=1e-5, comprec=1e-5):
+def cells_nonredundant(pcell, volume=1, dimension=3, symprec=1e-5, comprec=1e-5):
     """
     cells_nonredundant return all non duplicated hnf extend cells.
 
@@ -24,7 +24,7 @@ def cells_nonredundant(pcell, volume=1, symprec=1e-5, comprec=1e-5):
     yield:
     A list of Cell objects.
     """
-    return [pcell.extend(hnf) for hnf in non_dup_hnfs(pcell, volume, symprec, comprec)]
+    return [pcell.extend(hnf) for hnf in non_dup_hnfs(pcell, volume, dimension, symprec, comprec)]
     # for hnf in non_dup_hnfs(pcell, volume, symprec, comprec):
     #     yield pcell.extend(hnf)
 

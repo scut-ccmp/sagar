@@ -21,6 +21,8 @@ def cli():
                 type=click.Path(exists=True, resolve_path=True, readable=True, file_okay=True))
 @click.option('--comment', '-c', type=str, default='cell',
               help="identifier (first word) of output files, Defualt='cell'.")
+@click.option('--dimension', '-d', type=int, default=3,
+              help="Dimension of the system, 2 for slab. Defalut=3 for crystal")
 @click.option('--volume', '-v', nargs=2, type=int, metavar='<min> <max>',
               help="Expand primitive cell to supercell of volume <min> to <max>, set <min> as -1 for creating only <max> volume expanded supercells")
 @click.option('--symprec', '-s', type=float, default=1e-5,
@@ -29,7 +31,7 @@ def cli():
               help="Compare precision to judging if supercell is redundant. Defalut=1e-5")
 @click.option('--verbose', '-vvv', is_flag=True, metavar='',
               help="Will print verbose messages.")
-def cell(pcell_filename, comment, volume, symprec, comprec, verbose):
+def cell(pcell_filename, comment, dimension, volume, symprec, comprec, verbose):
     """
     <primitive_cell_file>  Primitive cell structure file, now only vasp POSCAR version5 supported.
     """
@@ -37,14 +39,14 @@ def cell(pcell_filename, comment, volume, symprec, comprec, verbose):
     (min_v, max_v) = volume
     if min_v == -1:
         click.echo("Expanding primitive to volume {:d}".format(max_v))
-        _export_supercell(pcell, comment, max_v, symprec, comprec, verbose)
+        _export_supercell(pcell, comment, dimension, max_v, symprec, comprec, verbose)
     else:
         for v in range(min_v, max_v + 1):
             click.echo("Expanding primitive to volume {:d}".format(v))
-            _export_supercell(pcell, comment, v, symprec, comprec, verbose)
+            _export_supercell(pcell, comment, dimension, v, symprec, comprec, verbose)
 
 
-def _export_supercell(pcell, comment, v, symprec, comprec, verbose):
+def _export_supercell(pcell, comment, dimension, v, symprec, comprec, verbose):
     spinner = Spinner()
     spinner.start()
     cells = cells_nonredundant(
