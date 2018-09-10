@@ -32,6 +32,9 @@
           <a href="../genindex.html" title="总目录"
              accesskey="I">索引</a></li>
         <li class="right" >
+          <a href="../py-modindex.html" title="Python 模块索引"
+             >模块</a> |</li>
+        <li class="right" >
           <a href="pynotebook.html" title="通过jupyter notebook使用pyyabc"
              accesskey="N">下一页</a> |</li>
         <li class="right" >
@@ -48,7 +51,13 @@
   <ul>
 <li><a class="reference internal" href="#">命令行接口 <code class="docutils literal notranslate"><span class="pre">rexpand</span></code> 的使用</a><ul>
 <li><a class="reference internal" href="#rexpand-cell">子命令 <code class="docutils literal notranslate"><span class="pre">rexpand</span> <span class="pre">cell</span></code> 的使用</a></li>
-<li><a class="reference internal" href="#rexpand-conf">子命令 <code class="docutils literal notranslate"><span class="pre">rexpand</span> <span class="pre">conf</span></code> 的使用</a></li>
+<li><a class="reference internal" href="#rexpand-conf">子命令 <code class="docutils literal notranslate"><span class="pre">rexpand</span> <span class="pre">conf</span></code> 的使用</a><ul>
+<li><a class="reference internal" href="#id1">各种体积的不等价超构型</a></li>
+<li><a class="reference internal" href="#id2">给定体积的不等价超构型</a></li>
+<li><a class="reference internal" href="#id3">特定胞的不等价构型</a></li>
+<li><a class="reference internal" href="#id4">特定分子和团簇结构的各种不等价构型</a></li>
+</ul>
+</li>
 </ul>
 </li>
 </ul>
@@ -88,11 +97,109 @@
             
   <div class="section" id="rexpand">
 <span id="cmdline"></span><h1>命令行接口 <code class="docutils literal notranslate"><span class="pre">rexpand</span></code> 的使用<a class="headerlink" href="#rexpand" title="永久链接至标题">¶</a></h1>
+<p>可以使用 <code class="docutils literal notranslate"><span class="pre">rexpand</span> <span class="pre">--help</span></code> 和 <code class="docutils literal notranslate"><span class="pre">rexpand</span> <span class="pre">&lt;subcmd&gt;</span> <span class="pre">--help</span></code> 查看命令行使用帮助手册。</p>
+<p>其中特别注意在二维体系中可以使用 <code class="docutils literal notranslate"><span class="pre">-d</span> <span class="pre">2</span></code> 参数指定不在z方向上扩展胞，此时需要确保z与x,y方向正交。</p>
 <div class="section" id="rexpand-cell">
 <h2>子命令 <code class="docutils literal notranslate"><span class="pre">rexpand</span> <span class="pre">cell</span></code> 的使用<a class="headerlink" href="#rexpand-cell" title="永久链接至标题">¶</a></h2>
+<p>以石墨烯的超胞拓展为例,有原胞如下 <code class="docutils literal notranslate"><span class="pre">graphene.vasp</span></code></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">graphene</span>
+<span class="mf">1.0</span>
+        <span class="mf">2.4560000896</span>         <span class="mf">0.0000000000</span>         <span class="mf">0.0000000000</span>
+       <span class="o">-</span><span class="mf">1.2280000448</span>         <span class="mf">2.1269584693</span>         <span class="mf">0.0000000000</span>
+        <span class="mf">0.0000000000</span>         <span class="mf">0.0000000000</span>        <span class="mf">14.0000000000</span>
+    <span class="n">C</span>
+    <span class="mi">2</span>
+<span class="n">Direct</span>
+     <span class="mf">0.000000000</span>         <span class="mf">0.000000000</span>         <span class="mf">0.500000000</span>
+     <span class="mf">0.666667020</span>         <span class="mf">0.333332972</span>         <span class="mf">0.500000000</span>
+</pre></div>
+</div>
+<p><code class="docutils literal notranslate"><span class="pre">rexpand</span> <span class="pre">cell</span></code> 是用原胞产生特定体积超胞的命令，给定一个原胞，和欲产生的数量。就可以产生要
+生成的所有的不等价超胞。</p>
+<p>要产生体积为2~6倍的各种超胞，用于后续的原子替换，可以使用如下命令:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>(pyyabc) $ mkdir -p graphene &amp;&amp; cd graphene
+(pyyabc) $ rexpand cell -d 2 -v 2 6 ../graphene.vasp
+</pre></div>
+</div>
 </div>
 <div class="section" id="rexpand-conf">
 <h2>子命令 <code class="docutils literal notranslate"><span class="pre">rexpand</span> <span class="pre">conf</span></code> 的使用<a class="headerlink" href="#rexpand-conf" title="永久链接至标题">¶</a></h2>
+<p>举例来说，如若，有金刚石原胞如下 <code class="docutils literal notranslate"><span class="pre">crystal.vasp</span></code></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">cubic</span> <span class="n">diamond</span>
+   <span class="mf">5.5</span>
+ <span class="mf">0.0</span>    <span class="mf">0.5</span>     <span class="mf">0.5</span>
+ <span class="mf">0.5</span>    <span class="mf">0.0</span>     <span class="mf">0.5</span>
+ <span class="mf">0.5</span>    <span class="mf">0.5</span>     <span class="mf">0.0</span>
+  <span class="n">C</span>
+  <span class="mi">2</span>
+<span class="n">Direct</span>
+ <span class="o">-</span><span class="mf">0.125</span> <span class="o">-</span><span class="mf">0.125</span> <span class="o">-</span><span class="mf">0.125</span>
+  <span class="mf">0.125</span>  <span class="mf">0.125</span>  <span class="mf">0.125</span>
+</pre></div>
+</div>
+<p>用于产生要产生的不等价构型(configurations),有三种可能:</p>
+<ul class="simple">
+<li>给出原胞，产生各种体积下的各种超结构。</li>
+<li>给原胞，产生一定体积内各种超构型。</li>
+<li>给出一个特定的胞，产生所有，或特定浓度下的所有不重复构型。</li>
+</ul>
+<p>结合浓度是否确定，将各种可能和使用情形列与下表:</p>
+<div class="section" id="id1">
+<h3>各种体积的不等价超构型<a class="headerlink" href="#id1" title="永久链接至标题">¶</a></h3>
+<p>目的是得到体积从原胞扩展到4倍胞时，各种浓度的CxB1-x的金刚石结构。在计算这些结构后
+可以通过统计能量来绘制第一性原理基态该合金的凸点图。
+生成结构需要执行下列命令:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>(pyyabc) $ mkdir -p alloy-C-B &amp;&amp; cd alloy-C-B
+(pyyabc) $ rexpand conf -mp varv -mc vc -v -1 4 -e C -s B -vvv ../crystal.vasp
+</pre></div>
+</div>
+<p>将会在当前目录下产生所有的可能构型。</p>
+</div>
+<div class="section" id="id2">
+<h3>给定体积的不等价超构型<a class="headerlink" href="#id2" title="永久链接至标题">¶</a></h3>
+<p>目的是得到所有体积为原胞4倍，即包含8个原子的，C 被 O元素替换的全部可能构型,
+则执行下列命令:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>(pyyabc) $ mkdir -p crystal-O &amp;&amp; cd crystal-O
+(pyyabc) $ rexpand conf -mp svc --volume -1 4 -mc vc -e C -s O ../crystal.vasp
+</pre></div>
+</div>
+<p>将会在当前目录下产生所有的可能的构型。
+参数的意义请参考上方列表。</p>
+</div>
+<div class="section" id="id3">
+<h3>特定胞的不等价构型<a class="headerlink" href="#id3" title="永久链接至标题">¶</a></h3>
+<p>该情况多数情况下会配合浓度参数一起使用，指定特定取代数量的构型的生成。
+目的是得到下述 Zn<sub>4</sub> S <sub>4</sub> 结构中Zn被2个Mg替换，替换后化学式为 Zn<sub>2</sub> Mg<sub>2</sub> S<sub>4</sub>.</p>
+<p>原始的结构为 <code class="docutils literal notranslate"><span class="pre">zinc-blende.vasp</span></code></p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">s</span> <span class="n">zn</span>
+<span class="mf">1.0</span>
+        <span class="mf">5.5</span>         <span class="mf">0.0</span>         <span class="mf">0.0</span>
+        <span class="mf">0.0</span>         <span class="mf">5.5</span>         <span class="mf">0.0</span>
+        <span class="mf">0.0</span>         <span class="mf">0.0</span>         <span class="mf">5.5</span>
+   <span class="n">Zn</span>    <span class="n">S</span>
+    <span class="mi">4</span>    <span class="mi">4</span>
+<span class="n">Direct</span>
+     <span class="mf">0.000000000</span>         <span class="mf">0.000000000</span>         <span class="mf">0.000000000</span>
+    <span class="o">-</span><span class="mf">0.000000000</span>         <span class="mf">0.500000000</span>         <span class="mf">0.500000000</span>
+     <span class="mf">0.500000000</span>        <span class="o">-</span><span class="mf">0.000000000</span>         <span class="mf">0.500000000</span>
+     <span class="mf">0.500000000</span>         <span class="mf">0.500000000</span>         <span class="mf">0.000000000</span>
+     <span class="mf">0.250000000</span>         <span class="mf">0.250000000</span>         <span class="mf">0.250000000</span>
+     <span class="mf">0.750000000</span>         <span class="mf">0.750000000</span>         <span class="mf">0.250000000</span>
+     <span class="mf">0.750000000</span>         <span class="mf">0.250000000</span>         <span class="mf">0.750000000</span>
+     <span class="mf">0.250000000</span>         <span class="mf">0.750000000</span>         <span class="mf">0.750000000</span>
+</pre></div>
+</div>
+<p>使用下列命令实现得到所有同样正方晶胞的替换构型:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>(pyyabc) $ mkdir -p zb &amp;&amp; cd zb
+(pyyabc) $ rexpand conf -mp sc -mc cc -e Zn -s Mg -n 2 --comment ZnxMgxS2x ../zinc-blende.vasp
+</pre></div>
+</div>
+<p>可以发现，只有一种独立的构型产生，因为惯用晶胞的四个Zn位于四面体顶点位置，
+任意替换两个Zn原子产生的构型都是一样的。</p>
+</div>
+<div class="section" id="id4">
+<h3>特定分子和团簇结构的各种不等价构型<a class="headerlink" href="#id4" title="永久链接至标题">¶</a></h3>
+</div>
 </div>
 </div>
 
@@ -108,6 +215,9 @@
         <li class="right" style="margin-right: 10px">
           <a href="../genindex.html" title="总目录"
              >索引</a></li>
+        <li class="right" >
+          <a href="../py-modindex.html" title="Python 模块索引"
+             >模块</a> |</li>
         <li class="right" >
           <a href="pynotebook.html" title="通过jupyter notebook使用pyyabc"
              >下一页</a> |</li>

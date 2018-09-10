@@ -65,7 +65,14 @@
 
 <span class="kn">from</span> <span class="nn">pyyabc.toolkit.mathtool</span> <span class="k">import</span> <span class="n">binomialCoeff</span>
 
-<div class="viewcode-block" id="remove_redundant"><a class="viewcode-back" href="../../../modules/pyyabc.toolkit.html#pyyabc.toolkit.derivetool.remove_redundant">[文档]</a><span class="k">def</span> <span class="nf">remove_redundant</span><span class="p">(</span><span class="n">mol_positions</span><span class="p">,</span> <span class="n">sites</span><span class="p">,</span> <span class="n">perms</span><span class="p">,</span> <span class="n">e_num</span><span class="o">=</span><span class="kc">None</span><span class="p">):</span>
+<div class="viewcode-block" id="remove_redundant"><a class="viewcode-back" href="../../../modules/pyyabc.toolkit.html#pyyabc.toolkit.derivetool.remove_redundant">[文档]</a><span class="k">def</span> <span class="nf">remove_redundant</span><span class="p">(</span><span class="n">mol_positions</span><span class="p">,</span> <span class="n">sites</span><span class="p">,</span> <span class="n">perms</span><span class="p">,</span> <span class="n">e_num</span><span class="o">=</span><span class="kc">None</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;jshash&#39;</span><span class="p">):</span>
+    <span class="k">if</span> <span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;jshash&#39;</span><span class="p">:</span>
+        <span class="k">for</span> <span class="n">i</span> <span class="ow">in</span> <span class="n">remove_redundant_by_hash</span><span class="p">(</span><span class="n">mol_positions</span><span class="p">,</span> <span class="n">sites</span><span class="p">,</span> <span class="n">perms</span><span class="p">,</span> <span class="n">e_num</span><span class="p">):</span>
+            <span class="k">yield</span> <span class="n">i</span>
+    <span class="k">if</span> <span class="n">method</span> <span class="o">==</span> <span class="s1">&#39;ccsort&#39;</span><span class="p">:</span>
+        <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="remove_redundant_by_hash"><a class="viewcode-back" href="../../../modules/pyyabc.toolkit.html#pyyabc.toolkit.derivetool.remove_redundant_by_hash">[文档]</a><span class="k">def</span> <span class="nf">remove_redundant_by_hash</span><span class="p">(</span><span class="n">mol_positions</span><span class="p">,</span> <span class="n">sites</span><span class="p">,</span> <span class="n">perms</span><span class="p">,</span> <span class="n">e_num</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    输入一个分子坐标`mol_positions`</span>
 <span class="sd">    和每个坐标位点上的可能取代情况`sites`</span>
