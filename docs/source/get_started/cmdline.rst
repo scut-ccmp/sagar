@@ -80,6 +80,7 @@
 可以通过统计能量来绘制第一性原理基态该合金的凸点图。
 
 .. |CxB1-x| replace:: C\ :sub: `x` B\ :sub:`1-x`
+
 生成结构需要执行下列命令::
 
     (pyyabc) $ mkdir -p alloy-C-B && cd alloy-C-B
