@@ -124,7 +124,7 @@ class ConfigurationGenerator(object):
                 perms = hfpg.get_symmetry_perms(symprec)
 
                 supercell = self._pcell.extend(h)
-                _sites = numpy.repeat(sites, volume)
+                _sites = numpy.repeat(sites, volume, axis=0)
 
                 for mol, _ in remove_redundant(supercell.positions, _sites, perms):
                     c = Cell(supercell.lattice, mol[0], mol[1])
@@ -162,7 +162,7 @@ class ConfigurationGenerator(object):
             perms = hfpg.get_symmetry_perms(symprec)
 
             supercell = self._pcell.extend(h)
-            _sites = numpy.repeat(sites, volume)
+            _sites = numpy.repeat(sites, volume, axis=0)
 
             for mol, d in remove_redundant(supercell.positions, _sites, perms, e_num):
                 c = Cell(supercell.lattice, mol[0], mol[1])
