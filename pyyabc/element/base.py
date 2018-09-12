@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 """
 periodic_table_dict
-Thanks for Yanan Wu. Email:
+Thanks for Yanan Wu. Email: 952512093@qq.com
 """
 periodic_table_dict = {'Vacc': 0,
                        'H': 1, 'He': 2,'Li': 3, 'Be': 4, 'B': 5, 'C': 6, 'N': 7, 'O': 8, 'F': 9, 'Ne': 10,
