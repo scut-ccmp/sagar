@@ -8,4 +8,4 @@
 
 ## Introduction
 pyyabc is a library with some uitils to deal grid site
- structures.
+ structures which is employed in linux platform.
