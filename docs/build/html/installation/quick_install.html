@@ -9,7 +9,7 @@
     <title>快速安装 &#8212; pyyabc 0.1.0 文档</title>
     <link rel="stylesheet" href="../_static/bizstyle.css" type="text/css" />
     <link rel="stylesheet" href="../_static/pygments.css" type="text/css" />
-    <script type="text/javascript" id="documentation_options" data-url_root="../" src="../_static/documentation_options.js"></script>
+    <script type="text/javascript" src="../_static/documentation_options.js"></script>
     <script type="text/javascript" src="../_static/jquery.js"></script>
     <script type="text/javascript" src="../_static/underscore.js"></script>
     <script type="text/javascript" src="../_static/doctools.js"></script>
@@ -50,10 +50,14 @@
   <h3><a href="../index.html">內容目录</a></h3>
   <ul>
 <li><a class="reference internal" href="#">快速安装</a><ul>
-<li><a class="reference internal" href="#id2">依赖软件的安装</a></li>
+<li><a class="reference internal" href="#unix">unix系统下的安装</a><ul>
+<li><a class="reference internal" href="#id4">依赖软件的安装</a></li>
 <li><a class="reference internal" href="#pyyabc">安装 <code class="docutils literal notranslate"><span class="pre">pyyabc</span></code> 软件包</a></li>
 <li><a class="reference internal" href="#option-jupyter-notebook">(option) jupyter notebook的安装</a></li>
 <li><a class="reference internal" href="#option-nose2">(option) 运行nose2执行单元测试</a></li>
+</ul>
+</li>
+<li><a class="reference internal" href="#windows">Windows系统下的安装</a></li>
 </ul>
 </li>
 </ul>
@@ -93,16 +97,18 @@
             
   <div class="section" id="quick-install">
 <span id="id1"></span><h1>快速安装<a class="headerlink" href="#quick-install" title="永久链接至标题">¶</a></h1>
-<p>这一章将简述安装步骤，该包只能安装在Unix类型的系统上，在 <code class="docutils literal notranslate"><span class="pre">OS</span> <span class="pre">X</span></code> 和 <code class="docutils literal notranslate"><span class="pre">Ubuntu</span></code> 以及 <code class="docutils literal notranslate"><span class="pre">Debian</span></code>,
-<code class="docutils literal notranslate"><span class="pre">Archlinux</span></code> 均测试安装。
+<p>这一章将简述安装步骤，该包建议安装在Unix类型的系统上，在 <code class="docutils literal notranslate"><span class="pre">OS</span> <span class="pre">X</span></code> 和 <code class="docutils literal notranslate"><span class="pre">Ubuntu</span></code> 以及 <code class="docutils literal notranslate"><span class="pre">Debian</span></code>,
+<code class="docutils literal notranslate"><span class="pre">Archlinux</span></code> 均测试安装, <a href="#id2"><span class="problematic" id="id3">`</span></a>Windows`系统也可以安装, 并且测试成功, 但是不建议开发者使用`Windows`安装维护。
 该章节分为下列几个部分：</p>
 <ol class="arabic simple">
 <li>依赖软件的安装</li>
 <li>安装 <code class="docutils literal notranslate"><span class="pre">pyyabc</span></code> 软件包</li>
 <li>(option) jupyter notebook的安装</li>
 </ol>
-<div class="section" id="id2">
-<h2>依赖软件的安装<a class="headerlink" href="#id2" title="永久链接至标题">¶</a></h2>
+<div class="section" id="unix">
+<h2>unix系统下的安装<a class="headerlink" href="#unix" title="永久链接至标题">¶</a></h2>
+<div class="section" id="id4">
+<h3>依赖软件的安装<a class="headerlink" href="#id4" title="永久链接至标题">¶</a></h3>
 <p>软件包的安装依赖于下列软件，因此在安装 <code class="docutils literal notranslate"><span class="pre">pyyabc</span></code> 之前需要首先安装下列依赖。</p>
 <ul class="simple">
 <li><a class="reference external" href="https://git-scm.com/downloads">git</a> (To download the <code class="docutils literal notranslate"><span class="pre">pyyabc</span></code> package)</li>
@@ -125,7 +131,7 @@
 </div>
 </div>
 <div class="section" id="pyyabc">
-<h2>安装 <code class="docutils literal notranslate"><span class="pre">pyyabc</span></code> 软件包<a class="headerlink" href="#pyyabc" title="永久链接至标题">¶</a></h2>
+<h3>安装 <code class="docutils literal notranslate"><span class="pre">pyyabc</span></code> 软件包<a class="headerlink" href="#pyyabc" title="永久链接至标题">¶</a></h3>
 <p>当前仅支持从源码安装。创建安装地址所在的文件夹并且克隆软件所在仓库到本地，
 运行下述命令:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ mkdir &lt;your_directory&gt;
@@ -162,7 +168,7 @@ $ which python
 </div>
 </div>
 <div class="section" id="option-jupyter-notebook">
-<h2>(option) jupyter notebook的安装<a class="headerlink" href="#option-jupyter-notebook" title="永久链接至标题">¶</a></h2>
+<h3>(option) jupyter notebook的安装<a class="headerlink" href="#option-jupyter-notebook" title="永久链接至标题">¶</a></h3>
 <blockquote>
 <div><code class="docutils literal notranslate"><span class="pre">pyyabc</span></code> 中提供了许多包装好的工具函数和类，提供给用户以组建新的需求。
 建议使用 <code class="docutils literal notranslate"><span class="pre">jupyter</span> <span class="pre">notebook</span></code> 来实现这些需求。jupyter的详细介绍请参考 <a class="reference external" href="http://jupyter.org/">jupyter</a></div></blockquote>
@@ -175,12 +181,16 @@ $ which python
 </div>
 </div>
 <div class="section" id="option-nose2">
-<h2>(option) 运行nose2执行单元测试<a class="headerlink" href="#option-nose2" title="永久链接至标题">¶</a></h2>
+<h3>(option) 运行nose2执行单元测试<a class="headerlink" href="#option-nose2" title="永久链接至标题">¶</a></h3>
 <p>进入pyyabc目录，执行:</p>
 <div class="highlight-default notranslate"><div class="highlight"><pre><span></span>$ nose2 -v
 </pre></div>
 </div>
 <p>测试通过则软件确保可用。</p>
+</div>
+</div>
+<div class="section" id="windows">
+<h2>Windows系统下的安装<a class="headerlink" href="#windows" title="永久链接至标题">¶</a></h2>
 <p>现在你就可以开始使用软件包，或者继续查看后续手册 <a class="reference internal" href="../get_started/index.html#get-started"><span class="std std-ref">使用说明</span></a>.</p>
 </div>
 </div>
@@ -213,7 +223,7 @@ $ which python
     </div>
     <div class="footer" role="contentinfo">
         &#169; 版权所有 2018, Jason Yu, ChangChun He, ShaoBin Qiu.
-      由 <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.6 创建。
+      由 <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.4 创建。
     </div>
   </body>
 </html>
