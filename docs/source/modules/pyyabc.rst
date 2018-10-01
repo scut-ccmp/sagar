@@ -6,6 +6,7 @@ Subpackages
 
 .. toctree::
 
+    pyyabc.cmd
     pyyabc.crystal
     pyyabc.element
     pyyabc.io
