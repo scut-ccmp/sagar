@@ -7,6 +7,7 @@
 [![PyPI pyversions](https://img.shields.io/pypi/pyversions/ansicolortags.svg)](https://pypi.python.org/pypi/ansicolortags/)
 
 ## Introduction
-sagar is short for (S)Tructures of (A)lloys (G)eneration (A)nd (R)ecognition
-sagar is a library with some uitils to deal grid site
+sagar is short for (S)Tructures of (A)lloys (G)eneration (A)nd (R)ecognition.
+
+It is a library with some uitils to deal grid site
  structures.
