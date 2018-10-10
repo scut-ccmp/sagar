@@ -9,8 +9,12 @@
     <title>sagar.toolkit.mathtool &#8212; sagar 0.1.0 文档</title>
     <link rel="stylesheet" href="../../../_static/bizstyle.css" type="text/css" />
     <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+<<<<<<< HEAD:docs/build/html/_modules/sagar/toolkit/mathtool.html
     
     <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+=======
+    <script type="text/javascript" src="../../../_static/documentation_options.js"></script>
+>>>>>>> refs/remotes/origin/master:docs/build/html/_modules/pyyabc/toolkit/mathtool.html
     <script type="text/javascript" src="../../../_static/jquery.js"></script>
     <script type="text/javascript" src="../../../_static/underscore.js"></script>
     <script type="text/javascript" src="../../../_static/doctools.js"></script>
@@ -83,7 +87,7 @@
     <span class="k">return</span> <span class="n">flatten_npa</span><span class="o">.</span><span class="n">reshape</span><span class="p">(</span><span class="n">npa</span><span class="o">.</span><span class="n">shape</span><span class="p">)</span></div>
 
 
-<span class="k">def</span> <span class="nf">extended_gcd</span><span class="p">(</span><span class="n">aa</span><span class="p">,</span> <span class="n">bb</span><span class="p">):</span>
+<div class="viewcode-block" id="extended_gcd"><a class="viewcode-back" href="../../../modules/pyyabc.toolkit.html#pyyabc.toolkit.mathtool.extended_gcd">[文档]</a><span class="k">def</span> <span class="nf">extended_gcd</span><span class="p">(</span><span class="n">aa</span><span class="p">,</span> <span class="n">bb</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
 <span class="sd">    Algorithm: https://en.wikipedia.org/wiki/Extended_Euclidean_algorithm#Iterative_method_2</span>
 
@@ -101,7 +105,7 @@
             <span class="n">lastremainder</span><span class="p">,</span> <span class="n">remainder</span><span class="p">)</span>
         <span class="n">x</span><span class="p">,</span> <span class="n">lastx</span> <span class="o">=</span> <span class="n">lastx</span> <span class="o">-</span> <span class="n">quotient</span> <span class="o">*</span> <span class="n">x</span><span class="p">,</span> <span class="n">x</span>
         <span class="n">y</span><span class="p">,</span> <span class="n">lasty</span> <span class="o">=</span> <span class="n">lasty</span> <span class="o">-</span> <span class="n">quotient</span> <span class="o">*</span> <span class="n">y</span><span class="p">,</span> <span class="n">y</span>
-    <span class="k">return</span> <span class="n">lastremainder</span><span class="p">,</span> <span class="n">lastx</span> <span class="o">*</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span> <span class="k">if</span> <span class="n">aa</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="mi">1</span><span class="p">),</span> <span class="n">lasty</span> <span class="o">*</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span> <span class="k">if</span> <span class="n">bb</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="mi">1</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">lastremainder</span><span class="p">,</span> <span class="n">lastx</span> <span class="o">*</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span> <span class="k">if</span> <span class="n">aa</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="mi">1</span><span class="p">),</span> <span class="n">lasty</span> <span class="o">*</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span> <span class="k">if</span> <span class="n">bb</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="mi">1</span><span class="p">)</span></div>
 
 <div class="viewcode-block" id="binomialCoeff"><a class="viewcode-back" href="../../../modules/sagar.toolkit.html#sagar.toolkit.mathtool.binomialCoeff">[文档]</a><span class="k">def</span> <span class="nf">binomialCoeff</span><span class="p">(</span><span class="n">n</span><span class="p">,</span> <span class="n">k</span><span class="p">):</span>
     <span class="k">if</span> <span class="n">k</span> <span class="o">&lt;</span> <span class="mi">0</span><span class="p">:</span>
@@ -115,9 +119,16 @@
     <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">result</span><span class="p">)</span></div>
 
 
+<<<<<<< HEAD:docs/build/html/_modules/sagar/toolkit/mathtool.html
 <div class="viewcode-block" id="distance"><a class="viewcode-back" href="../../../modules/sagar.toolkit.html#sagar.toolkit.mathtool.distance">[文档]</a><span class="k">def</span> <span class="nf">distance</span><span class="p">(</span><span class="n">p1</span><span class="p">,</span> <span class="n">p2</span><span class="p">):</span>
     <span class="k">return</span> <span class="n">sqrt</span><span class="p">((</span><span class="n">p1</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="o">-</span> <span class="n">p2</span><span class="p">[</span><span class="mi">0</span><span class="p">])</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="p">(</span><span class="n">p1</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span> <span class="o">-</span> <span class="n">p2</span><span class="p">[</span><span class="mi">1</span><span class="p">])</span><span class="o">**</span><span class="mi">2</span> <span class="o">+</span> <span class="p">(</span><span class="n">p1</span><span class="p">[</span><span class="mi">2</span><span class="p">]</span> <span class="o">-</span> <span class="n">p2</span><span class="p">[</span><span class="mi">2</span><span class="p">])</span><span class="o">**</span><span class="mi">2</span><span class="p">)</span></div>
 
+=======
+<div class="viewcode-block" id="distance"><a class="viewcode-back" href="../../../modules/pyyabc.toolkit.html#pyyabc.toolkit.mathtool.distance">[文档]</a><span class="k">def</span> <span class="nf">distance</span><span class="p">(</span><span class="n">p1</span><span class="p">,</span> <span class="n">p2</span><span class="p">):</span>
+    <span class="c1">#return sqrt((p1[0] - p2[0])**2 + (p1[1] - p2[1])**2 + (p1[2] - p2[2])**2)</span>
+    <span class="n">p1</span><span class="p">,</span> <span class="n">p2</span> <span class="o">=</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">p1</span><span class="p">),</span> <span class="n">numpy</span><span class="o">.</span><span class="n">array</span><span class="p">(</span><span class="n">p2</span><span class="p">)</span>
+    <span class="k">return</span> <span class="n">numpy</span><span class="o">.</span><span class="n">linalg</span><span class="o">.</span><span class="n">norm</span><span class="p">(</span><span class="n">p1</span> <span class="o">-</span> <span class="n">p2</span><span class="p">)</span></div>
+>>>>>>> refs/remotes/origin/master:docs/build/html/_modules/pyyabc/toolkit/mathtool.html
 
 <div class="viewcode-block" id="closest_pair"><a class="viewcode-back" href="../../../modules/sagar.toolkit.html#sagar.toolkit.mathtool.closest_pair">[文档]</a><span class="k">def</span> <span class="nf">closest_pair</span><span class="p">(</span><span class="n">points</span><span class="p">):</span>
     <span class="sd">&quot;&quot;&quot;</span>
@@ -131,6 +142,7 @@
         <span class="k">return</span> <span class="nb">float</span><span class="p">(</span><span class="s1">&#39;inf&#39;</span><span class="p">)</span>
     <span class="k">return</span> <span class="nb">min</span><span class="p">([</span><span class="n">distance</span><span class="p">(</span><span class="n">points</span><span class="p">[</span><span class="n">i</span><span class="p">],</span> <span class="n">points</span><span class="p">[</span><span class="n">j</span><span class="p">])</span>
                 <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">j</span> <span class="ow">in</span> <span class="n">combinations</span><span class="p">(</span><span class="nb">range</span><span class="p">(</span><span class="n">num_points</span><span class="p">),</span> <span class="mi">2</span><span class="p">)])</span></div>
+<<<<<<< HEAD:docs/build/html/_modules/sagar/toolkit/mathtool.html
 
 
 <div class="viewcode-block" id="extended_gcd"><a class="viewcode-back" href="../../../modules/sagar.toolkit.html#sagar.toolkit.mathtool.extended_gcd">[文档]</a><span class="k">def</span> <span class="nf">extended_gcd</span><span class="p">(</span><span class="n">aa</span><span class="p">,</span> <span class="n">bb</span><span class="p">):</span>
@@ -152,6 +164,8 @@
         <span class="n">x</span><span class="p">,</span> <span class="n">lastx</span> <span class="o">=</span> <span class="n">lastx</span> <span class="o">-</span> <span class="n">quotient</span> <span class="o">*</span> <span class="n">x</span><span class="p">,</span> <span class="n">x</span>
         <span class="n">y</span><span class="p">,</span> <span class="n">lasty</span> <span class="o">=</span> <span class="n">lasty</span> <span class="o">-</span> <span class="n">quotient</span> <span class="o">*</span> <span class="n">y</span><span class="p">,</span> <span class="n">y</span>
     <span class="k">return</span> <span class="n">lastremainder</span><span class="p">,</span> <span class="n">lastx</span> <span class="o">*</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span> <span class="k">if</span> <span class="n">aa</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="mi">1</span><span class="p">),</span> <span class="n">lasty</span> <span class="o">*</span> <span class="p">(</span><span class="o">-</span><span class="mi">1</span> <span class="k">if</span> <span class="n">bb</span> <span class="o">&lt;</span> <span class="mi">0</span> <span class="k">else</span> <span class="mi">1</span><span class="p">)</span></div>
+=======
+>>>>>>> refs/remotes/origin/master:docs/build/html/_modules/pyyabc/toolkit/mathtool.html
 </pre></div>
 
           </div>
@@ -174,7 +188,11 @@
     </div>
     <div class="footer" role="contentinfo">
         &#169; 版权所有 2018, Jason Yu, ChangChun He, ShaoBin Qiu.
+<<<<<<< HEAD:docs/build/html/_modules/sagar/toolkit/mathtool.html
       由 <a href="http://sphinx-doc.org/">Sphinx</a> 1.8.0 创建。
+=======
+      由 <a href="http://sphinx-doc.org/">Sphinx</a> 1.7.4 创建。
+>>>>>>> refs/remotes/origin/master:docs/build/html/_modules/pyyabc/toolkit/mathtool.html
     </div>
   </body>
 </html>

@@ -54,8 +54,9 @@ def binomialCoeff(n, k):
 
 
 def distance(p1, p2):
-    return sqrt((p1[0] - p2[0])**2 + (p1[1] - p2[1])**2 + (p1[2] - p2[2])**2)
-
+    #return sqrt((p1[0] - p2[0])**2 + (p1[1] - p2[1])**2 + (p1[2] - p2[2])**2)
+    p1, p2 = numpy.array(p1), numpy.array(p2)
+    return numpy.linalg.norm(p1 - p2)
 
 def closest_pair(points):
     """
@@ -69,24 +70,3 @@ def closest_pair(points):
         return float('inf')
     return min([distance(points[i], points[j])
                 for i, j in combinations(range(num_points), 2)])
-
-
-def extended_gcd(aa, bb):
-    """
-    Algorithm: https://en.wikipedia.org/wiki/Extended_Euclidean_algorithm#Iterative_method_2
-
-    parameters:
-    aa, bb: int
-
-    return: r, s, t
-
-    r = s * aa + t * bb
-    """
-    lastremainder, remainder = abs(aa), abs(bb)
-    x, lastx, y, lasty = 0, 1, 1, 0
-    while remainder:
-        lastremainder, (quotient, remainder) = remainder, divmod(
-            lastremainder, remainder)
-        x, lastx = lastx - quotient * x, x
-        y, lasty = lasty - quotient * y, y
-    return lastremainder, lastx * (-1 if aa < 0 else 1), lasty * (-1 if bb < 0 else 1)

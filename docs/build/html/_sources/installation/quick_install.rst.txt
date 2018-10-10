@@ -4,13 +4,18 @@
 快速安装
 =============
 
-这一章将简述安装步骤，该包只能安装在Unix类型的系统上，在 ``OS X`` 和 ``Ubuntu`` 以及 ``Debian``,
-``Archlinux`` 均测试安装。
+这一章将简述安装步骤，该包建议安装在Unix类型的系统上，在 ``OS X`` 和 ``Ubuntu`` 以及 ``Debian``,
+``Archlinux`` 均测试安装, `Windows`系统也可以安装, 并且测试成功, 但是不建议开发者使用`Windows`安装维护。
 该章节分为下列几个部分：
 
 1. 依赖软件的安装
 2. 安装 ``sagar`` 软件包
 3. (option) jupyter notebook的安装
+
+
+---------------
+unix系统下的安装
+---------------
 
 依赖软件的安装
 ++++++++++++++++++
@@ -101,5 +106,21 @@ virtual environment进行独立python环境的管理。
     $ nose2 -v
 
 测试通过则软件确保可用。
+
+---------------
+Windows系统下的安装
+---------------
+该包由于依赖于`spglib`这个包, 需要C++的编译器进行编译, 因
+此安装的时候会报错, `visual studio C++ 14.0 is required`.
+当然我自己试了一下并没有什么用, 可能是打开的方式不对... 最后在
+python非官方的包中找到`spglib`这个轮子(wheel),
+地址在`这 <https://www.lfd.uci.edu/~gohlke/pythonlibs/#pycurl>`_,
+ 可以在这里选择一个与你的电脑相匹配的32位或64位的wheel就可以了.
+
+
+
+
+
+
 
 现在你就可以开始使用软件包，或者继续查看后续手册 :ref:`get-started`.
