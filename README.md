@@ -7,10 +7,6 @@
 [![PyPI pyversions](https://img.shields.io/pypi/pyversions/ansicolortags.svg)](https://pypi.python.org/pypi/ansicolortags/)
 
 ## Introduction
-<<<<<<< HEAD
+sagar is short for (S)Tructures of (A)lloys (G)eneration (A)nd (R)ecognition
 sagar is a library with some uitils to deal grid site
  structures.
-=======
-pyyabc is a library with some uitils to deal grid site
- structures which is employed in linux platform.
->>>>>>> refs/remotes/origin/master
