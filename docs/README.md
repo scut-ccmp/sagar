@@ -2,6 +2,6 @@
 
 ```
 $ cd docs
-$ sphinx-apidoc -f -o source/modules ../pyyabc
+$ sphinx-apidoc -f -o source/modules ../sagar
 $ make html
 ```

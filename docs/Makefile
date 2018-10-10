@@ -4,7 +4,7 @@
 # You can set these variables from the command line.
 SPHINXOPTS    = -D language='zh_CN'
 SPHINXBUILD   = sphinx-build
-SPHINXPROJ    = pyyabc
+SPHINXPROJ    = sagar
 SOURCEDIR     = source
 BUILDDIR      = build
 

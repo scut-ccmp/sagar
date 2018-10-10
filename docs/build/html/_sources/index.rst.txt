@@ -1,9 +1,9 @@
-.. pyyabc documentation master file, created by
+.. sagar documentation master file, created by
    sphinx-quickstart on Tue Sep  4 08:45:58 2018.
    You can adapt this file completely to your liking, but it should at least
    contain the root `toctree` directive.
 
-pyyabc使用手册!
+sagar使用手册!
 ==================================
 
 用户手册

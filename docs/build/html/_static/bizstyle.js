@@ -36,6 +36,6 @@ $(window).resize(function(){
         $("li.nav-item-0 a").text("Top");
     }
     else {
-        $("li.nav-item-0 a").text("pyyabc 0.1.0 文档");
+        $("li.nav-item-0 a").text("sagar 0.1.0 文档");
     }
 });

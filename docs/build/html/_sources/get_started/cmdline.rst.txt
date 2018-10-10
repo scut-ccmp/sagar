@@ -29,8 +29,8 @@
 
 要产生体积为2~6倍的各种超胞，用于后续的原子替换，可以使用如下命令::
 
-    (pyyabc) $ mkdir -p graphene && cd graphene
-    (pyyabc) $ rexpand cell -d 2 -v 2 6 ../graphene.vasp
+    (sagar) $ mkdir -p graphene && cd graphene
+    (sagar) $ rexpand cell -d 2 -v 2 6 ../graphene.vasp
 
 子命令 ``rexpand conf`` 的使用
 +++++++++++++++++++++++++++++++++++
@@ -83,8 +83,8 @@
 
 生成结构需要执行下列命令::
 
-    (pyyabc) $ mkdir -p alloy-C-B && cd alloy-C-B
-    (pyyabc) $ rexpand conf -mp varv -mc vc -v -1 4 -e C -s B -vvv ../crystal.vasp
+    (sagar) $ mkdir -p alloy-C-B && cd alloy-C-B
+    (sagar) $ rexpand conf -mp varv -mc vc -v -1 4 -e C -s B -vvv ../crystal.vasp
 
 将会在当前目录下产生所有的可能构型。
 
@@ -94,8 +94,8 @@
 目的是得到所有体积为原胞4倍，即包含8个原子的，C 被 O元素替换的全部可能构型,
 则执行下列命令::
 
-    (pyyabc) $ mkdir -p crystal-O && cd crystal-O
-    (pyyabc) $ rexpand conf -mp svc --volume -1 4 -mc vc -e C -s O ../crystal.vasp
+    (sagar) $ mkdir -p crystal-O && cd crystal-O
+    (sagar) $ rexpand conf -mp svc --volume -1 4 -mc vc -e C -s O ../crystal.vasp
 
 将会在当前目录下产生所有的可能的构型。
 参数的意义请参考上方列表。
@@ -130,8 +130,8 @@
 
 使用下列命令实现得到所有同样正方晶胞的替换构型::
 
-    (pyyabc) $ mkdir -p zb && cd zb
-    (pyyabc) $ rexpand conf -mp sc -mc cc -e Zn -s Mg -n 2 --comment ZnxMgxS2x ../zinc-blende.vasp
+    (sagar) $ mkdir -p zb && cd zb
+    (sagar) $ rexpand conf -mp sc -mc cc -e Zn -s Mg -n 2 --comment ZnxMgxS2x ../zinc-blende.vasp
 
 可以发现，只有一种独立的构型产生，因为惯用晶胞的四个Zn位于四面体顶点位置，
 任意替换两个Zn原子产生的构型都是一样的。

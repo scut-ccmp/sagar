@@ -9,17 +9,17 @@
 该章节分为下列几个部分：
 
 1. 依赖软件的安装
-2. 安装 ``pyyabc`` 软件包
+2. 安装 ``sagar`` 软件包
 3. (option) jupyter notebook的安装
 
 依赖软件的安装
 ++++++++++++++++++
-软件包的安装依赖于下列软件，因此在安装 ``pyyabc`` 之前需要首先安装下列依赖。
+软件包的安装依赖于下列软件，因此在安装 ``sagar`` 之前需要首先安装下列依赖。
 
-* `git`_ (To download the ``pyyabc`` package)
-* `python >= 3.5`_ (The programming language used for pyyabc)
+* `git`_ (To download the ``sagar`` package)
+* `python >= 3.5`_ (The programming language used for sagar)
 * `python-pip`_ (Python package manager)
-* `virtualenv`_ (Software to create a virtual python environment to install pyyabc in)
+* `virtualenv`_ (Software to create a virtual python environment to install sagar in)
 
 .. _git: https://git-scm.com/downloads
 .. _python >= 3.5: https://www.python.org/downloads
@@ -44,7 +44,7 @@
 .. _pacman: https://wiki.archlinux.org/index.php/pacman
 
 
-安装 ``pyyabc`` 软件包
+安装 ``sagar`` 软件包
 +++++++++++++++++++++++++++
 
 当前仅支持从源码安装。创建安装地址所在的文件夹并且克隆软件所在仓库到本地，
@@ -52,7 +52,7 @@
 
     $ mkdir <your_directory>
     $ cd <your_directory>
-    $ git clone https://github.com/unkcpz/pyyabc.git
+    $ git clone https://github.com/unkcpz/sagar.git
 
 为了避免安装该软件时同时安装的依赖包与系统正在使用的python包产生冲突， *强烈建议* 使用
 virtual environment进行独立python环境的管理。
@@ -62,27 +62,27 @@ virtual environment进行独立python环境的管理。
     $ echo "export PYENV=$HOME/PYENV" >> ~/.bashrc
     $ source ~/.bashrc
     $ mkdir -p $PYENV
-    $ virtualenv --python=/usr/bin/python3 $PYENV/pyyabc
-    $ source $PYENV/pyyabc/bin/activate
+    $ virtualenv --python=/usr/bin/python3 $PYENV/sagar
+    $ source $PYENV/sagar/bin/activate
     $ which python
 
-以上命令将在家目录中建立文件夹 ``pyyabc``，并进入该环境. 此时你会看到你所使用的python
-为 ``/home/<username>/PYENV/pyyabc/bin/python`` 。
-在激活该环境后，你会看到在你的命令行提示符前出现 ``(pyyabc) $ <command>`` 这表示你正在当前
+以上命令将在家目录中建立文件夹 ``sagar``，并进入该环境. 此时你会看到你所使用的python
+为 ``/home/<username>/PYENV/sagar/bin/python`` 。
+在激活该环境后，你会看到在你的命令行提示符前出现 ``(sagar) $ <command>`` 这表示你正在当前
 环境下工作，调用和安装的工具都会来自于以上目录中。
 
 .. note:: 你可能需要更新你创建的新的虚拟环境中的安装工具 ``pip`` 和 ``setuptools`` ::
 
-    (pyyabc) $ pip install -U setuptools pip
+    (sagar) $ pip install -U setuptools pip
 
-最后，在克隆的 ``pyyabc`` 项目所在的目录下执行安装::
+最后，在克隆的 ``sagar`` 项目所在的目录下执行安装::
 
-    (pyyabc) $ pip install -e pyyabc
+    (sagar) $ pip install -e sagar
 
 (option) jupyter notebook的安装
 +++++++++++++++++++++++++++++++++++
 
- ``pyyabc`` 中提供了许多包装好的工具函数和类，提供给用户以组建新的需求。
+ ``sagar`` 中提供了许多包装好的工具函数和类，提供给用户以组建新的需求。
  建议使用 ``jupyter notebook`` 来实现这些需求。jupyter的详细介绍请参考 `jupyter`_
 
 在jupyter notebook中的使用案例，可以参考 :ref:`jupyter examples <examples>`
@@ -91,12 +91,12 @@ virtual environment进行独立python环境的管理。
 
 安装jupyther,只需要在虚拟环境中执行::
 
-    (pyyabc) $ pip install jupyter
+    (sagar) $ pip install jupyter
 
 (option) 运行nose2执行单元测试
 +++++++++++++++++++++++++++++++++++++++++
 
-进入pyyabc目录，执行::
+进入sagar目录，执行::
 
     $ nose2 -v
 

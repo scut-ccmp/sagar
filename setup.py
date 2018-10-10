@@ -1,7 +1,7 @@
 from setuptools import setup, find_packages
 
 setup(
-    name='pyyabc',
+    name='sagar',
     # Remenber change version in ababe.cmdline.runabalib.exec_from_cmdline()
     version='0.1.0',
     description='A grid structure machine learning tool used\
@@ -28,7 +28,7 @@ setup(
     scripts=[],
     entry_points={
         'console_scripts': [
-            'rexpand = pyyabc.cmd.rexpand:cli',
+            'rexpand = sagar.cmd.rexpand:cli',
         ],
     }
 )
