@@ -250,6 +250,24 @@ class TestMutableCell(unittest.TestCase):
         self.assertEqual(mcell._sites[0], [(-0.125, -0.125, -0.125), "Si"])
         self.assertEqual(mcell._sites[1], [(0.125, 0.125, 0.125), "Vacc"])
 
+    def test_get_site(self):
+        lattice = numpy.copy(self.lattice)
+        si_sites = [[(-0.125, -0.125, -0.125), "Si"],
+                    [(0.125, 0.125, 0.125), "Si"]]
+        mcell = MutableCell(lattice, sites=si_sites)
+        self.assertEqual(mcell.get_site(0), [(-0.125, -0.125, -0.125), "Si"])
+        self.assertEqual(mcell.get_site(1), [(0.125, 0.125, 0.125), "Si"])
+
+    def test_get_car_site(self):
+        lattice = numpy.copy(numpy.array([0.0, 1.5, 1.5,
+                                          1.5, 0.0, 1.5,
+                                          1.5, 1.5, 0.0]).reshape(3, 3))
+        si_sites = [[(-0.125, -0.125, -0.125), "Si"],
+                    [(0.125, 0.125, 0.125), "Si"]]
+        mcell = MutableCell(lattice, sites=si_sites)
+        self.assertEqual(mcell.get_car_site(0), [(-0.375, -0.375, -0.375), "Si"])
+        self.assertEqual(mcell.get_car_site(1), [(0.375, 0.375, 0.375), "Si"])
+
 
 if __name__ == "__main__":
     import nose2

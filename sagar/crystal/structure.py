@@ -347,6 +347,15 @@ class MutableCell(object):
         vacc_site = [pos, 'Vacc']
         self.set_site(idx, vacc_site)
 
+    def get_site(self, idx):
+        return self._sites[idx]
+
+    def get_car_site(self, idx):
+        fs = self.get_site(idx)
+        car = frac_to_car(self._lattice, fs[0])
+
+        return [tuple(car), fs[1]]
+
     def __repr__(self):
         def _repr(number):
             return "{:9.6f}".format(number)
