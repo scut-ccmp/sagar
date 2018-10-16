@@ -16,6 +16,7 @@ class Filter(object):
 
 class MinDistanceFilter(Filter):
     """
+    参数中的element是表示元素的字符串
     最小距离过滤器（连通性过滤器）
     当返回True时表示该结构中指定元素的距离在晶体中不相连，分散，可接受
     当返回False时藐视该结构中指定元素的距离在晶体中过近，相连，不接受
