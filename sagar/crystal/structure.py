@@ -324,9 +324,9 @@ class MutableCell(object):
         lattice = imcell.lattice
         sites = []
 
-        for s in zip(imcell.positions.tolist(), imcell.atoms.tolist()):
-            sites.append(s)
-            
+        for p, e in zip(imcell.positions.tolist(), imcell.atoms.tolist()):
+            sites.append([p, get_symbol(e)])
+
         return cls(lattice, sites)
 
     def add_site(self, site):
