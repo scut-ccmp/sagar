@@ -358,8 +358,9 @@ class MutableCell(object):
                     "   c: " + ' '.join(map(_repr, lattice[2]))]
         out_pos = []
         out_pos.append("Sites:")
-        for s in self._sites:
-            o = ' '.join(map(_repr, s[0])) + ' ' + s[1]
+        for idx, s in enumerate(self._sites):
+            idx = '[' + str(idx) + ']:'
+            o = idx + ' '.join(map(_repr, s[0])) + ' ' + s[1]
             out_pos.append(o)
 
         outs = out_latt + out_pos
