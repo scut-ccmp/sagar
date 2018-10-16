@@ -319,6 +319,16 @@ class MutableCell(object):
                     numpy.array(atoms))
         return cell
 
+    @classmethod
+    def from_cell(cls, imcell):
+        lattice = imcell.lattice
+        sites = []
+
+        for s in zip(imcell.positions.tolist(), imcell.atoms.tolist()):
+            sites.append(s)
+            
+        return cls(lattice, sites)
+
     def add_site(self, site):
         """
         """

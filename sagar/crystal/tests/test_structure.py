@@ -200,6 +200,25 @@ class TestMutableCell(unittest.TestCase):
                                                                     0.125, 0.125, 0.125]).reshape((2, 3)))
         numpy.testing.assert_almost_equal(c.atoms, numpy.array([14, 14]))
 
+    def test_from_cell(self):
+        lattice = numpy.copy(self.lattice)
+        positions = numpy.array([0.0, 0.0, 0.0,
+                                 0.25, 0.25, 0.25]).reshape((2, 3))
+        atoms = numpy.array([6, 6])
+        origin_lattice = numpy.copy(lattice)
+        origin_positions = numpy.copy(positions)
+        origin_atoms = numpy.copy(atoms)
+
+        cell = Cell(lattice, positions, atoms)
+        mcell = MutableCell.from_cell(cell)
+        self.assertTrue(isinstance(mcell, MutableCell))
+
+        # Make sure mcell modified not change the cell
+        mcell.remove_site(0)
+        numpy.testing.assert_almost_equal(cell.lattice, origin_lattice)
+        numpy.testing.assert_almost_equal(cell.positions, origin_positions)
+        numpy.testing.assert_almost_equal(cell.atoms, origin_atoms)
+
     def test_add_site(self):
         lattice = numpy.copy(self.lattice)
         mcell = MutableCell(lattice)
