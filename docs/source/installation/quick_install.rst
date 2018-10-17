@@ -140,7 +140,7 @@ windows下的软件包安装同样依赖于上述软件，上述软件在anacond
 python非官方的包中找到`spglib`这个轮子(wheel),
 地址在`这 <https://www.lfd.uci.edu/~gohlke/pythonlibs/#pycurl>`_, 可以在这里选择一个与你的电脑相匹配的32位或64位的wheel就可以了.
 
-打开windows下的命令行界面 ``cmd`` ，执行
+打开windows下的命令行界面 ``cmd`` ，执行::
 
     > pip install 目录\spglib-1.10.4.11-cp36-cp36m-win_amd64.whl
 
@@ -151,13 +151,13 @@ python非官方的包中找到`spglib`这个轮子(wheel),
 
 首先在本地解压sagar-master.zip,进入sagar-master目录，打开 ``setup.py`` 文件，删除 ``"spglib==1.9.9.18"`` 部分。
 
-然后在 ``cmd`` 下进入到sagar目录，执行
+然后在 ``cmd`` 下进入到sagar目录，执行::
 
 	(根据自己的文件位置进行操作，例如)
 	> G：
 	> cd software/sagar-master/sagar-master
 	
-最后，执行
+最后，执行::
 
 	> pip install -e .
 
