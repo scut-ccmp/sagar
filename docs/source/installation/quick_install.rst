@@ -138,7 +138,7 @@ windows下的软件包安装同样依赖于上述软件，上述软件在anacond
 此安装的时候会报错, `visual studio C++ 14.0 is required`.
 当然我自己试了一下并没有什么用, 可能是打开的方式不对... 最后在
 python非官方的包中找到`spglib`这个轮子(wheel),
-地址在`这 <https://www.lfd.uci.edu/~gohlke/pythonlibs/#pycurl>`_, 可以在这里选择一个与你的电脑相匹配的32位或64位的wheel就可以了.
+地址在`这 <https://www.lfd.uci.edu/~gohlke/pythonlibs/#spglib>`_, 可以在这里选择一个与你的电脑相匹配的32位或64位的wheel就可以了.
 
 打开windows下的命令行界面 ``cmd`` ，执行::
 
