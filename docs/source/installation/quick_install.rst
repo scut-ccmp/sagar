@@ -110,17 +110,66 @@ virtual environment进行独立python环境的管理。
 ---------------
 Windows系统下的安装
 ---------------
+
+依赖软件的安装
++++++++++++++++++++++++++++
+
+windows下的软件包安装同样依赖于上述软件，上述软件在anaconda软件中有着很好的管理，因此在安装 ``sagar`` 之前可以优先安装anaconda。
+
+* `anaconda`_ (一个开源的Python发行版本，其包含了conda、Python等180多个科学包及其依赖项)
+
+.. _anaconda: https://mirrors.tuna.tsinghua.edu.cn/anaconda/archive/
+
+首先下载最新版 ``anaconda`` 的windows32位或64位。安装时一直按确定或继续直到安装成功。
+
+下载 ``sagar`` 软件包
+++++++++++++++++++++++++++++
+
+首先打开组里的`Documentation blog`_,点开 ``sagar`` ，打开其中仓库地址。
+
+点击 ``Clone or download`` 中的 ``Download ZIP`` 选项,下载sagar软件包到本地。
+.. _Documentation blog:https://scut-ccmp.github.io
+
+
+安装spglib
+++++++++++++++++++++++++++++++++
+
 该包由于依赖于`spglib`这个包, 需要C++的编译器进行编译, 因
 此安装的时候会报错, `visual studio C++ 14.0 is required`.
 当然我自己试了一下并没有什么用, 可能是打开的方式不对... 最后在
 python非官方的包中找到`spglib`这个轮子(wheel),
-地址在`这 <https://www.lfd.uci.edu/~gohlke/pythonlibs/#pycurl>`_,
- 可以在这里选择一个与你的电脑相匹配的32位或64位的wheel就可以了.
+地址在`这 <https://www.lfd.uci.edu/~gohlke/pythonlibs/#pycurl>`_, 可以在这里选择一个与你的电脑相匹配的32位或64位的wheel就可以了.
+
+打开windows下的命令行界面 ``cmd`` ，执行
+
+    > pip install 目录\spglib-1.10.4.11-cp36-cp36m-win_amd64.whl
+
+	出现Successfully installed spglib-1.10.4.11，即安装完成。
+
+安装 ``sagar`` 软件包
++++++++++++++++++++++++++++++++
+
+首先在本地解压sagar-master.zip,进入sagar-master目录，打开 ``setup.py`` 文件，删除 ``"spglib==1.9.9.18"`` 部分。
+
+然后在 ``cmd`` 下进入到sagar目录，执行
+
+	(根据自己的文件位置进行操作，例如)
+	> G：
+	> cd software/sagar-master/sagar-master
+	
+最后，执行
+
+	> pip install -e .
 
 
+(option) 运行nose2执行单元测试
++++++++++++++++++++++++++++++++++++++++++
 
+进入sagar目录，执行::
 
+    $ nose2 -v
 
+测试通过则软件确保可用。
 
 
 现在你就可以开始使用软件包，或者继续查看后续手册 :ref:`get-started`.
