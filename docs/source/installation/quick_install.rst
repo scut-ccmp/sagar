@@ -125,11 +125,11 @@ windows下的软件包安装同样依赖于上述软件，上述软件在anacond
 下载 ``sagar`` 软件包
 ++++++++++++++++++++++++++++
 
-首先打开组里的 `Documentation blog`_ ,点开 ``sagar`` ，打开其中仓库地址。
+首先打开组里的 `blog`_ ,点开 ``sagar`` ，打开其中仓库地址。
 
 点击 ``Clone or download`` 中的 ``Download ZIP`` 选项,下载sagar软件包到本地.
 
-.. _Documentation blog:https://scut-ccmp.github.io
+.. _blog: https://scut-ccmp.github.io
 
 
 安装spglib
