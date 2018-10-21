@@ -125,7 +125,7 @@ windows下的软件包安装同样依赖于上述软件，上述软件在anacond
 下载 ``sagar`` 软件包
 ++++++++++++++++++++++++++++
 
-这里给出代码仓库的地址: `resource`_
+这里给出代码仓库的地址: `resource`_ 
 
 .. _resource :https://github.com/scut-ccmp/sagar
 
