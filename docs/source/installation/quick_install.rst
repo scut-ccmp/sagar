@@ -125,9 +125,10 @@ windows下的软件包安装同样依赖于上述软件，上述软件在anacond
 下载 ``sagar`` 软件包
 ++++++++++++++++++++++++++++
 
-首先打开组里的`Documentation blog`_,点开 ``sagar`` ，打开其中仓库地址。
+首先打开组里的 `Documentation blog`_ ,点开 ``sagar`` ，打开其中仓库地址。
 
-点击 ``Clone or download`` 中的 ``Download ZIP`` 选项,下载sagar软件包到本地。
+点击 ``Clone or download`` 中的 ``Download ZIP`` 选项,下载sagar软件包到本地.
+
 .. _Documentation blog:https://scut-ccmp.github.io
 
 
@@ -137,8 +138,10 @@ windows下的软件包安装同样依赖于上述软件，上述软件在anacond
 该包由于依赖于`spglib`这个包, 需要C++的编译器进行编译, 因
 此安装的时候会报错, `visual studio C++ 14.0 is required`.
 当然我自己试了一下并没有什么用, 可能是打开的方式不对... 最后在
-python非官方的包中找到`spglib`这个轮子(wheel),
-地址在`这 <https://www.lfd.uci.edu/~gohlke/pythonlibs/#spglib>`_, 可以在这里选择一个与你的电脑相匹配的32位或64位的wheel就可以了.
+python非官方的包中找到 `spglib`_ 这个轮子(wheel), 可以在这里选择一个
+与你的电脑相匹配的32位或64位的wheel就可以了.
+
+.. _spglib: https://www.lfd.uci.edu/~gohlke/pythonlibs/#spglib
 
 打开windows下的命令行界面 ``cmd`` ，执行::
 
@@ -156,7 +159,7 @@ python非官方的包中找到`spglib`这个轮子(wheel),
 	(根据自己的文件位置进行操作，例如)
 	> G：
 	> cd software/sagar-master/sagar-master
-	
+
 最后，执行::
 
 	> pip install -e .
