@@ -152,7 +152,7 @@ windows下的软件包安装同样依赖于上述软件，上述软件在anacond
 安装 ``sagar`` 软件包
 +++++++++++++++++++++++++++++++
 
-首先在本地解压sagar-master.zip,进入sagar-master目录，打开 ``setup.py`` 文件，删除 ``"spglib==1.9.9.18"`` 部分。
+首先在本地解压sagar-master.zip, 进入sagar-master目录.
 
 然后在 ``cmd`` 下进入到sagar目录，执行::
 
