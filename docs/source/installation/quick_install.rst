@@ -120,7 +120,7 @@ windows下的软件包安装同样依赖于上述软件，上述软件在anacond
 
 .. _anaconda: https://mirrors.tuna.tsinghua.edu.cn/anaconda/archive/
 
-首先下载最新版 ``anaconda`` 的windows32位或64位。安装时一直按确定或继续直到安装成功。
+首先下载最新版 ``anaconda`` 的windows32位或64, 安装时一直按确定或继续直到安装成功。
 
 下载 ``sagar`` 软件包
 ++++++++++++++++++++++++++++
@@ -131,25 +131,20 @@ windows下的软件包安装同样依赖于上述软件，上述软件在anacond
 
 点击 ``Clone or download`` 中的 ``Download ZIP`` 选项,下载sagar软件包到本地.
 
-.. _blog: https://scut-ccmp.github.io
 
-
-安装spglib
+安装Visual build tools
 ++++++++++++++++++++++++++++++++
 
-该包由于依赖于`spglib`这个包, 需要C++的编译器进行编译, 因
-此安装的时候会报错, `visual studio C++ 14.0 is required`.
-当然我自己试了一下并没有什么用, 可能是打开的方式不对... 最后在
-python非官方的包中找到 `spglib`_ 这个轮子(wheel), 可以在这里选择一个
-与你的电脑相匹配的32位或64位的wheel就可以了.
+该包由于依赖于`spglib`这个包, 需要C++的编译器进行编译, 但是一般windows上并没有
+安装Visual Studio这样的编译器, 因此安装的时候会报
+错: `visual studio C++ 14.0 is required`. 所以我们建议使
+用 `visualcppbuildtoos.exe` 这个安装包来安装一系列所
+需要的编译工具, 地址在这:  `vs_buildtools`_.
 
-.. _spglib: https://www.lfd.uci.edu/~gohlke/pythonlibs/#spglib
+.. _vs_buildtoos: https://github.com/ChangChunHe/Sundries/blob/master/visualcppbuildtools_full.exe
 
-打开windows下的命令行界面 ``cmd`` ，执行::
+点击右上角的 ``Download`` 按钮.
 
-    > pip install 目录\spglib-1.10.4.11-cp36-cp36m-win_amd64.whl
-
-	出现Successfully installed spglib-1.10.4.11，即安装完成。
 
 安装 ``sagar`` 软件包
 +++++++++++++++++++++++++++++++
