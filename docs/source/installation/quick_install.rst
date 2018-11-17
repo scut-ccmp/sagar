@@ -139,9 +139,9 @@ windows下的软件包安装同样依赖于上述软件，上述软件在anacond
 安装Visual Studio这样的编译器, 因此安装的时候会报
 错: `visual studio C++ 14.0 is required`. 所以我们建议使
 用 `visualcppbuildtoos.exe` 这个安装包来安装一系列所
-需要的编译工具, 地址在这:  `vs_buildtools`_.
+需要的编译工具, 地址在这:  `vsbuildtools`_.
 
-.. _vs_buildtoos: https://github.com/ChangChunHe/Sundries/blob/master/visualcppbuildtools_full.exe
+.. _vsbuildtools: https://github.com/ChangChunHe/Sundries/blob/master/visualcppbuildtools_full.exe
 
 点击右上角的 ``Download`` 按钮.
 
