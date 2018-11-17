@@ -122,15 +122,6 @@ windows下的软件包安装同样依赖于上述软件，上述软件在anacond
 
 首先下载最新版 ``anaconda`` 的windows32位或64, 安装时一直按确定或继续直到安装成功。
 
-下载 ``sagar`` 软件包
-++++++++++++++++++++++++++++
-
-这里给出代码仓库的地址: `resource`_ ,
-
-.. _resource: https://github.com/scut-ccmp/sagar
-
-点击 ``Clone or download`` 中的 ``Download ZIP`` 选项,下载sagar软件包到本地.
-
 
 安装Visual build tools
 ++++++++++++++++++++++++++++++++
@@ -143,7 +134,19 @@ windows下的软件包安装同样依赖于上述软件，上述软件在anacond
 
 .. _vsbuildtools: https://github.com/ChangChunHe/Sundries/blob/master/visualcppbuildtools_full.exe
 
-点击右上角的 ``Download`` 按钮.
+点击右上角的 ``Download`` 按钮即可下载. 接着按照安装的步骤一直下一步即可. 注意这个工具会帮你
+下载一个大约3G的visual studio maketools, 大概要等待半个小时左右的时间才可以安装成功.
+
+
+下载 ``sagar`` 软件包
+++++++++++++++++++++++++++++
+
+安装好上一步的工具之后就可以安装``sagar``这个包了.
+先下载这个包的源码, 这里给出代码仓库的地址: `resource`_ ,
+
+.. _resource: https://github.com/scut-ccmp/sagar
+
+点击 ``Clone or download`` 中的 ``Download ZIP`` 选项,下载sagar软件包到本地.
 
 
 安装 ``sagar`` 软件包
