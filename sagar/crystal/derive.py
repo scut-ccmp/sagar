@@ -61,10 +61,10 @@ class PermutationGroup(object):
             new_positions = numpy.matmul(origin_positions, rot.T) + trans
             moded = numpy.ones_like(new_positions, dtype='intc')
             new_positions = numpy.mod(new_positions, moded)
-            new_positions = refine_positions(new_positions)
+            new_positions = refine_positions(new_positions, atol=symprec)
             # 寻找置换矩阵
             for j, row in enumerate(origin_positions):
-                row = refine_positions(row)
+                row = refine_positions(row, atol=symprec)
                 idx = numpy.where(
                     (numpy.isclose(row, new_positions, atol=symprec)).all(axis=1))[0]
                 result[i, j] = idx
