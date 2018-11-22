@@ -91,9 +91,10 @@ def _read_string(data):
         coortype = lines[line_coortype].split()[0]
 
     if coortype[0] in "cCkK":
-        raise ValueError("Sorry! Cartesian coordinates "
-                         "are not supported now, "
-                         "please modify your input file.")
+        line_first_pos = line_coortype + 1
+        iscart=True
+    else:
+        iscart =False
 
     if coortype[0] in "dD":
         line_first_pos = line_coortype + 1
@@ -104,7 +105,8 @@ def _read_string(data):
         s = lines[i].split()
         vec = float(s[0]), float(s[1]), float(s[2])
         positions.append(vec)
-
+    if iscart:
+        positions = numpy.dot(numpy.array(positions),numpy.linalg.inv(lattice))
     return Cell(lattice, positions, atoms)
 
 
