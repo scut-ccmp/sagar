@@ -146,6 +146,7 @@ class ConfigurationGenerator(object):
         tuple[0]: Cell object, a list of non-redundant configurations of certain volume supercell.
         tuple[1]: int object, degeneracy of the configuration in all configurations of this volume.
         """
+        # TODO: if it is a supercell as input: get Error
         # 该函数产生特定体积下所有构型（包括超胞）和简并度，用于统计平均
         hnfs = non_dup_hnfs(self._pcell, volume, dimension, symprec)
         dict_trans = {}
@@ -160,6 +161,7 @@ class ConfigurationGenerator(object):
             # trans = dict_trans[quotient]
             # rots = hfpg.get_pure_rotations(symprec)
             perms = hfpg.get_symmetry_perms(symprec)
+            import pdb; pdb.set_trace()
 
             supercell = self._pcell.extend(h)
             _sites = numpy.repeat(sites, volume, axis=0)
