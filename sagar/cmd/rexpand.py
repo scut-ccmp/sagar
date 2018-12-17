@@ -50,7 +50,7 @@ def _export_supercell(pcell, comment, dimension, v, symprec, comprec, verbose):
     spinner = Spinner()
     spinner.start()
     cells = cells_nonredundant(
-        pcell, v, symprec=symprec, comprec=comprec)
+        pcell, v, dimension, symprec=symprec, comprec=comprec)
     for idx, c in enumerate(cells):
         if verbose:
             print("    " + "No.{:d}: Processing".format(idx))
