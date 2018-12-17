@@ -143,7 +143,7 @@ def conf(cell_filename, comment, pmode, cmode, dimension, volume, element, subst
         e_n = e_total - sum(number)    # 第一个元素的数量
         e_num = [e_n] + list(number)    # 各个元素的数量
         confs = cg.cons_specific_volume(
-            sites, volume=max_v, e_num=e_num, symprec=symprec)
+            sites, volume=max_v, e_num=e_num, dimension=dimension, symprec=symprec)
         f_deg = open('deg.txt', 'a')
         for idx, (c, d) in enumerate(confs):
             filename = '{:s}_id{:d}'.format(comment, idx)

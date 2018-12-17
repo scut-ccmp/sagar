@@ -161,7 +161,6 @@ class ConfigurationGenerator(object):
             # trans = dict_trans[quotient]
             # rots = hfpg.get_pure_rotations(symprec)
             perms = hfpg.get_symmetry_perms(symprec)
-            import pdb; pdb.set_trace()
 
             supercell = self._pcell.extend(h)
             _sites = numpy.repeat(sites, volume, axis=0)
