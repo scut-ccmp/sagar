@@ -319,6 +319,16 @@ class MutableCell(object):
                     numpy.array(atoms))
         return cell
 
+    @classmethod
+    def from_cell(cls, imcell):
+        lattice = imcell.lattice
+        sites = []
+
+        for p, e in zip(imcell.positions.tolist(), imcell.atoms.tolist()):
+            sites.append([p, get_symbol(e)])
+
+        return cls(lattice, sites)
+
     def add_site(self, site):
         """
         """
@@ -337,6 +347,15 @@ class MutableCell(object):
         vacc_site = [pos, 'Vacc']
         self.set_site(idx, vacc_site)
 
+    def get_site(self, idx):
+        return self._sites[idx]
+
+    def get_car_site(self, idx):
+        fs = self.get_site(idx)
+        car = frac_to_car(self._lattice, fs[0])
+
+        return [tuple(car), fs[1]]
+
     def __repr__(self):
         def _repr(number):
             return "{:9.6f}".format(number)
@@ -348,8 +367,9 @@ class MutableCell(object):
                     "   c: " + ' '.join(map(_repr, lattice[2]))]
         out_pos = []
         out_pos.append("Sites:")
-        for s in self._sites:
-            o = ' '.join(map(_repr, s[0])) + ' ' + s[1]
+        for idx, s in enumerate(self._sites):
+            idx = '[' + str(idx) + ']:'
+            o = idx + ' '.join(map(_repr, s[0])) + ' ' + s[1]
             out_pos.append(o)
 
         outs = out_latt + out_pos

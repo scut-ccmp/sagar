@@ -41,9 +41,10 @@ def _get_rand_vec(distance):
 def remove_sites_in_a_circle(mcell, cc, radius, list_ele=None):
     """
     移除以cc为圆心，radius为半径的圆内，所有ele的原子。
-    cc: 圆心 (x, y, z) 笛卡尔坐标
+    cc: 圆心 (x, y, z) 分数坐标
     radius: 半径 单位为A
     ele: 要删除的元素的list，若为None，则删除所有元素找到的位点
+        这里使用元素符号的列表
     """
     for idx, s in enumerate(mcell._sites):
         if _is_close_in_radius(mcell._lattice, cc, s[0], radius) and _is_in_ele(s[1], list_ele):
