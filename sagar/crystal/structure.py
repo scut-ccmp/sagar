@@ -350,6 +350,13 @@ class MutableCell(object):
     def get_site(self, idx):
         return self._sites[idx]
 
+    def get_sites(self, start=None, stop=None, step=1):
+        """
+        使用slice(start, stop, step)获取多个原子.
+        """
+        idxs = slice(start, stop, step)
+        return self._sites[idxs]
+
     def get_car_site(self, idx):
         fs = self.get_site(idx)
         car = frac_to_car(self._lattice, fs[0])
