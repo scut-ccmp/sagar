@@ -347,6 +347,22 @@ class MutableCell(object):
         vacc_site = [pos, 'Vacc']
         self.set_site(idx, vacc_site)
 
+    def rotate_site_by_z(self, idx, cc, angle):
+        """
+        绕z旋转,则cc为(x,y),z方向确定不动.
+        将idx的原子绕cc为圆心旋转angle度,angle单位是度,不是\pi
+        """
+        r_matrix = numpy.array([[numpy.cos(angle), -numpy.sin(angle)],
+                                [numpy.sin(angle), numpy.cos(angle)]])
+        x, y, z = self._sites[idx][0]
+        e = self._sites[idx][1]
+        x0, y0 = cc
+        vx, vy = x-x0, y-y0
+        new_vx, new_vy = numpy.matmul([vx, vy], r_matrix)
+        new_x, new_y = new_vx+x0, new_vy+y0
+        new_site = [(new_x, new_y, z), e]
+        self.set_site(idx, new_site)
+
     def get_site(self, idx):
         return self._sites[idx]
 

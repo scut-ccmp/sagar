@@ -117,7 +117,7 @@ def conf(cell_filename, comment, pmode, cmode, dimension, volume, element, subst
         (min_v, max_v) = volume
         sites = _get_sites(list(cell.atoms), element, substitutes)
         confs = cg.cons_specific_volume(
-            sites, volume=max_v, e_num=None, symprec=symprec)
+            sites, volume=max_v, e_num=None, dimension=dimension, symprec=symprec)
         f_deg = open('deg.txt', 'a')
         for idx, (c, d) in enumerate(confs):
             filename = '{:s}_id{:d}'.format(comment, idx)

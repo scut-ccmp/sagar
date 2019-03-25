@@ -250,6 +250,18 @@ class TestMutableCell(unittest.TestCase):
         self.assertEqual(mcell._sites[0], [(-0.125, -0.125, -0.125), "Si"])
         self.assertEqual(mcell._sites[1], [(0.125, 0.125, 0.125), "Vacc"])
 
+    def test_rotate_site_by_z(self):
+        lattice = numpy.copy(self.lattice)
+        si_sites = [[(-0.125, -0.125, -0.125), "Si"],
+                    [(0.125, 0.125, 0.125), "Si"]]
+        mcell = MutableCell(lattice, sites=si_sites)
+        mcell.rotate_site_by_z(1, (0,0), 90)
+        self.assertEqual(mcell._sites[1], [(0.125, -0.125, 0.125), "Si"])
+
+        mcell = MutableCell(lattice, sites=si_sites)
+        mcell.rotate_site_by_z(1, (0.125,0), 90)
+        self.assertEqual(mcell._sites[1], [(0.25, 0.0, 0.125), "Si"])
+
     def test_get_site(self):
         lattice = numpy.copy(self.lattice)
         si_sites = [[(-0.125, -0.125, -0.125), "Si"],
