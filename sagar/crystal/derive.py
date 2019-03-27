@@ -126,10 +126,10 @@ class ConfigurationGenerator(object):
                 supercell = self._pcell.extend(h)
                 _sites = numpy.repeat(sites, volume, axis=0)
 
-                for mol, _ in remove_redundant(supercell.positions, _sites, perms):
+                for mol, d in remove_redundant(supercell.positions, _sites, perms):
                     c = Cell(supercell.lattice, mol[0], mol[1])
                     if c.is_primitive(symprec):
-                        yield c
+                        yield (c, d)
 
     # 特定体积胞
     def cons_specific_volume(self, sites, volume=2, e_num=None, dimension=3, symprec=1e-5):

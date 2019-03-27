@@ -102,10 +102,15 @@ def conf(cell_filename, comment, pmode, cmode, dimension, volume, element, subst
         sites = _get_sites(list(cell.atoms), element, substitutes)
         confs = cg.cons_max_volume(
             sites, max_v, min_volume=min_v, dimension=dimension, symprec=symprec)
-        for idx, c in enumerate(confs):
+        f_deg = open('deg.txt', 'a')
+        for idx, (c, d) in enumerate(confs):
             c = c.get_primitive_cell()
             filename = '{:s}_id{:d}'.format(comment, idx)
             write_vasp(c, filename)
+            deg_line = filename + '{:10d}'.format(d) + '\n'
+            f_deg.write(deg_line)
+        f_deg.close()
+        
         spinner.stop()
         click.secho("DONE", bold=True, bg='green', fg='white')
     elif pmode == 'svc' and cmode == 'vc':
