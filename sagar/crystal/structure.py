@@ -1,12 +1,11 @@
 # -*- coding: utf-8 -*-
 import numpy
+import spglib
 
 from itertools import product
-import spglib
 
 from sagar.toolkit.mathtool import closest_pair
 from sagar.element.base import periodic_table_dict, get_symbol, symbol2number
-
 
 def car_to_frac(lattice, car_vec):
     inv_lattice = numpy.linalg.inv(lattice)
