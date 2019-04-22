@@ -20,7 +20,7 @@ setup(
     packages=['sagar'],
     include_package_data=True,
     package_data={},
-    keywords = 'crystal material strucutre DFT'
+    keywords = 'crystal material strucutre DFT',
     install_requires=[
         "numpy",
         "spglib",
@@ -43,7 +43,7 @@ setup(
         "Programming Language :: Python :: 2.7",
         "Operating System :: POSIX :: Linux",
         "Intended Audience :: Science/Research",
-        "License :: MIT License",
+        "License :: OSI Approved :: MIT License",
         "Topic :: Scientific/Engineering :: Chemistry",
         "Topic :: Scientific/Engineering :: Physics",
         "Natural Language :: Chinese (Simplified)",
