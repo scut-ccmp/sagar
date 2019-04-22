@@ -523,8 +523,3 @@ class TestSnfHnf(unittest.TestCase):
                 s_set.add(s_flat_tuple)
             b.append(len(s_set))
         self.assertEqual(b, wanted_b_quick)
-
-
-if __name__ == "__main__":
-    import nose2
-    nose2.main()

@@ -112,8 +112,3 @@ class TestDerive(unittest.TestCase):
     #     all_type = self.cg.get_configurations(sites, e_num)
     #     num_confs = len([i for i in all_type])
     #     self.assertEqual(num_confs, 871)
-
-
-if __name__ == "__main__":
-    import nose2
-    nose2.main()

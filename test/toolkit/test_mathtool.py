@@ -39,8 +39,3 @@ class TestCommonUtils(unittest.TestCase):
                               3, 60, 6,
                               10.1, 10.2, 10.3]).reshape((-1, 3))
         self.assertEqual(closest_pair(points), 5)
-
-
-if __name__ == "__main__":
-    import nose2
-    nose2.main()

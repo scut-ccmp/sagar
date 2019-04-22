@@ -349,6 +349,7 @@ class MutableCell(object):
 
     def rotate_site_by_z(self, idx, cc, degrees, radians=None):
         """
+        需要确保是二维材料
         绕z旋转,则cc为(x,y),z方向确定不动.
         将idx的原子绕cc为圆心旋转angle度,angle单位是度,不是PI
         """

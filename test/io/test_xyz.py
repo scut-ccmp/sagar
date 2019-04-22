@@ -41,8 +41,3 @@ H1
         got = _write_string(mol, long_format=False)
 
         self.assertEqual(got, wanted)
-
-
-if __name__ == "__main__":
-    import nose2
-    nose2.main()
