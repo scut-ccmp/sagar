@@ -2,6 +2,8 @@
 import unittest
 import numpy
 
+import spglib
+
 from sagar.crystal.structure import Cell
 from sagar.crystal.derive import ConfigurationGenerator as CG
 
@@ -120,8 +122,3 @@ class TestDerive(unittest.TestCase):
         got = len([i for i in con])
 
         self.assertEqual(got, wanted)
-
-
-if __name__ == "__main__":
-    import nose2
-    nose2.main()

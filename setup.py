@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from setuptools import setup, find_packages
+from setuptools import setup
 
 __author__ = "Jason Eu"
 __license__ = "MIT"
@@ -17,10 +17,9 @@ setup(
     author='Jason Eu',
     author_email='morty.yu@yahoo.com',
     license=__license__,
-    packages=['sagar'],
     include_package_data=True,
     package_data={},
-    keywords = 'crystal material strucutre DFT'
+    keywords = 'crystal material strucutre DFT',
     install_requires=[
         "numpy",
         "spglib",
@@ -43,14 +42,23 @@ setup(
         "Programming Language :: Python :: 2.7",
         "Operating System :: POSIX :: Linux",
         "Intended Audience :: Science/Research",
-        "License :: MIT License",
+        "License :: OSI Approved :: MIT License",
         "Topic :: Scientific/Engineering :: Chemistry",
         "Topic :: Scientific/Engineering :: Physics",
         "Natural Language :: Chinese (Simplified)",
         "Natural Language :: English"],
     entry_points={
         'console_scripts': [
-            'rexpand = sagar.cmd.rexpand:cli',
+            'rexpand = sagar.rexpand:cli',
         ],
-    }
+    },
+    packages=[
+        'sagar',
+        'sagar.crystal',
+        'sagar.element',
+        'sagar.io',
+        'sagar.molecule',
+        'sagar.toolkit',
+    ],
+    test_suite='test',
 )

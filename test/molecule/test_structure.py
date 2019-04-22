@@ -46,8 +46,3 @@ class TestMol(unittest.TestCase):
         mol = Molecule(cco_pos, cco_atoms)
         self.assertFalse(mol.check(elements=['C'], limit=0.1))
         self.assertTrue(mol.check(elements=['O'], limit=0.1))
-
-
-if __name__ == "__main__":
-    import nose2
-    nose2.main()

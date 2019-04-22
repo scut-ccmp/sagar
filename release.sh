@@ -1,3 +1,4 @@
+# $ sh release.sh 0.6.0
 PACKAGE="sagar"
 VERSION_FILE=${PACKAGE}/version.py
 
@@ -10,6 +11,8 @@ while true; do
     * ) echo "Please answer yes or no.";;
   esac
 done
+
+echo $version
 
 # 字符串的1表示第一行
 sed -i "1 s/__version__* =.*/__version__ = \"${version}\"/" $VERSION_FILE

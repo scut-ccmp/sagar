@@ -103,8 +103,3 @@ Cartesian
         wanted = Cell(latt, positions, atoms)
         got = _read_string(data)
         self.assertLess(numpy.sum(abs(got.positions-wanted.positions)),1e-4)
-
-
-if __name__ == "__main__":
-    import nose2
-    nose2.main()

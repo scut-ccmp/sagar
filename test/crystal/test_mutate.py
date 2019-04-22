@@ -68,15 +68,15 @@ class TestMutableMethods(unittest.TestCase):
         rotate_sites_in_a_circle_by_z(mcell, (0.416666, 0.5833333, 0.5), radius=1.0, degrees=90)
 
         c = mcell.to_cell()
-        expected_positions = numpy.array([[0.       , 0.       , 0.5      ],
-                                          [0.       , 0.5      , 0.5      ],
-                                          [0.5      , 0.       , 0.5      ],
-                                          [0.3333327, 0.4999993, 0.5      ],
-                                          [0.33333  , 0.166666 , 0.5      ],
-                                          [0.4999987, 0.6666693, 0.5      ],
-                                          [0.83333  , 0.166666 , 0.5      ],
-                                          [0.83333  , 0.666666 , 0.5      ]]
-)
+        expected_positions = numpy.array([[0.        , 0.        , 0.5       ],
+                                          [0.        , 0.5       , 0.5       ],
+                                          [0.5       , 0.        , 0.5       ],
+                                          [0.27232809, 0.43899781, 0.5       ],
+                                          [0.33333   , 0.166666  , 0.5       ],
+                                          [0.56100438, 0.72767076, 0.5       ],
+                                          [0.83333   , 0.166666  , 0.5       ],
+                                          [0.83333   , 0.666666  , 0.5       ]])
+
         numpy.testing.assert_almost_equal(c.positions, expected_positions)
 
 
