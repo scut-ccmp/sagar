@@ -319,6 +319,16 @@ class MutableCell(object):
                     numpy.array(atoms))
         return cell
 
+    @classmethod
+    def from_cell(cls, imcell):
+        lattice = imcell.lattice
+        sites = []
+
+        for p, e in zip(imcell.positions.tolist(), imcell.atoms.tolist()):
+            sites.append([p, get_symbol(e)])
+
+        return cls(lattice, sites)
+
     def add_site(self, site):
         """
         """
@@ -337,6 +347,41 @@ class MutableCell(object):
         vacc_site = [pos, 'Vacc']
         self.set_site(idx, vacc_site)
 
+    def rotate_site_by_z(self, idx, cc, degrees, radians=None):
+        """
+        绕z旋转,则cc为(x,y),z方向确定不动.
+        将idx的原子绕cc为圆心旋转angle度,angle单位是度,不是\pi
+        """
+        radians = numpy.deg2rad(degrees)
+        r_matrix = numpy.array([[numpy.cos(radians), -numpy.sin(radians)],
+                                [numpy.sin(radians), numpy.cos(radians)]])
+        x, y, z = frac_to_car(self._lattice, self._sites[idx][0])
+        e = self._sites[idx][1]
+        x0, y0, _ = frac_to_car(self._lattice, cc)
+        # 原来的向量
+        vx, vy = x-x0, y-y0
+        # 旋转后的向量
+        new_vx, new_vy = numpy.matmul([vx, vy], r_matrix)
+        new_x, new_y = new_vx+x0, new_vy+y0
+        new_site = [car_to_frac(self._lattice, (new_x, new_y, z)), e]
+        self.set_site(idx, new_site)
+
+    def get_site(self, idx):
+        return self._sites[idx]
+
+    def get_sites(self, start=None, stop=None, step=1):
+        """
+        使用slice(start, stop, step)获取多个原子.
+        """
+        idxs = slice(start, stop, step)
+        return self._sites[idxs]
+
+    def get_car_site(self, idx):
+        fs = self.get_site(idx)
+        car = frac_to_car(self._lattice, fs[0])
+
+        return [tuple(car), fs[1]]
+
     def __repr__(self):
         def _repr(number):
             return "{:9.6f}".format(number)
@@ -348,8 +393,9 @@ class MutableCell(object):
                     "   c: " + ' '.join(map(_repr, lattice[2]))]
         out_pos = []
         out_pos.append("Sites:")
-        for s in self._sites:
-            o = ' '.join(map(_repr, s[0])) + ' ' + s[1]
+        for idx, s in enumerate(self._sites):
+            idx = '[' + str(idx) + ']:'
+            o = idx + ' '.join(map(_repr, s[0])) + ' ' + s[1]
             out_pos.append(o)
 
         outs = out_latt + out_pos

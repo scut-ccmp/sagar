@@ -61,10 +61,10 @@ class PermutationGroup(object):
             new_positions = numpy.matmul(origin_positions, rot.T) + trans
             moded = numpy.ones_like(new_positions, dtype='intc')
             new_positions = numpy.mod(new_positions, moded)
-            new_positions = refine_positions(new_positions)
+            new_positions = refine_positions(new_positions, atol=symprec)
             # 寻找置换矩阵
             for j, row in enumerate(origin_positions):
-                row = refine_positions(row)
+                row = refine_positions(row, atol=symprec)
                 idx = numpy.where(
                     (numpy.isclose(row, new_positions, atol=symprec)).all(axis=1))[0]
                 result[i, j] = idx
@@ -146,6 +146,7 @@ class ConfigurationGenerator(object):
         tuple[0]: Cell object, a list of non-redundant configurations of certain volume supercell.
         tuple[1]: int object, degeneracy of the configuration in all configurations of this volume.
         """
+        # TODO: if it is a supercell as input: get Error
         # 该函数产生特定体积下所有构型（包括超胞）和简并度，用于统计平均
         hnfs = non_dup_hnfs(self._pcell, volume, dimension, symprec)
         dict_trans = {}

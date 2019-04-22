@@ -50,7 +50,7 @@ def _export_supercell(pcell, comment, dimension, v, symprec, comprec, verbose):
     spinner = Spinner()
     spinner.start()
     cells = cells_nonredundant(
-        pcell, v, symprec=symprec, comprec=comprec)
+        pcell, v, dimension, symprec=symprec, comprec=comprec)
     for idx, c in enumerate(cells):
         if verbose:
             print("    " + "No.{:d}: Processing".format(idx))
@@ -117,7 +117,7 @@ def conf(cell_filename, comment, pmode, cmode, dimension, volume, element, subst
         (min_v, max_v) = volume
         sites = _get_sites(list(cell.atoms), element, substitutes)
         confs = cg.cons_specific_volume(
-            sites, volume=max_v, e_num=None, symprec=symprec)
+            sites, volume=max_v, e_num=None, dimension=dimension, symprec=symprec)
         f_deg = open('deg.txt', 'a')
         for idx, (c, d) in enumerate(confs):
             filename = '{:s}_id{:d}'.format(comment, idx)
@@ -143,7 +143,7 @@ def conf(cell_filename, comment, pmode, cmode, dimension, volume, element, subst
         e_n = e_total - sum(number)    # 第一个元素的数量
         e_num = [e_n] + list(number)    # 各个元素的数量
         confs = cg.cons_specific_volume(
-            sites, volume=max_v, e_num=e_num, symprec=symprec)
+            sites, volume=max_v, e_num=e_num, dimension=dimension, symprec=symprec)
         f_deg = open('deg.txt', 'a')
         for idx, (c, d) in enumerate(confs):
             filename = '{:s}_id{:d}'.format(comment, idx)

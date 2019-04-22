@@ -176,6 +176,15 @@ class TestMutableCell(unittest.TestCase):
                                     0.5, 0.0, 0.5,
                                     0.5, 0.5, 0.0]).reshape((3, 3))
 
+    def siteEqual(self, site_a, site_b, prec=1e-5):
+        p_a, e_a = numpy.array(site_a[0]), site_a[1]
+        p_b, e_b = numpy.array(site_b[0]), site_b[1]
+        if e_a == e_b and numpy.linalg.norm(p_a-p_b) < prec:
+            is_eq = True
+        else:
+            is_eq = False
+        return is_eq
+
     def test_init(self):
         # 创建空胞
         lattice = numpy.copy(self.lattice)
@@ -199,6 +208,25 @@ class TestMutableCell(unittest.TestCase):
         numpy.testing.assert_almost_equal(c.positions, numpy.array([0.875, 0.875, 0.875,
                                                                     0.125, 0.125, 0.125]).reshape((2, 3)))
         numpy.testing.assert_almost_equal(c.atoms, numpy.array([14, 14]))
+
+    def test_from_cell(self):
+        lattice = numpy.copy(self.lattice)
+        positions = numpy.array([0.0, 0.0, 0.0,
+                                 0.25, 0.25, 0.25]).reshape((2, 3))
+        atoms = numpy.array([6, 6])
+        origin_lattice = numpy.copy(lattice)
+        origin_positions = numpy.copy(positions)
+        origin_atoms = numpy.copy(atoms)
+
+        cell = Cell(lattice, positions, atoms)
+        mcell = MutableCell.from_cell(cell)
+        self.assertTrue(isinstance(mcell, MutableCell))
+
+        # Make sure mcell modified not change the cell
+        mcell.remove_site(0)
+        numpy.testing.assert_almost_equal(cell.lattice, origin_lattice)
+        numpy.testing.assert_almost_equal(cell.positions, origin_positions)
+        numpy.testing.assert_almost_equal(cell.atoms, origin_atoms)
 
     def test_add_site(self):
         lattice = numpy.copy(self.lattice)
@@ -230,6 +258,40 @@ class TestMutableCell(unittest.TestCase):
         self.assertEqual(len(mcell._sites), 2)
         self.assertEqual(mcell._sites[0], [(-0.125, -0.125, -0.125), "Si"])
         self.assertEqual(mcell._sites[1], [(0.125, 0.125, 0.125), "Vacc"])
+
+    def test_rotate_site_by_z(self):
+        lattice = numpy.copy(self.lattice)
+        si_sites = [[(-0.125, -0.125, -0.125), "Si"],
+                    [(0.125, 0.125, 0.125), "Si"]]
+        mcell = MutableCell(lattice, sites=si_sites)
+        mcell.rotate_site_by_z(1, (0,0,0), 90)
+        self.assertTrue(self.siteEqual(mcell._sites[1], [(0.125, -0.125, 0.125), "Si"]))
+
+        mcell = MutableCell(lattice, sites=si_sites)
+        mcell.rotate_site_by_z(1, (0.125,0,0), -90)
+        self.assertTrue(self.siteEqual(mcell._sites[1], [(0.25, 0.0, 0.125), "Si"]))
+
+        mcell = MutableCell(lattice, sites=[[(0.6, 0.6, 0.5), "C"]])
+        mcell.rotate_site_by_z(0, (0.5, 0.5,0), -90)
+        self.assertTrue(self.siteEqual(mcell._sites[0], [(0.4, 0.6, 0.5), "C"]))
+
+    def test_get_site(self):
+        lattice = numpy.copy(self.lattice)
+        si_sites = [[(-0.125, -0.125, -0.125), "Si"],
+                    [(0.125, 0.125, 0.125), "Si"]]
+        mcell = MutableCell(lattice, sites=si_sites)
+        self.assertEqual(mcell.get_site(0), [(-0.125, -0.125, -0.125), "Si"])
+        self.assertEqual(mcell.get_site(1), [(0.125, 0.125, 0.125), "Si"])
+
+    def test_get_car_site(self):
+        lattice = numpy.copy(numpy.array([0.0, 1.5, 1.5,
+                                          1.5, 0.0, 1.5,
+                                          1.5, 1.5, 0.0]).reshape(3, 3))
+        si_sites = [[(-0.125, -0.125, -0.125), "Si"],
+                    [(0.125, 0.125, 0.125), "Si"]]
+        mcell = MutableCell(lattice, sites=si_sites)
+        self.assertEqual(mcell.get_car_site(0), [(-0.375, -0.375, -0.375), "Si"])
+        self.assertEqual(mcell.get_car_site(1), [(0.375, 0.375, 0.375), "Si"])
 
 
 if __name__ == "__main__":
