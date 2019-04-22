@@ -355,13 +355,15 @@ class MutableCell(object):
         radians = numpy.deg2rad(degrees)
         r_matrix = numpy.array([[numpy.cos(radians), -numpy.sin(radians)],
                                 [numpy.sin(radians), numpy.cos(radians)]])
-        x, y, z = self._sites[idx][0]
+        x, y, z = frac_to_car(self._lattice, self._sites[idx][0])
         e = self._sites[idx][1]
-        x0, y0 = cc
+        x0, y0, _ = frac_to_car(self._lattice, cc)
+        # 原来的向量
         vx, vy = x-x0, y-y0
+        # 旋转后的向量
         new_vx, new_vy = numpy.matmul([vx, vy], r_matrix)
         new_x, new_y = new_vx+x0, new_vy+y0
-        new_site = [(new_x, new_y, z), e]
+        new_site = [car_to_frac(self._lattice, (new_x, new_y, z)), e]
         self.set_site(idx, new_site)
 
     def get_site(self, idx):

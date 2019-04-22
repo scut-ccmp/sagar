@@ -64,7 +64,6 @@ class TestMutableMethods(unittest.TestCase):
                     [(0.83333, 0.166666, 0.5), "C"],
                     [(0.83333, 0.666666, 0.5), "C"]]
 
-        og_si_sites = copy.deepcopy(si_sites)
         mcell = MutableCell(lattice, sites=si_sites)
         rotate_sites_in_a_circle_by_z(mcell, (0.416666, 0.5833333, 0.5), radius=1.0, degrees=90)
 

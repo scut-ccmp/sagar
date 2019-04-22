@@ -59,9 +59,7 @@ def rotate_sites_in_a_circle_by_z(mcell, cc, radius, degrees, radians=None, list
     """
     for idx, s in enumerate(mcell._sites):
         if _is_close_in_radius(mcell._lattice, cc, s[0], radius) and _is_in_ele(s[1], list_ele):
-            x = cc[0]
-            y = cc[1]
-            mcell.rotate_site_by_z(idx, (x, y), degrees)
+            mcell.rotate_site_by_z(idx, cc, degrees)
 
 def _is_close_in_radius(lattice, p1, p2, radius):
     # 截断圆对应的半径大于距离，说明两点在圆内，需要删除：返回True

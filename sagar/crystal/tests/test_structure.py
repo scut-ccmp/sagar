@@ -264,12 +264,16 @@ class TestMutableCell(unittest.TestCase):
         si_sites = [[(-0.125, -0.125, -0.125), "Si"],
                     [(0.125, 0.125, 0.125), "Si"]]
         mcell = MutableCell(lattice, sites=si_sites)
-        mcell.rotate_site_by_z(1, (0,0), 90)
+        mcell.rotate_site_by_z(1, (0,0,0), 90)
         self.assertTrue(self.siteEqual(mcell._sites[1], [(0.125, -0.125, 0.125), "Si"]))
 
         mcell = MutableCell(lattice, sites=si_sites)
-        mcell.rotate_site_by_z(1, (0.125,0), -90)
+        mcell.rotate_site_by_z(1, (0.125,0,0), -90)
         self.assertTrue(self.siteEqual(mcell._sites[1], [(0.25, 0.0, 0.125), "Si"]))
+
+        mcell = MutableCell(lattice, sites=[[(0.6, 0.6, 0.5), "C"]])
+        mcell.rotate_site_by_z(0, (0.5, 0.5,0), -90)
+        self.assertTrue(self.siteEqual(mcell._sites[0], [(0.4, 0.6, 0.5), "C"]))
 
     def test_get_site(self):
         lattice = numpy.copy(self.lattice)
