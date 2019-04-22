@@ -176,6 +176,15 @@ class TestMutableCell(unittest.TestCase):
                                     0.5, 0.0, 0.5,
                                     0.5, 0.5, 0.0]).reshape((3, 3))
 
+    def siteEqual(self, site_a, site_b, prec=1e-5):
+        p_a, e_a = numpy.array(site_a[0]), site_a[1]
+        p_b, e_b = numpy.array(site_b[0]), site_b[1]
+        if e_a == e_b and numpy.linalg.norm(p_a-p_b) < prec:
+            is_eq = True
+        else:
+            is_eq = False
+        return is_eq
+
     def test_init(self):
         # 创建空胞
         lattice = numpy.copy(self.lattice)
@@ -256,11 +265,11 @@ class TestMutableCell(unittest.TestCase):
                     [(0.125, 0.125, 0.125), "Si"]]
         mcell = MutableCell(lattice, sites=si_sites)
         mcell.rotate_site_by_z(1, (0,0), 90)
-        self.assertEqual(mcell._sites[1], [(0.125, -0.125, 0.125), "Si"])
+        self.assertTrue(self.siteEqual(mcell._sites[1], [(0.125, -0.125, 0.125), "Si"]))
 
         mcell = MutableCell(lattice, sites=si_sites)
-        mcell.rotate_site_by_z(1, (0.125,0), 90)
-        self.assertEqual(mcell._sites[1], [(0.25, 0.0, 0.125), "Si"])
+        mcell.rotate_site_by_z(1, (0.125,0), -90)
+        self.assertTrue(self.siteEqual(mcell._sites[1], [(0.25, 0.0, 0.125), "Si"]))
 
     def test_get_site(self):
         lattice = numpy.copy(self.lattice)
