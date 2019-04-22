@@ -13,7 +13,7 @@ setup(
     # Remenber change version in ababe.cmdline.runabalib.exec_from_cmdline()
     version = about['__version__'],
     description='Structures of Alloys Generation And Recognition',
-    long_description=open('README.rst').read()
+    long_description=open('README.rst').read(),
     author='Jason Eu',
     author_email='morty.yu@yahoo.com',
     license=__license__,
