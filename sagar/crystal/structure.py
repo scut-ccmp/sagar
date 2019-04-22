@@ -140,11 +140,12 @@ class Cell(object):
         # 适用于hnf
 
         # ---------------------选取一个大框包含目标框
-        conv = numpy.row_stack((mat, numpy.matrix([0, 0, 0])))
-        conv = numpy.row_stack((conv, numpy.matrix(mat[0] + mat[1])))
-        conv = numpy.row_stack((conv, mat[0] + mat[2]))
-        conv = numpy.row_stack((conv, mat[1] + mat[2]))
-        conv = numpy.row_stack((conv, mat[0] + mat[1] + mat[2]))
+        # import pdb; pdb.set_trace()
+        conv = numpy.vstack((mat, numpy.array([0, 0, 0])))
+        conv = numpy.vstack((conv, mat[0] + mat[1]))
+        conv = numpy.vstack((conv, mat[0] + mat[2]))
+        conv = numpy.vstack((conv, mat[1] + mat[2]))
+        conv = numpy.vstack((conv, mat[0] + mat[1] + mat[2]))
 
         ma = [0, 0, 0]
         mi = [0, 0, 0]
@@ -349,7 +350,7 @@ class MutableCell(object):
     def rotate_site_by_z(self, idx, cc, degrees, radians=None):
         """
         绕z旋转,则cc为(x,y),z方向确定不动.
-        将idx的原子绕cc为圆心旋转angle度,angle单位是度,不是\pi
+        将idx的原子绕cc为圆心旋转angle度,angle单位是度,不是PI
         """
         radians = numpy.deg2rad(degrees)
         r_matrix = numpy.array([[numpy.cos(radians), -numpy.sin(radians)],

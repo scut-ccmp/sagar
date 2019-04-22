@@ -2,7 +2,7 @@
 import unittest
 import numpy
 
-# from sagar.crystal.structure import Cell, MutableCell
+from sagar.crystal.structure import Cell, MutableCell
 
 
 class TestUtils(unittest.TestCase):

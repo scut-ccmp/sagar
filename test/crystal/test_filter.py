@@ -2,9 +2,9 @@
 import unittest
 import numpy
 
-# from sagar.crystal.filter import *
-# from sagar.crystal.structure import Cell
-# from sagar.crystal.mutate import cell_to_mcell
+from sagar.crystal.filter import *
+from sagar.crystal.structure import Cell
+from sagar.crystal.mutate import cell_to_mcell
 
 
 class TestMinDistanceFilter(unittest.TestCase):
