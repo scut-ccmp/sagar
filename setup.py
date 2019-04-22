@@ -17,7 +17,6 @@ setup(
     author='Jason Eu',
     author_email='morty.yu@yahoo.com',
     license=__license__,
-    packages=['sagar'],
     include_package_data=True,
     package_data={},
     keywords = 'crystal material strucutre DFT',
@@ -50,7 +49,16 @@ setup(
         "Natural Language :: English"],
     entry_points={
         'console_scripts': [
-            'rexpand = sagar.cmd.rexpand:cli',
+            'rexpand = sagar.rexpand:cli',
         ],
-    }
+    },
+    packages=[
+        'sagar',
+        'sagar.crystal',
+        'sagar.element',
+        'sagar.io',
+        'sagar.molecule',
+        'sagar.toolkit',
+    ],
+    test_suite='test',
 )
