@@ -51,6 +51,37 @@ class TestMutableMethods(unittest.TestCase):
 
             numpy.testing.assert_almost_equal(distance(og_car_pos, new_car_pos), 0.01)
 
+    def test_rotate_site_by_z(self):
+        lattice = numpy.array([4.912, 0.000, 0.000,
+                               -2.456, 4.254, 0.000,
+                               0.000, 0.000, 16.000])
+        si_sites = [[(0.0, 0.0, 0.5), "C"],
+                    [(0.0, 0.5, 0.5), "C"],
+                    [(0.5, 0.0, 0.5), "C"],
+                    [(0.5, 0.5, 0.5), "C"],
+                    [(0.33333, 0.166666, 0.5), "C"],
+                    [(0.33333, 0.666666, 0.5), "C"],
+                    [(0.83333, 0.166666, 0.5), "C"],
+                    [(0.83333, 0.666666, 0.5), "C"]]
+
+        og_si_sites = copy.deepcopy(si_sites)
+        mcell = MutableCell(lattice, sites=si_sites)
+        rotate_sites_in_a_circle_by_z(mcell, (0.416666, 0.5833333, 0.5), radius=1.0, degrees=90)
+
+        c = mcell.to_cell()
+        expected_positions = numpy.array([[0.       , 0.       , 0.5      ],
+                                          [0.       , 0.5      , 0.5      ],
+                                          [0.5      , 0.       , 0.5      ],
+                                          [0.3333327, 0.4999993, 0.5      ],
+                                          [0.33333  , 0.166666 , 0.5      ],
+                                          [0.4999987, 0.6666693, 0.5      ],
+                                          [0.83333  , 0.166666 , 0.5      ],
+                                          [0.83333  , 0.666666 , 0.5      ]]
+)
+        numpy.testing.assert_almost_equal(c.positions, expected_positions)
+
+
+
     def test_remove_sites_in_a_circle(self):
         # 需要测试两类情况，范围内只包含胞内原子的，和范围超出一个胞。
 
