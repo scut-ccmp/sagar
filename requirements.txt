@@ -7,7 +7,6 @@ cycler==0.10.0
 Flask==1.0.2
 funcsigs==1.0.2
 itsdangerous==0.24
-Jinja2==2.10
 kiwisolver==1.0.1
 MarkupSafe==1.0
 matplotlib==2.2.3
