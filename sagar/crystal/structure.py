@@ -284,7 +284,7 @@ class Cell(object):
 
         return reduced_cell
 
-    def get_refine_cell(self, symprec=1e-5):
+    def get_refined_cell(self, symprec=1e-5):
         spg_cell = (self.lattice, self.positions, self.atoms)
         lattice, positions, atoms = spglib.refine_cell(spg_cell, symprec)
         return self.__class__(lattice, positions, atoms)
