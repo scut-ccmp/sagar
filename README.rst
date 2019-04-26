@@ -1,13 +1,33 @@
-# sagar
+sagar
+=====
 
-[![Build Status](https://travis-ci.org/scut-ccmp/sagar.svg?branch=master)](https://travis-ci.org/scut-ccmp/sagar)
-[![codecov](https://codecov.io/gh/scut-ccmp/sagar/branch/master/graph/badge.svg)](https://codecov.io/gh/scut-ccmp/sagar)
-[![Documentation Status](https://readthedocs.org/projects/sagar/badge/?version=latest)](https://sagar.readthedocs.io/)
-[![MIT Licence](https://badges.frapsoft.com/os/mit/mit.svg?v=103)](https://opensource.org/licenses/mit-license.php)
-[![Open Source Love](https://badges.frapsoft.com/os/v1/open-source.svg?v=103)](https://github.com/ellerbrock/open-source-badges/)
-[![PyPI pyversions](https://img.shields.io/pypi/pyversions/ansicolortags.svg)](https://pypi.python.org/pypi/ansicolortags/)
+.. image :: https://travis-ci.org/scut-ccmp/sagar.svg?branch=master
+    :target: https://travis-ci.org/scut-ccmp/sagar
+    :alt: Build Status
 
-## Introduction
+.. image ::https://codecov.io/gh/scut-ccmp/sagar/branch/master/graph/badge.svg
+    :target: https://codecov.io/gh/scut-ccmp/sagar
+    :alt: codecov
+
+.. image :: https://readthedocs.org/projects/sagar/badge/?version=latest
+    :target: https://sagar.readthedocs.io/
+    :alt: Documentation Status
+
+.. image :: https://badges.frapsoft.com/os/mit/mit.svg?v=103
+    :target: https://opensource.org/licenses/mit-license.php
+    :alt: MIT Licence
+
+.. image :: https://badges.frapsoft.com/os/v1/open-source.svg?v=103
+    :target: https://opensource.org/licenses/mit-license.php
+    :alt: Open Source Love
+
+.. image :: https://img.shields.io/pypi/pyversions/ansicolortags.svg
+    :target: https://pypi.python.org/pypi/ansicolortags/
+    :alt: PyPI pyversions
+
+Introduction
+++++++++++++
+
 sagar is short for (S)Tructures of (A)lloys (G)eneration (A)nd (R)ecognition.
 
 It is a library with some uitils to deal grid site
