@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import numpy
 import spglib
+from pniggli import niggli_reduce
 
 from itertools import product
 
@@ -135,6 +136,12 @@ class Cell(object):
         Used in producing the new positions extended by a matrix
         """
         prec = 1e-5
+
+        # for 2D lattice mat[2,2] = nan
+        # import pdb; pdb.set_trace()
+        if numpy.isnan(mat[2, 2]):
+            mat[2, 2] = 1
+        mat = numpy.array(mat, dtype=int)
         #m = numpy.amax(mat)
         #_int_coor = numpy.array([i for i in product(range(m * 3), repeat=3)])
         # 适用于hnf
@@ -250,6 +257,34 @@ class Cell(object):
         lattice, positions, atoms = spglib.standardize_cell(
             spg_cell, to_primitive=True, no_idealize=True, symprec=symprec)
         return self.__class__(lattice, positions, atoms)
+
+    def _get_niggli_2D(self, vacc=16.0, eps=1e-5):
+        L = self.lattice[0:2, 0:2]
+        reduced_L = niggli_reduce(L)
+        # M = r_L . L^-1
+        # import pdb; pdb.set_trace()
+        M = numpy.matmul(reduced_L, numpy.linalg.inv(L))
+        M_3D = numpy.zeros((3, 3))
+        M_3D[:2, :2] = M
+        M_3D[2, 2] = 1
+        reduced_cell = self.extend(M_3D)
+
+        lattice = reduced_cell.lattice
+        lattice[2, 2] = vacc
+        positions = reduce_cell.posisions
+        positions = positions[:, 2] = 0.5
+        atoms = reduce_cell.atoms
+
+        return self.__class__(lattice, positions, atoms)
+
+    def _get_niggli_3D(self, eps=1e-5):
+        L = self.lattice
+        reduced_L = niggli_reduce(L)
+        # M = r_L . L^-1
+        M = numpy.matmul(reduced_L, numpy.linalg.inv(L))
+        reduced_cell = self.extend(M)
+
+        return reduced_cell
 
     def get_refine_cell(self, symprec=1e-5):
         spg_cell = (self.lattice, self.positions, self.atoms)

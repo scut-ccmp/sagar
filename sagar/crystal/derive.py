@@ -24,9 +24,14 @@ def cells_nonredundant(pcell, volume=1, dimension=3, symprec=1e-5, comprec=1e-5)
     yield:
     A list of Cell objects.
     """
-    return [pcell.extend(hnf) for hnf in non_dup_hnfs(pcell, volume, dimension, symprec, comprec)]
-    # for hnf in non_dup_hnfs(pcell, volume, symprec, comprec):
-    #     yield pcell.extend(hnf)
+    # return [pcell.extend(hnf) for hnf in non_dup_hnfs(pcell, volume, dimension, symprec, comprec)]
+    for hnf in non_dup_hnfs(pcell, volume, dimension, symprec, comprec):
+        cell = pcell.extend(hnf)
+        if dimension == 2:
+            cell = cell._get_niggli_2D(vacc=16, eps=comprec)
+        if dimension == 3:
+            cell = cell.get_primitive_cell(symprec=symprec)
+        yield cell
 
 
 class PermutationGroup(object):

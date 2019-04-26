@@ -48,7 +48,7 @@ def cell(pcell_filename, comment, dimension, volume, symprec, comprec, verbose):
 
 def _export_supercell(pcell, comment, dimension, v, symprec, comprec, verbose):
     spinner = Spinner()
-    spinner.start()
+    # spinner.start()
     cells = cells_nonredundant(
         pcell, v, dimension, symprec=symprec, comprec=comprec)
     for idx, c in enumerate(cells):
@@ -56,7 +56,7 @@ def _export_supercell(pcell, comment, dimension, v, symprec, comprec, verbose):
             print("    " + "No.{:d}: Processing".format(idx))
         filename = '{:s}_v{:d}_id{:d}'.format(comment, v, idx)
         write_vasp(c, filename)
-    spinner.stop()
+    # spinner.stop()
 
 
 @cli.command('conf', short_help="Generating configurations in grid cells or supercells.")

@@ -24,8 +24,7 @@ setup(
         "numpy",
         "spglib",
         "click>=6",
-        "colorama",
-        "ase==3.16",
+        "pniggli",
     ],
     extras_require={
         'dev': [
@@ -34,6 +33,9 @@ setup(
             'pytest-cov',
             'twine',
             'ipython',
+        ],
+        'ase': [
+            "ase==3.16",
         ],
     },
     classifiers=[
