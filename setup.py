@@ -29,7 +29,7 @@ setup(
     extras_require={
         'dev': [
             'pip',
-            'pytest',
+            'pytest>=3.6',
             'pytest-cov',
             'twine',
             'ipython',
