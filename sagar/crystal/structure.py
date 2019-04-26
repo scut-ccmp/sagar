@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import numpy
 import spglib
+from pniggli import niggli_reduce
 
 from itertools import product
 
@@ -135,7 +136,8 @@ class Cell(object):
         Used in producing the new positions extended by a matrix
         """
         prec = 1e-5
-        #m = numpy.amax(mat)
+
+        #m = numpy.amax(    mat)
         #_int_coor = numpy.array([i for i in product(range(m * 3), repeat=3)])
         # 适用于hnf
 
@@ -152,6 +154,8 @@ class Cell(object):
         for i in range(0, 3):
             ma[i] = numpy.amax(conv[:, i])
             mi[i] = numpy.amin(conv[:, i])
+
+        # import pdb; pdb.set_trace()
         _int_coor = numpy.array([j for j in product(range(
             mi[0] - 1, ma[0] + 2), range(mi[1] - 1, ma[1] + 2), range(mi[2] - 1, ma[2] + 2))])
         # from qiusb-------------
@@ -251,7 +255,36 @@ class Cell(object):
             spg_cell, to_primitive=True, no_idealize=True, symprec=symprec)
         return self.__class__(lattice, positions, atoms)
 
-    def get_refine_cell(self, symprec=1e-5):
+    def _get_niggli_2D(self, vacc=16.0, eps=1e-5):
+        # import pdb; pdb.set_trace()
+        L = self.lattice[0:2, 0:2]
+        reduced_L = niggli_reduce(L)
+        # M = r_L . L^-1
+        M = numpy.matmul(reduced_L, numpy.linalg.inv(L))
+        M_3D = numpy.zeros((3, 3))
+        M_3D[:2, :2] = M
+        M_3D[2, 2] = 1
+        M_3D = numpy.around(M_3D).astype(int)
+        reduced_cell = self.extend(M_3D)
+
+        lattice = reduced_cell.lattice
+        lattice[2, 2] = vacc
+        positions = reduced_cell.positions
+        positions[:, 2] = 0.5
+        atoms = reduced_cell.atoms
+
+        return self.__class__(lattice, positions, atoms)
+
+    def _get_niggli_3D(self, eps=1e-5):
+        L = self.lattice
+        reduced_L = niggli_reduce(L)
+        # M = r_L . L^-1
+        M = numpy.matmul(reduced_L, numpy.linalg.inv(L))
+        reduced_cell = self.extend(M)
+
+        return reduced_cell
+
+    def get_refined_cell(self, symprec=1e-5):
         spg_cell = (self.lattice, self.positions, self.atoms)
         lattice, positions, atoms = spglib.refine_cell(spg_cell, symprec)
         return self.__class__(lattice, positions, atoms)
