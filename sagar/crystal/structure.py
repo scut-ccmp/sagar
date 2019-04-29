@@ -280,6 +280,7 @@ class Cell(object):
         reduced_L = niggli_reduce(L)
         # M = r_L . L^-1
         M = numpy.matmul(reduced_L, numpy.linalg.inv(L))
+        M = numpy.around(M).astype(int)
         reduced_cell = self.extend(M)
 
         return reduced_cell

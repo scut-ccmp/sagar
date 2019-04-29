@@ -30,7 +30,7 @@ def cells_nonredundant(pcell, volume=1, dimension=3, symprec=1e-5, comprec=1e-5)
         if dimension == 2:
             cell = cell._get_niggli_2D(vacc=16, eps=comprec)
         if dimension == 3:
-            cell = cell.get_refined_cell(symprec=symprec)
+            cell = cell._get_niggli_3D(eps=symprec)
         cells.append(cell)
 
     return cells
