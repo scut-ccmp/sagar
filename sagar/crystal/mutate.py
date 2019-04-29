@@ -65,9 +65,20 @@ def rotate_sites_in_a_circle_by_z(mcell, cc, radius, degrees, radians=None, list
     # bugfix: temp 胞外的原子无法合理转动，
     # 完全的bugfix 需要直接使用直角坐标，
     # 暂时的fix为将轴原子移到中心
-    for idx, s in enumerate(mcell._sites):
-        if _is_close_in_radius(mcell._lattice, cc, s[0], radius) and _is_in_ele(s[1], list_ele):
-            mcell.rotate_site_by_z(idx, cc, degrees)
+    # silly implemence
+    t = numpy.array([0.5,0.5,0.5]) - numpy.array(cc)
+    imcell = mcell.to_cell()
+    imcell_t = imcell.translate(t)
+    mc = MutableCell.from_cell(imcell_t)
+    for idx, s in enumerate(mc._sites):
+        if _is_close_in_radius(mc._lattice, (0.5,0.5,0.5), s[0], radius) and _is_in_ele(s[1], list_ele):
+            mc.rotate_site_by_z(idx, (0.5,0.5,0.5), degrees)
+
+    # 转回去
+    imcell = mc.to_cell()
+    imcell_t = imcell.translate(-t)
+    mc = MutableCell.from_cell(imcell_t)
+    return mc
 
 def _is_close_in_radius(lattice, p1, p2, radius):
     # 截断圆对应的半径大于距离，说明两点在圆内，需要删除：返回True

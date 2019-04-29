@@ -127,6 +127,14 @@ class Cell(object):
 
         return self.__class__(lattice, positions, atoms)
 
+    def translate(self, vec):
+        """
+        translate a cell by vectors
+        """
+        positions = numpy.array(self.positions) + numpy.array(vec)
+
+        return self.__class__(self.lattice, positions, self._atoms)
+
     def _get_mat_frac(self, mat):
         """
         When giving mat -- a 3x3 matrix,
