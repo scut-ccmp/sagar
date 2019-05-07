@@ -161,7 +161,11 @@ def _write_string(cell, long_format, print_vacc=False):
     else:
         latt_form = '11.6f'
 
-    for vec in cell.lattice:
+    lattice = cell.lattice
+    if numpy.linalg.det(lattice) < 0:
+        # TODO: give a warning for hand change
+        lattice = -lattice
+    for vec in lattice:
         lattice_string += ' '
         for v in vec:
             lattice_string += '{:{form}}'.format(v, form=latt_form)
