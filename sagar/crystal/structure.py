@@ -241,7 +241,7 @@ class Cell(object):
 
     def is_primitive(self, symprec=1e-5):
         """
-        is_primitive_cell decide if a cell is primitive
+        is_primitive decide if a cell is primitive
 
         parameters:
 
@@ -278,7 +278,6 @@ class Cell(object):
         lattice = reduced_cell.lattice
         lattice[2, 2] = vacc
         positions = reduced_cell.positions
-        positions[:, 2] = 0.5
         atoms = reduced_cell.atoms
 
         return self.__class__(lattice, positions, atoms)
