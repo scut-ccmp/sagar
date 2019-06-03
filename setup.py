@@ -29,6 +29,7 @@ setup(
     entry_points={
         'console_scripts': [
             'rexpand = sagar.cmd.rexpand:cli',
+            'latmat = sagar.cmd.latmat:cli'
         ],
     }
 )

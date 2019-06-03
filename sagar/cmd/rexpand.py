@@ -7,6 +7,9 @@ import sys
 from sagar.crystal.derive import cells_nonredundant, ConfigurationGenerator
 from sagar.io.vasp import read_vasp, write_vasp
 from sagar.crystal.structure import symbol2number as s2n
+from sagar.toolkit.LM import main_match
+import numpy
+
 
 CONTEXT_SETTINGS = dict(help_option_names=['-h', '--help'])
 
@@ -14,6 +17,27 @@ CONTEXT_SETTINGS = dict(help_option_names=['-h', '--help'])
 @click.group(context_settings=CONTEXT_SETTINGS)
 def cli():
     pass
+
+@cli.command('latmat',short_help="match two different lattices")
+@click.argument('poscar_a', metavar='<substrate_cell_file>',
+                type=click.Path(exists=True, resolve_path=True, readable=True, file_okay=True))
+@click.argument('poscar_b', metavar='<crystal_cell_file>',
+                type=click.Path(exists=True, resolve_path=True, readable=True, file_okay=True))
+@click.option('--n_max', '-nmax', type=int, default=16,
+              help="the maximum  extending volume of substrate structure")
+@click.option('--n_min', '-nmin', type=int, default=1,
+              help="the minimum  extending volume")
+@click.option('--distance', '-d', type=float, default=2.2,
+              help="the distance between two layers")
+@click.option('--err_l', '-el', type=float, default=0.08,
+              help="the max error of length")
+@click.option('--err_s', '-es', type=float, default=0.08,
+              help="the max error of area")
+@click.option('--err_theta', '-et', type=float, default=0.08,
+              help="the max error of angle")
+def lat_match(poscar_a,poscar_b,n_max,distance,err_l,err_s,err_theta,n_min):
+    main_match(poscar_a,poscar_b,n_max,distance,err_l,err_s,
+                err_theta,n_min=1,MS=1,translation_vectors=numpy.array([[0, 0]]))
 
 
 @cli.command('cell', short_help="Expanding primitive cell to specific range of volumes.")
@@ -110,7 +134,7 @@ def conf(cell_filename, comment, pmode, cmode, dimension, volume, element, subst
             deg_line = filename + '{:10d}'.format(d) + '\n'
             f_deg.write(deg_line)
         f_deg.close()
-        
+
         spinner.stop()
         click.secho("DONE", bold=True, bg='green', fg='white')
     elif pmode == 'svc' and cmode == 'vc':
