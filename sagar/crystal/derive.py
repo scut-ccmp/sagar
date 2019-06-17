@@ -129,8 +129,11 @@ class ConfigurationGenerator(object):
                 # trans = dict_trans[quotient]
                 # rots = hfpg.get_pure_rotations(symprec)
                 perms = hfpg.get_symmetry_perms(symprec)
-
-                supercell = self._pcell.extend(h)
+                
+                if dimension == 2:
+                    supercell = self._pcell.extend(h)._get_niggli_2D()
+                else:
+                    supercell = self._pcell.extend(h)._get_niggli_3D()
                 _sites = numpy.repeat(sites, volume, axis=0)
 
                 for mol, _ in remove_redundant(supercell.positions, _sites, perms):
@@ -169,7 +172,11 @@ class ConfigurationGenerator(object):
             # rots = hfpg.get_pure_rotations(symprec)
             perms = hfpg.get_symmetry_perms(symprec)
 
-            supercell = self._pcell.extend(h)
+            if dimension == 2:
+                supercell = self._pcell.extend(h)._get_niggli_2D()
+            else:
+                supercell = self._pcell.extend(h)._get_niggli_3D()
+
             _sites = numpy.repeat(sites, volume, axis=0)
 
             for mol, d in remove_redundant(supercell.positions, _sites, perms, e_num):
