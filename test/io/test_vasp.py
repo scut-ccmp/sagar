@@ -63,7 +63,7 @@ Direct
                 0.5, 0.5, 0.]
         positions = [0., 0., 0.,
                      0.25, 0.25, 0.25]
-        atoms = ['H', 'Vacc']
+        atoms = ['H', 'Vac']
         cell = Cell(latt, positions, atoms)
 
         got = _write_string(cell, long_format=False)

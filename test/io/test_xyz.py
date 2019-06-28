@@ -35,7 +35,7 @@ H1
 '''
         positions = [0., 0., 0.,
                      2.5, 2.5, 2.5]
-        atoms = ['H', 'Vacc']
+        atoms = ['H', 'Vac']
         mol = Molecule(positions, atoms)
 
         got = _write_string(mol, long_format=False)
