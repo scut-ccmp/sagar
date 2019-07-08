@@ -28,7 +28,7 @@ sagar
 Introduction
 ++++++++++++
 
-sagar is short for (S)Tructures of (A)lloys (G)eneration (A)nd (R)ecognition.
+sagar is short for (S)Tructures of (A)lloy (G)eneration (A)nd (R)ecognition.
 
 It is a library with some uitils to deal grid site
  structures.
