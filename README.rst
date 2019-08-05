@@ -30,5 +30,6 @@ Introduction
 
 sagar is short for (S)Tructures of (A)lloy (G)eneration (A)nd (R)ecognition.
 
-It is a library with some uitils to deal grid site
- structures.
+It is a library with some uitils to deal grid site structures. You can visit the `web app version`_ of sagar for a better experience.
+
+.. _`web app version`: http://www.compphys.cn/physics_tools
