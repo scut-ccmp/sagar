@@ -168,7 +168,7 @@ def _write_string(cell, long_format, print_vacc=False):
     for vec in lattice:
         lattice_string += ' '
         for v in vec:
-            lattice_string += '{:{form}}'.format(v, form=latt_form)
+            lattice_string += ' '+'{:{form}}'.format(v, form=latt_form)
         lattice_string += '\n'
 
     # atom types and their numbers
@@ -196,7 +196,7 @@ def _write_string(cell, long_format, print_vacc=False):
             continue
         positions_string += ' '
         for v in vec:
-            positions_string += '{:{form}}'.format(v, form=pos_form)
+            positions_string += ' '+'{:{form}}'.format(v, form=pos_form)
         positions_string += ' ' + get_symbol(atoms[i])
         positions_string += '\n'
 
