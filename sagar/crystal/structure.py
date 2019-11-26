@@ -263,7 +263,7 @@ class Cell(object):
             spg_cell, to_primitive=True, no_idealize=True, symprec=symprec)
         return self.__class__(lattice, positions, atoms)
 
-    def _get_niggli_2D(self, vacc=16,eps=1e-5):
+    def _get_niggli_2D(self, vacc,eps=1e-5):
         # import pdb; pdb.set_trace()
         L = self.lattice[0:2, 0:2]
         vacc = self.lattice[2,2]
