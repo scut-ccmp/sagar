@@ -28,7 +28,7 @@ def cells_nonredundant(pcell, volume=1, dimension=3, symprec=1e-5, comprec=1e-5)
     for hnf in non_dup_hnfs(pcell, volume, dimension, symprec, comprec):
         cell = pcell.extend(hnf)
         if dimension == 2:
-            cell = cell._get_niggli_2D(vacc=16, eps=comprec)
+            cell = cell._get_niggli_2D(eps=comprec)
         if dimension == 3:
             cell = cell._get_niggli_3D(eps=symprec)
         cells.append(cell)
@@ -129,7 +129,7 @@ class ConfigurationGenerator(object):
                 # trans = dict_trans[quotient]
                 # rots = hfpg.get_pure_rotations(symprec)
                 perms = hfpg.get_symmetry_perms(symprec)
-                
+
                 if dimension == 2:
                     supercell = self._pcell.extend(h)._get_niggli_2D()
                 else:
