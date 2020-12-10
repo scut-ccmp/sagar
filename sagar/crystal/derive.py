@@ -64,17 +64,26 @@ class PermutationGroup(object):
 
         origin_positions = supercell.positions
         origin_positions = refine_positions(origin_positions)
+
+
+
         for i, (rot, trans) in enumerate(zip(arr_rots, arr_trans)):
             new_positions = numpy.matmul(origin_positions, rot.T) + trans
-            moded = numpy.ones_like(new_positions, dtype='intc')
-            new_positions = numpy.mod(new_positions, moded)
-            new_positions = refine_positions(new_positions, atol=symprec)
-            # 寻找置换矩阵
+
+            all_pos = []
+            for ix in range(-1,2):
+                for iy in range(-1,2):
+                    for iz in range(-1,2):
+                        tmp = new_positions+numpy.array([ix,iy,iz])
+                        all_pos.extend(tmp.tolist())
+            all_pos = numpy.array(all_pos)
+
+
+            # import pdb; pdb.set_trace()
             for j, row in enumerate(origin_positions):
-                row = refine_positions(row, atol=symprec)
-                idx = numpy.where(
-                    (numpy.isclose(row, new_positions, atol=symprec)).all(axis=1))[0]
-                result[i, j] = idx
+                # row = refine_positions(row, atol=symprec)
+                idx = numpy.argmin(numpy.linalg.norm(row-all_pos,axis=1))
+                result[i, j] = idx%numpy.shape(origin_positions)[0]
 
         result = numpy.unique(result, axis=0)
         return result
