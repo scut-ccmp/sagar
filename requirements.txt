@@ -11,7 +11,7 @@ kiwisolver==1.0.1
 MarkupSafe==1.0
 matplotlib==2.2.3
 mock==2.0.0
-numpy==1.15.1
+numpy==1.22.0
 pbr==4.2.0
 pyparsing==2.2.0
 python-dateutil==2.7.3
